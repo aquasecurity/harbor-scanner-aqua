@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: harbor-scanner-aqua
+spec:
+  selector:
+    app: harbor-scanner-aqua
+  type: LoadBalancer
+  ports:
+    - name: api-server
+      protocol: TCP
+      port: 8443
+      targetPort: 8443
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: harbor-scanner-aqua
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: harbor-scanner-aqua
+  template:
+    metadata:
+      labels:
+        app: harbor-scanner-aqua
+    spec:
+      containers:
+        - name: main
+          image: aquasec/harbor-scanner-aqua:dev
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            readOnlyRootFilesystem: true
+          env:
+            - name: "SCANNER_LOG_LEVEL"
+              value: "info"
+            - name: "SCANNER_API_ADDR"
+              value: ":8443"
+            - name: "SCANNER_API_TLS_CERTIFICATE"
+              value: "/certs/tls.crt"
+            - name: "SCANNER_API_TLS_KEY"
+              value: "/certs/tls.key"
+            - name: "SCANNER_API_READ_TIMEOUT"
+              value: "15s"
+            - name: "SCANNER_API_WRITE_TIMEOUT"
+              value: "15s"
+            - name: "SCANNER_API_IDLE_TIMEOUT"
+              value: "60s"
+          ports:
+            - name: api-server
+              containerPort: 8443
+          volumeMounts:
+            - mountPath: /certs
+              name: certs
+              readOnly: true
+      volumes:
+        - name: certs
+          secret:
+            secretName: harbor-scanner-aqua-tls
