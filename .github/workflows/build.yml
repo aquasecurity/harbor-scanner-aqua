@@ -20,3 +20,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.txt
+      - name: Release snapshot
+        uses: goreleaser/goreleaser-action@v1
+        with:
+          args: release --snapshot --skip-publish --rm-dist
