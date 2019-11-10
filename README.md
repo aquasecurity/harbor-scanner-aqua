@@ -1,3 +1,4 @@
+[![GitHub release][release-img]][release]
 [![Build Actions][build-action-img]][build-action]
 [![Codecov][codecov-img]][codecov]
 [![Go Report Card][report-card-img]][report-card]
@@ -55,6 +56,8 @@ Configuration of the adapter is done via environment variables at startup.
    curl -vk https://localhost:8443/api/v1/metadata | jq
    ```
 
+[release-img]: https://img.shields.io/github/release/aquasecurity/harbor-scanner-aqua.svg
+[release]: https://github.com/aquasecurity/harbor-scanner-aqua/releases
 [build-action-img]: https://github.com/aquasecurity/harbor-scanner-aqua/workflows/build/badge.svg
 [build-action]: https://github.com/aquasecurity/harbor-scanner-aqua/actions
 [codecov-img]: https://codecov.io/gh/aquasecurity/harbor-scanner-aqua/branch/master/graph/badge.svg

@@ -1,4 +1,5 @@
 .idea/
+dist/
 
 coverage.txt
 scanner-adapter
