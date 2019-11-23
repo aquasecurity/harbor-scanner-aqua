@@ -1,8 +1,8 @@
 package main
 
 import (
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
-	"github.com/aquasecurity/harbor-scanner-aqua/pkg/scanner"
 	log "github.com/sirupsen/logrus"
 	"os"
 )
@@ -26,7 +26,7 @@ func main() {
 		Date:    date,
 	}
 
-	if err := scanner.Run(info); err != nil {
+	if err := pkg.Run(info); err != nil {
 		log.Fatalf("Error: %v", err)
 	}
 }

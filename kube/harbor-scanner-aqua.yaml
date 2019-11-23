@@ -48,6 +48,20 @@ spec:
               value: "15s"
             - name: "SCANNER_API_IDLE_TIMEOUT"
               value: "60s"
+            - name: "SCANNER_AQUA_USER"
+              valueFrom:
+                secretKeyRef:
+                  name: harbor-scanner-aqua
+                  key: aqua_user
+            - name: "SCANNER_AQUA_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: harbor-scanner-aqua
+                  key: aqua_password
+            - name: "SCANNER_AQUA_HOST"
+              value: "http://aqua-web.aqua-security:8080"
+            - name: "SCANNER_AQUA_REGISTRY"
+              value: "Harbor"
           ports:
             - name: api-server
               containerPort: 8443

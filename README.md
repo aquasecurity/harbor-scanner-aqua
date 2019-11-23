@@ -19,6 +19,10 @@ Configuration of the adapter is done via environment variables at startup.
 | `SCANNER_API_READ_TIMEOUT`    | `15s` | The maximum duration for reading the entire request, including the body. |
 | `SCANNER_API_WRITE_TIMEOUT`   | `15s` | The maximum duration before timing out writes of the response. |
 | `SCANNER_API_IDLE_TIMEOUT`    | `60s` | The maximum amount of time to wait for the next request when keep-alives are enabled. |
+| `SCANNER_AQUA_USER` | | Aqua management console username (required) |
+| `SCANNER_AQUA_PASSWORD` | | Aqua management console address (required) |
+| `SCANNER_AQUA_HOST` | `http://aqua-web.aqua-security:8080` | Aqua management console address |
+| `SCANNER_AQUA_REGISTRY` | `Harbor` | The name of the Harbor registry configured in Aqua management console |
 
 ## Deploy to minikube
 
@@ -40,19 +44,25 @@ Configuration of the adapter is done via environment variables at startup.
         -days 365 \
         -subj /CN=harbor-scanner-aqua
       ```
-   2. Create a `tls` secret from the two generated files:
+   2. Create a *tls* secret from the two generated files:
       ```
       $ kubectl create secret tls harbor-scanner-aqua-tls \
         --cert=tls.crt \
         --key=tls.key
       ```
-4. Create `harbor-scanner-aqua` deployment and service:
+4. Create a *generic* secret for Aqua management console credentials:
    ```
-   kubectl apply -f kube/harbor-scanner-aqua.yaml
+   $ kubectl create secret generic harbor-scanner-aqua \
+     --from-literal aqua_user=$AQUA_USER \
+     --from-literal aqua_password=$AQUA_PASSWORD
    ```
-5. If everything is fine you should be able to get scanner's metadata:
+5. Create `harbor-scanner-aqua` Deployment and Service:
    ```
-   kubectl port-forward service/harbor-scanner-aqua 8443:8443 &> /dev/null &
+   $ kubectl apply -f kube/harbor-scanner-aqua.yaml
+   ```
+6. If everything is fine you should be able to get scanner's metadata:
+   ```
+   $ kubectl port-forward service/harbor-scanner-aqua 8443:8443 &> /dev/null &
    curl -vk https://localhost:8443/api/v1/metadata | jq
    ```
 

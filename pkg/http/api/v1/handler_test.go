@@ -2,6 +2,8 @@ package v1
 
 import (
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/persistence/mock"
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/scanner"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
@@ -11,7 +13,9 @@ import (
 )
 
 func TestHandler(t *testing.T) {
-	handler := NewAPIHandler(etc.BuildInfo{Version: "v0.0.5", Commit: "abc", Date: "20-04-1319T13:45:00"})
+	enqueuer := &scanner.MockEnqueuer{}
+	store := &mock.Store{}
+	handler := NewAPIHandler(etc.BuildInfo{Version: "v0.0.5", Commit: "abc", Date: "20-04-1319T13:45:00"}, enqueuer, store)
 
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
