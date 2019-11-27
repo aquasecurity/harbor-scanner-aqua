@@ -16,9 +16,9 @@ archives:
       386: i386
       amd64: x86_64
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: "{{ .FullCommit }}"
 changelog:
   sort: asc
   filters:
@@ -31,6 +31,8 @@ dockers:
       - "docker.io/aquasec/harbor-scanner-aqua:{{ .Version }}"
     binaries:
       - scanner-adapter
+    extra_files:
+      - scannercli
     build_flag_templates:
       - "--label=org.label-schema.schema-version=1.0"
       - "--label=org.label-schema.name={{ .ProjectName }}"
