@@ -4,9 +4,16 @@ import (
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
 	"github.com/caarlos0/env/v6"
 	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
+	"golang.org/x/xerrors"
 	"os"
+	"os/exec"
+	"sync"
 	"time"
 )
+
+var version = "Unknown"
+var once sync.Once
 
 type BuildInfo struct {
 	Version string
@@ -15,7 +22,9 @@ type BuildInfo struct {
 }
 
 type Config struct {
-	API API
+	API     API
+	AquaCSP AquaCSP
+	Store   Store
 }
 
 type API struct {
@@ -31,8 +40,36 @@ func (c API) IsTLSEnabled() bool {
 	return c.TLSCertificate != "" && c.TLSKey != ""
 }
 
+type AquaCSP struct {
+	User       string `env:"SCANNER_AQUA_USER"`
+	Password   string `env:"SCANNER_AQUA_PASSWORD"`
+	Host       string `env:"SCANNER_AQUA_HOST" envDefault:"http://aqua-web.aqua-security:8080"`
+	Registry   string `env:"SCANNER_AQUA_REGISTRY" envDefault:"Harbor"`
+	ReportsDir string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/tmp/reports"`
+}
+
+type Store struct {
+	RedisURL      string        `env:"SCANNER_STORE_REDIS_URL" envDefault:"redis://harbor-harbor-redis:6379"`
+	Namespace     string        `env:"SCANNER_STORE_REDIS_NAMESPACE" envDefault:"harbor.scanner.aqua:store"`
+	PoolMaxActive int           `env:"SCANNER_STORE_REDIS_POOL_MAX_ACTIVE" envDefault:"5"`
+	PoolMaxIdle   int           `env:"SCANNER_STORE_REDIS_POOL_MAX_IDLE" envDefault:"5"`
+	ScanJobTTL    time.Duration `env:"SCANNER_STORE_REDIS_SCAN_JOB_TTL" envDefault:"1h"`
+}
+
 func GetConfig() (cfg Config, err error) {
 	err = env.Parse(&cfg)
+	if err != nil {
+		return cfg, xerrors.Errorf("parsing config: %w", err)
+	}
+
+	if _, err := os.Stat(cfg.AquaCSP.ReportsDir); os.IsNotExist(err) {
+		log.WithField("path", cfg.AquaCSP.ReportsDir).Debug("Creating reports dir")
+		err = os.MkdirAll(cfg.AquaCSP.ReportsDir, os.ModeDir)
+		if err != nil {
+			return cfg, xerrors.Errorf("creating reports dir: %w", err)
+		}
+	}
+
 	return
 }
 
@@ -48,9 +85,32 @@ func GetLogLevel() logrus.Level {
 }
 
 func GetScannerMetadata() harbor.Scanner {
+	once.Do(func() {
+		v, err := getVersion()
+		if err != nil {
+			log.WithError(err).Error("Error while retrieving version")
+			return
+		}
+		version = v
+	})
 	return harbor.Scanner{
 		Name:    "Aqua CSP Scanner",
 		Vendor:  "Aqua Security",
-		Version: "Unknown",
+		Version: version,
 	}
+}
+
+func getVersion() (version string, err error) {
+	executable, err := exec.LookPath("scannercli")
+	if err != nil {
+		return
+	}
+	cmd := exec.Command(executable, "version")
+	out, err := cmd.Output()
+	if err != nil {
+		return
+	}
+
+	version = string(out)
+	return
 }
