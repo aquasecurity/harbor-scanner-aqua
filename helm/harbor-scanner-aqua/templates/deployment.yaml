@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: {{ .Release.Name }}
+spec:
+    replicas: {{ .Values.deployment.replicas }}
+    selector:
+        matchLabels:
+            app: {{ .Release.Name }}
+    template:
+        metadata:
+            labels:
+                app: {{ .Release.Name }}
+        spec:
+            containers:
+                - name: main
+                  image: {{ template "harbor-scanner-aqua.imageRef" . }}
+                  imagePullPolicy: {{ .Values.deployment.image.pullPolicy | quote }}
+                  env:
+                      - name: "SCANNER_LOG_LEVEL"
+                        value: {{ .Values.scanner.logLevel }}
+                      - name: "SCANNER_API_ADDR"
+                        value: ":{{ .Values.service.port }}"
+                      - name: "SCANNER_API_READ_TIMEOUT"
+                        value: {{ .Values.scanner.api.readTimeout }}
+                      - name: "SCANNER_API_WRITE_TIMEOUT"
+                        value: {{ .Values.scanner.api.writeTimeout }}
+                      - name: "SCANNER_API_IDLE_TIMEOUT"
+                        value: {{ .Values.scanner.api.idleTimeout }}
+                      - name: "SCANNER_AQUA_USER"
+                        valueFrom:
+                            secretKeyRef:
+                                name: {{ .Release.Name }}
+                                key: aqua_user
+                      - name: "SCANNER_AQUA_PASSWORD"
+                        valueFrom:
+                            secretKeyRef:
+                                name: {{ .Release.Name }}
+                                key: aqua_password
+                      - name: "SCANNER_AQUA_HOST"
+                        value: {{ .Values.scanner.aqua.host }}
+                      - name: "SCANNER_AQUA_REGISTRY"
+                        value: {{ .Values.scanner.aqua.registry }}
+                      {{- if .Values.scanner.api.tlsEnabled }}
+                      - name: "SCANNER_API_TLS_CERTIFICATE"
+                        value: "/certs/tls.crt"
+                      - name: "SCANNER_API_TLS_KEY"
+                        value: "/certs/tls.key"
+                      {{- end }}
+                  ports:
+                      - name: api-server
+                        containerPort: {{ .Values.service.port }}
+                  volumeMounts:
+                      {{- if .Values.scanner.api.tlsEnabled }}
+                      - mountPath: /certs
+                        name: certs
+                        readOnly: true
+                      {{- end }}
+            volumes:
+                {{- if .Values.scanner.api.tlsEnabled }}
+                - name: certs
+                  secret:
+                      secretName: {{ .Release.Name }}-tls
+                {{- end }}

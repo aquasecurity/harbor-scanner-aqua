@@ -1,0 +1,27 @@
+service:
+  type: "LoadBalancer"
+  port: 8443
+  targetPort: 8443
+
+deployment:
+  replicas: 1
+  image:
+    registry: "docker.io"
+    repository: "aquasec/harbor-scanner-aqua"
+    tag: "0.1.0-rc2"
+    pullPolicy: "IfNotPresent"
+
+scanner:
+  logLevel: info
+  api:
+    tlsEnabled: true
+    tlsCertificate: ""
+    tlsKey: ""
+    readTimeout: 15s
+    writeTimeout: 15s
+    idleTimeout: 60s
+  aqua:
+    user: ""
+    password: ""
+    host: "http://aqua-web.aqua-security:8080"
+    registry: "Harbor"
