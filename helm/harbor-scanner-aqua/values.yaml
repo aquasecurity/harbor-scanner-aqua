@@ -1,7 +1,9 @@
+nameOverride: ""
+fullnameOverride: ""
+
 service:
   type: "LoadBalancer"
-  port: 8443
-  targetPort: 8443
+  port: 8080
 
 deployment:
   replicas: 1
@@ -14,7 +16,7 @@ deployment:
 scanner:
   logLevel: info
   api:
-    tlsEnabled: true
+    tlsEnabled: false
     tlsCertificate: ""
     tlsKey: ""
     readTimeout: 15s

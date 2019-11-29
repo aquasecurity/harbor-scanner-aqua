@@ -9,9 +9,6 @@ Aqua CSP Scanner as a plug-in vulnerability scanner in the Harbor registry.
 ```
 $ helm install --name harbor-scanner-aqua \
                --namespace harbor \
-               --set scanner.api.tlsEnabled=false \
-               --set service.port=8080 \
-               --set service.targetPort=8080 \
                --set scanner.aqua.user=$AQUA_USER \
                --set scanner.aqua.password=$AQUA_PASSWORD \
                --set scanner.aqua.host=http://aqua-web.aqua-security:8080 \
@@ -20,28 +17,28 @@ $ helm install --name harbor-scanner-aqua \
 
 ### With TLS
 
-```
-$ openssl genrsa -out tls.key 2048
-```
-
-```
-$ openssl req -new -x509 \
-              -key tls.key \
-              -out tls.crt \
-              -days 365 \
-              -subj /CN=harbor-scanner-aqua.harbor
-```
-
-```
-$ helm install --name harbor-scanner-aqua \
-               --namespace harbor \
-               --set scanner.api.tlsCertificate="`cat tls.crt`" \
-               --set scanner.api.tlsKey="`cat tls.key`" \
-               --set scanner.aqua.user=$AQUA_USER \
-               --set scanner.aqua.password=$AQUA_PASSWORD \
-               --set scanner.aqua.host=http://aqua-web.aqua-security:8080 \
-               .
-```
+1. Generate certificate and private key files:
+   ```
+   $ openssl genrsa -out tls.key 2048
+   $ openssl req -new -x509 \
+                 -key tls.key \
+                 -out tls.crt \
+                 -days 365 \
+                 -subj /CN=harbor-scanner-aqua.harbor
+   ```
+2. Install the `harbor-scanner-aqua` chart:
+   ```
+   $ helm install --name harbor-scanner-aqua \
+                  --namespace harbor \
+                  --set service.port=8443 \
+                  --set scanner.api.tlsEnabled=true \
+                  --set scanner.api.tlsCertificate="`cat tls.crt`" \
+                  --set scanner.api.tlsKey="`cat tls.key`" \
+                  --set scanner.aqua.user=$AQUA_USER \
+                  --set scanner.aqua.password=$AQUA_PASSWORD \
+                  --set scanner.aqua.host=http://aqua-web.aqua-security:8080 \
+                  .
+   ```
 
 ## Introduction
 
@@ -64,14 +61,14 @@ $ helm install --name my-release .
 The command deploys scanner adapter on the Kubernetes cluster in the default configuration. The [Parameters](#parameters)
 section lists the parameters that can be configured during installation.
 
-> **Tip**: List all releases using `helm list`
+> **Tip**: List all releases using `helm list`.
 
 ## Uninstalling the Chart
 
 To uninstall/delete the `my-release` deployment:
 
 ```
-$ helm delete my-release
+$ helm delete --purge my-release
 ```
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
@@ -95,7 +92,6 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.api.idleTimeout`     | The maximum amount of time to wait for the next request when keep-alives are enabled | `60s` |
 | `service.type`                | Kubernetes service type                                                 | `LoadBalancer` |
 | `service.port`                | Kubernetes service port                                                 | `8443`         |
-| `service.targetPort`          | Kubernetes service target port                                          | `8443`         |
 | `deployment.image.registry`   | Image registry                                                          | `docker.io`    |
 | `deployment.image.repository` | Image name                                                              | `aquasec/harbor-scanner-aqua` |
 | `deployment.image.tag`        | Image tag                                                               | `{TAG_NAME}`   |
@@ -107,9 +103,9 @@ The above parameters map to the env variables defined in [harbor-scanner-aqua](h
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
 ```
-$ helm install --name my-release --namespace my-namespace \
-  --set scanner.api.tlsEnabled=false \
-  --set scanner.aqua.user=$AQUA_USER \
-  --set scanner.aqua.password=$AQUA_PASSWORD \
-  .
+$ helm install --name my-release \
+               --namespace my-namespace \
+               --set scanner.aqua.user=$AQUA_USER \
+               --set scanner.aqua.password=$AQUA_PASSWORD \
+               .
 ```
