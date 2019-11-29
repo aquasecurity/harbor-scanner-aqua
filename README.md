@@ -10,25 +10,25 @@
 
 Configuration of the adapter is done via environment variables at startup.
 
-| Name | Default Value | Description |
-|------|---------------|-------------|
-| `SCANNER_LOG_LEVEL`           | `info`  | The log level of `trace`, `debug`, `info`, `warn`, `warning`, `error`, `fatal` or `panic`. The standard logger logs entries with that level or anything above it. |
-| `SCANNER_API_ADDR`            | `:8080` | Binding address for the API HTTP server. |
-| `SCANNER_API_TLS_CERTIFICATE` | | The absolute path to the x509 certificate file. |
-| `SCANNER_API_TLS_KEY`         | | The absolute path to the x509 private key file. |
-| `SCANNER_API_READ_TIMEOUT`    | `15s` | The maximum duration for reading the entire request, including the body. |
-| `SCANNER_API_WRITE_TIMEOUT`   | `15s` | The maximum duration before timing out writes of the response. |
-| `SCANNER_API_IDLE_TIMEOUT`    | `60s` | The maximum amount of time to wait for the next request when keep-alives are enabled. |
-| `SCANNER_AQUA_USER` | | Aqua management console username (required) |
-| `SCANNER_AQUA_PASSWORD` | | Aqua management console address (required) |
-| `SCANNER_AQUA_HOST` | `http://aqua-web.aqua-security:8080` | Aqua management console address |
-| `SCANNER_AQUA_REGISTRY` | `Harbor` | The name of the Harbor registry configured in Aqua management console |
+|              Name             |  Default |                                 Description                               |
+|-------------------------------|----------|---------------------------------------------------------------------------|
+| `SCANNER_LOG_LEVEL`           | `info`   | The log level of `trace`, `debug`, `info`, `warn`, `warning`, `error`, `fatal` or `panic`. The standard logger logs entries with that level or anything above it. |
+| `SCANNER_API_ADDR`            | `:8080`  | Binding address for the API HTTP server                                   |
+| `SCANNER_API_TLS_CERTIFICATE` |          | The absolute path to the x509 certificate file                            |
+| `SCANNER_API_TLS_KEY`         |          | The absolute path to the x509 private key file                            |
+| `SCANNER_API_READ_TIMEOUT`    | `15s`    | The maximum duration for reading the entire request, including the body   |
+| `SCANNER_API_WRITE_TIMEOUT`   | `15s`    | The maximum duration before timing out writes of the response             |
+| `SCANNER_API_IDLE_TIMEOUT`    | `60s`    | The maximum amount of time to wait for the next request when keep-alives are enabled |
+| `SCANNER_AQUA_USER`           |          | Aqua management console username (required)                               |
+| `SCANNER_AQUA_PASSWORD`       |          | Aqua management console password (required)                               |
+| `SCANNER_AQUA_HOST`           | `http://aqua-web.aqua-security:8080` | Aqua management console address               |
+| `SCANNER_AQUA_REGISTRY`       | `Harbor` | The name of the Harbor registry configured in Aqua management console     |
 
 ## Deploy to minikube
 
 1. Configure Docker client with Docker Engine in minikube:
    ```
-   eval $(minikube docker-env -p harbor)
+   eval $(minikube docker-env)
    ```
 2. Build Docker container:
    ```
