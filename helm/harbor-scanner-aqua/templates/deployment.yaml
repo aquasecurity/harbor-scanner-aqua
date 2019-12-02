@@ -5,7 +5,7 @@ metadata:
   labels:
 {{ include "harbor-scanner-aqua.labels" . | indent 4 }}
 spec:
-  replicas: {{ .Values.deployment.replicas }}
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "harbor-scanner-aqua.name" . }}
@@ -19,7 +19,7 @@ spec:
       containers:
         - name: main
           image: {{ template "harbor-scanner-aqua.imageRef" . }}
-          imagePullPolicy: {{ .Values.deployment.image.pullPolicy | quote }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           env:
             - name: "SCANNER_LOG_LEVEL"
               value: {{ .Values.scanner.logLevel }}
