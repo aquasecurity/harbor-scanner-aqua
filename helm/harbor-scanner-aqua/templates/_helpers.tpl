@@ -47,8 +47,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Return the proper imageRef as used by the container template spec.
 */}}
 {{- define "harbor-scanner-aqua.imageRef" -}}
-{{- $registryName := .Values.deployment.image.registry -}}
-{{- $repositoryName := .Values.deployment.image.repository -}}
-{{- $tag := .Values.deployment.image.tag | toString -}}
+{{- $registryName := .Values.image.registry -}}
+{{- $repositoryName := .Values.image.repository -}}
+{{- $tag := .Values.image.tag | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
