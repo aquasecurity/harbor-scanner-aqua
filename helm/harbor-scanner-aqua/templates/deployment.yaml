@@ -20,6 +20,9 @@ spec:
         - name: main
           image: {{ template "harbor-scanner-aqua.imageRef" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+          securityContext:
+            runAsUser: 1000
+            runAsNonRoot: true
           env:
             - name: "SCANNER_LOG_LEVEL"
               value: {{ .Values.scanner.logLevel }}
