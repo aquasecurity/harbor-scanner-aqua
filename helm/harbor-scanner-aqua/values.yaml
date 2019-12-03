@@ -27,3 +27,4 @@ scanner:
     password: ""
     host: "http://aqua-web.aqua-security:8080"
     registry: "Harbor"
+    reportsDir: "/var/lib/scanner/reports"

@@ -21,8 +21,10 @@ spec:
           image: {{ template "harbor-scanner-aqua.imageRef" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           securityContext:
+            privileged: false
             runAsUser: 1000
             runAsNonRoot: true
+            readOnlyRootFilesystem: true
           env:
             - name: "SCANNER_LOG_LEVEL"
               value: {{ .Values.scanner.logLevel }}
@@ -45,9 +47,11 @@ spec:
                   name: {{ include "harbor-scanner-aqua.fullname" . }}
                   key: aqua_password
             - name: "SCANNER_AQUA_HOST"
-              value: {{ .Values.scanner.aqua.host }}
+              value: {{ .Values.scanner.aqua.host | quote }}
             - name: "SCANNER_AQUA_REGISTRY"
-              value: {{ .Values.scanner.aqua.registry }}
+              value: {{ .Values.scanner.aqua.registry | quote }}
+            - name: "SCANNER_AQUA_REPORTS_DIR"
+              value: {{ .Values.scanner.aqua.reportsDir | quote }}
             {{- if .Values.scanner.api.tlsEnabled }}
             - name: "SCANNER_API_TLS_CERTIFICATE"
               value: "/certs/tls.crt"
@@ -58,12 +62,17 @@ spec:
             - name: api-server
               containerPort: {{ .Values.service.port }}
           volumeMounts:
+            - name: data
+              mountPath: /var/lib/scanner/reports
+              readOnly: false
             {{- if .Values.scanner.api.tlsEnabled }}
-            - mountPath: /certs
-              name: certs
+            - name: certs
+              mountPath: /certs
               readOnly: true
             {{- end }}
       volumes:
+        - name: data
+          emptyDir: {}
         {{- if .Values.scanner.api.tlsEnabled }}
         - name: certs
           secret:

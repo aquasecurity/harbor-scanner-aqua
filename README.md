@@ -57,6 +57,7 @@ make container
    $ helm install harbor-scanner-aqua ./helm/harbor-scanner-aqua \
                   --namespace harbor \
                   --set image.tag=dev \
+                  --set scanner.logLevel=trace \
                   --set scanner.aqua.user=$AQUA_USER \
                   --set scanner.aqua.password=$AQUA_PASSWORD \
                   --set scanner.aqua.host=http://csp-console-svc.aqua:8080
@@ -114,6 +115,7 @@ Configuration of the adapter is done via environment variables at startup.
 | `SCANNER_AQUA_PASSWORD`       | N/A      | Aqua management console password (required)                               |
 | `SCANNER_AQUA_HOST`           | `http://aqua-web.aqua-security:8080` | Aqua management console address               |
 | `SCANNER_AQUA_REGISTRY`       | `Harbor` | The name of the Harbor registry configured in Aqua management console     |
+| `SCANNER_AQUA_REPORTS_DIR`    | `/var/lib/scanner/reports` | Directory to save temporary scan reports                |
 
 ## License
 

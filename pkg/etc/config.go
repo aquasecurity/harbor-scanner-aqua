@@ -45,7 +45,7 @@ type AquaCSP struct {
 	Password   string `env:"SCANNER_AQUA_PASSWORD"`
 	Host       string `env:"SCANNER_AQUA_HOST" envDefault:"http://aqua-web.aqua-security:8080"`
 	Registry   string `env:"SCANNER_AQUA_REGISTRY" envDefault:"Harbor"`
-	ReportsDir string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/tmp/reports"`
+	ReportsDir string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/var/lib/scanner/reports"`
 }
 
 type Store struct {
@@ -61,15 +61,6 @@ func GetConfig() (cfg Config, err error) {
 	if err != nil {
 		return cfg, xerrors.Errorf("parsing config: %w", err)
 	}
-
-	if _, err := os.Stat(cfg.AquaCSP.ReportsDir); os.IsNotExist(err) {
-		log.WithField("path", cfg.AquaCSP.ReportsDir).Debug("Creating reports dir")
-		err = os.MkdirAll(cfg.AquaCSP.ReportsDir, os.ModeDir)
-		if err != nil {
-			return cfg, xerrors.Errorf("creating reports dir: %w", err)
-		}
-	}
-
 	return
 }
 

@@ -28,6 +28,14 @@ func Run(info etc.BuildInfo) error {
 		return xerrors.Errorf("getting config: %w", err)
 	}
 
+	if _, err := os.Stat(config.AquaCSP.ReportsDir); os.IsNotExist(err) {
+		log.WithField("path", config.AquaCSP.ReportsDir).Debug("Creating reports dir")
+		err = os.MkdirAll(config.AquaCSP.ReportsDir, os.ModeDir)
+		if err != nil {
+			return xerrors.Errorf("creating reports dir: %w", err)
+		}
+	}
+
 	workPool := work.New()
 	command := aqua.NewCommand(config.AquaCSP)
 	transformer := scanner.NewTransformer(clock.NewSystemClock())
