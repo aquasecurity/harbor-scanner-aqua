@@ -32,7 +32,7 @@ func TestGetConfig(t *testing.T) {
 					Password:   "",
 					Host:       "http://aqua-web.aqua-security:8080",
 					Registry:   "Harbor",
-					ReportsDir: "/tmp/reports",
+					ReportsDir: "/var/lib/scanner/reports",
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",
@@ -52,6 +52,7 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_API_READ_TIMEOUT":    "1h",
 				"SCANNER_API_WRITE_TIMEOUT":   "2m",
 				"SCANNER_API_IDLE_TIMEOUT":    "1h2m3s",
+				"SCANNER_AQUA_REPORTS_DIR":    "/somewhere/else",
 			},
 			expectedConfig: Config{
 				API: API{
@@ -67,7 +68,7 @@ func TestGetConfig(t *testing.T) {
 					Password:   "",
 					Host:       "http://aqua-web.aqua-security:8080",
 					Registry:   "Harbor",
-					ReportsDir: "/tmp/reports",
+					ReportsDir: "/somewhere/else",
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",

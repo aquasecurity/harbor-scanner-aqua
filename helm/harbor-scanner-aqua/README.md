@@ -82,6 +82,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.aqua.password`      | Aqua management console password (required)                             | N/A            |
 | `scanner.aqua.host`          | Aqua management console address                                         | `http://aqua-web.aqua-security:8080` |
 | `scanner.aqua.registry`      | The name of the Harbor registry configured in Aqua management console   | `Harbor`       |
+| `scanner.aqua.reportsDir`    | Directory to save temporary scan reports                                | `/var/lib/scanner/reports` |
 | `scanner.api.tlsEnabled`     | The flag to enable or disable TLS for HTTP                              | `true`         |
 | `scanner.api.tlsCertificate` | The absolute path to the x509 certificate file                          |                |
 | `scanner.api.tlsKey`         | The absolute path to the x509 private key file                          |                |
