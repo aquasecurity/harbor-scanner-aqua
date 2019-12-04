@@ -15,6 +15,8 @@ jobs:
         uses: actions/checkout@v1
       - name: Run unit tests
         run: make test
+      - name: Run integration tests
+        run: make test-integration
       - name: Upload code coverage
         uses: codecov/codecov-action@v1.0.3
         with:
