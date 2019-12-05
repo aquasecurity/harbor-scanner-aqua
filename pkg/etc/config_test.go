@@ -28,11 +28,12 @@ func TestGetConfig(t *testing.T) {
 					IdleTimeout:  parseDuration(t, "60s"),
 				},
 				AquaCSP: AquaCSP{
-					User:       "",
-					Password:   "",
-					Host:       "http://aqua-web.aqua-security:8080",
-					Registry:   "Harbor",
-					ReportsDir: "/var/lib/scanner/reports",
+					User:        "",
+					Password:    "",
+					Host:        "http://aqua-web.aqua-security:8080",
+					Registry:    "Harbor",
+					ReportsDir:  "/var/lib/scanner/reports",
+					UseImageTag: true,
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",
@@ -53,6 +54,7 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_API_WRITE_TIMEOUT":   "2m",
 				"SCANNER_API_IDLE_TIMEOUT":    "1h2m3s",
 				"SCANNER_AQUA_REPORTS_DIR":    "/somewhere/else",
+				"SCANNER_AQUA_USE_IMAGE_TAG":  "false",
 			},
 			expectedConfig: Config{
 				API: API{
@@ -64,11 +66,12 @@ func TestGetConfig(t *testing.T) {
 					IdleTimeout:    parseDuration(t, "1h2m3s"),
 				},
 				AquaCSP: AquaCSP{
-					User:       "",
-					Password:   "",
-					Host:       "http://aqua-web.aqua-security:8080",
-					Registry:   "Harbor",
-					ReportsDir: "/somewhere/else",
+					User:        "",
+					Password:    "",
+					Host:        "http://aqua-web.aqua-security:8080",
+					Registry:    "Harbor",
+					ReportsDir:  "/somewhere/else",
+					UseImageTag: false,
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",
