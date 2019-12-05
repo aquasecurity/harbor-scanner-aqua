@@ -176,6 +176,7 @@ Configuration of the adapter is done via environment variables at startup.
 | `SCANNER_AQUA_HOST`           | `http://aqua-web.aqua-security:8080` | Aqua management console address               |
 | `SCANNER_AQUA_REGISTRY`       | `Harbor` | The name of the Harbor registry configured in Aqua management console     |
 | `SCANNER_AQUA_REPORTS_DIR`    | `/var/lib/scanner/reports` | Directory to save temporary scan reports                |
+| `SCANNER_AQUA_USE_IMAGE_TAG`  | `false`  | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` |
 
 ## License
 
