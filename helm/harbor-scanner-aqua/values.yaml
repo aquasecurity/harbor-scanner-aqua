@@ -10,7 +10,7 @@ replicaCount: 1
 image:
   registry: "docker.io"
   repository: "aquasec/harbor-scanner-aqua"
-  tag: "0.1.0-rc4"
+  tag: "0.1.0-rc5"
   pullPolicy: "IfNotPresent"
 
 scanner:
@@ -28,3 +28,4 @@ scanner:
     host: "http://aqua-web.aqua-security:8080"
     registry: "Harbor"
     reportsDir: "/var/lib/scanner/reports"
+    useImageTag: false

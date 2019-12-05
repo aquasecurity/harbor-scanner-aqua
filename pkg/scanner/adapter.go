@@ -1,7 +1,6 @@
 package scanner
 
 import (
-	"fmt"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/aqua"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
 )
@@ -23,8 +22,11 @@ func NewAdapter(command aqua.Command, transformer Transformer) Adapter {
 }
 
 func (s *adapter) Scan(req harbor.ScanRequest) (harbor.ScanReport, error) {
-	imageRef := fmt.Sprintf("%s:%s", req.Artifact.Repository, req.Artifact.Tag)
-	aquaScanReport, err := s.command.Exec(imageRef)
+	aquaScanReport, err := s.command.Exec(aqua.ImageRef{
+		Repository: req.Artifact.Repository,
+		Tag:        req.Artifact.Tag,
+		Digest:     req.Artifact.Digest,
+	})
 	if err != nil {
 		return harbor.ScanReport{}, err
 	}

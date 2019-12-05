@@ -52,6 +52,8 @@ spec:
               value: {{ .Values.scanner.aqua.registry | quote }}
             - name: "SCANNER_AQUA_REPORTS_DIR"
               value: {{ .Values.scanner.aqua.reportsDir | quote }}
+            - name: "SCANNER_AQUA_USE_IMAGE_TAG"
+              value: {{ .Values.scanner.aqua.useImageTag | quote }}
             {{- if .Values.scanner.api.tlsEnabled }}
             - name: "SCANNER_API_TLS_CERTIFICATE"
               value: "/certs/tls.crt"
@@ -65,6 +67,9 @@ spec:
             - name: data
               mountPath: /var/lib/scanner/reports
               readOnly: false
+            - name: aqua
+              mountPath: /opt/aquascans
+              readOnly: false
             {{- if .Values.scanner.api.tlsEnabled }}
             - name: certs
               mountPath: /certs
@@ -72,6 +77,8 @@ spec:
             {{- end }}
       volumes:
         - name: data
+          emptyDir: {}
+        - name: aqua
           emptyDir: {}
         {{- if .Values.scanner.api.tlsEnabled }}
         - name: certs

@@ -3,6 +3,7 @@ package aqua
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/xerrors"
@@ -11,10 +12,24 @@ import (
 	"os/exec"
 )
 
+type ImageRef struct {
+	Repository string
+	Tag        string
+	Digest     string
+}
+
+func (ir *ImageRef) WithTag() string {
+	return fmt.Sprintf("%s:%s", ir.Repository, ir.Tag)
+}
+
+func (ir *ImageRef) WithDigest() string {
+	return fmt.Sprintf("%s@%s", ir.Repository, ir.Digest)
+}
+
 // Command represents the CLI interface for the Aqua CSP scanner,
 // i.e. scannercli executable.
 type Command interface {
-	Exec(imageRef string) (ScanReport, error)
+	Exec(imageRef ImageRef) (ScanReport, error)
 }
 
 // NewCommands constructs Aqua CSP scanner command with the given configuration.
@@ -28,7 +43,7 @@ type command struct {
 	cfg etc.AquaCSP
 }
 
-func (c *command) Exec(imageRef string) (report ScanReport, err error) {
+func (c *command) Exec(imageRef ImageRef) (report ScanReport, err error) {
 	executable, err := exec.LookPath("scannercli")
 	if err != nil {
 		return report, xerrors.Errorf("searching for scannercli executable: %w", err)
@@ -46,6 +61,11 @@ func (c *command) Exec(imageRef string) (report ScanReport, err error) {
 		}
 	}()
 
+	image := imageRef.WithDigest()
+	if c.cfg.UseImageTag {
+		image = imageRef.WithTag()
+	}
+
 	args := []string{
 		"scan",
 		"--user", c.cfg.User,
@@ -54,7 +74,7 @@ func (c *command) Exec(imageRef string) (report ScanReport, err error) {
 		"--registry", c.cfg.Registry,
 		"--dockerless",
 		"--jsonfile", reportFile.Name(),
-		imageRef,
+		image,
 	}
 
 	log.WithFields(log.Fields{"exec": executable, "args": args}).Trace("Running scannercli")
