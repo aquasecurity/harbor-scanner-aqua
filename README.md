@@ -6,8 +6,18 @@
 
 # Harbor Scanner Adapter for Aqua CSP Scanner
 
+The Harbor [Scanner Adapter][image-vulnerability-scanning-proposal] for Aqua CSP is a service that translates
+the [Harbor][harbor-url] scanning API into `scannercli` commands and allows Harbor to use Aqua CSP scanner
+for providing vulnerability reports on images stored in Harbor registry as part of its vulnerability scan feature.
+
+> **NOTE**: This adapter is only required if you want Harbor to use Aqua CSP for its image scanning feature.
+> If your objective is to use Aqua CSP to provide its own analysis reports against images stored in Harbor,
+> that can be achieved without this adapter.
+
 ## TOC
 
+- [Requirements](#requirements)
+- [How it works?](#how-it-works)
 - [Getting started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Build](#build)
@@ -16,6 +26,56 @@
   - [Kubernetes](#kubernetes)
 - [Configuration](#configuration)
 - [License](#license)
+
+## Requirements
+
+This adapter requires Aqua CSP 4.5 deployment to operate against. The adapter can be deployed before the Aqua CSP
+installation, but the Aqua CSP management console URL and credentials must be known to configure the adapter with
+the environment variables.
+
+It is highly recommended to create a new user in the Aqua CSP deployment with credentials dedicated to the Harbor
+adapter. The adapter does not require access to the management console. Therefore only the `Scanner` role must be
+assigned to such user in order to grant permissions for `scannercli` utilities, which are used by the adapter
+behind the scenes.
+
+![Scanner user](docs/images/aqua_ui_user.png)
+
+It is also highly recommended to create a new user in Harbor with credentials dedicated to the Aqua CSP scanner.
+Use those credentials to create a new integration with Harbor registry.
+
+![Harbor integration](docs/images/aqua_ui_harbor_registry.png)
+
+## How it works?
+
+In essence, a scan request payload sent by Harbor to the adapter:
+
+```json
+{
+  "registry": {
+    "url": "https://core.harbor.domain",
+    "authorization": "Basic BASE64_ENCODED_CREDENTIALS"
+  },
+  "artifact": {
+    "repository": "library/mongo",
+    "tag": "3.4-xenial",
+    "digest": "sha256:6c3c624b58dbbcd3c0dd82b4c53f04194d1247c6eebdaab7c610cf7d66709b3b",
+    "mime_type": "application/vnd.docker.distribution.manifest.v2+json"
+  }
+}
+```
+
+is translated to the following `scannercli` command:
+
+```
+$ scannercli scan \
+    --user $AQUA_SCANNER_USER \
+    --password $AQUA_SCANNER_PASSWORD \
+    --host http://csp-console-svc.aqua:8080 \
+    --registry "Harbor" \
+    library/mongo:3.4-xenial
+```
+
+Finally, the output report is translated to Harbor model so it can be displayed in Harbor UI.
 
 ## Getting started
 
@@ -132,3 +192,5 @@ This project is licensed under the Apache 2.0 license - see the [LICENSE](LICENS
 [license-img]: https://img.shields.io/github/license/aquasecurity/harbor-scanner-aqua.svg
 [license]: https://github.com/aquasecurity/harbor-scanner-aqua/blob/master/LICENSE
 [minikube-url]: https://github.com/kubernetes/minikube
+[harbor-url]: https://github.com/goharbor/harbor
+[image-vulnerability-scanning-proposal]: https://github.com/goharbor/community/blob/master/proposals/pluggable-image-vulnerability-scanning_proposal.md
