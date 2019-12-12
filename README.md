@@ -173,10 +173,15 @@ Configuration of the adapter is done via environment variables at startup.
 | `SCANNER_API_IDLE_TIMEOUT`    | `60s`    | The maximum amount of time to wait for the next request when keep-alives are enabled |
 | `SCANNER_AQUA_USER`           | N/A      | Aqua management console username (required)                               |
 | `SCANNER_AQUA_PASSWORD`       | N/A      | Aqua management console password (required)                               |
-| `SCANNER_AQUA_HOST`           | `http://aqua-web.aqua-security:8080` | Aqua management console address               |
+| `SCANNER_AQUA_HOST`           | `http://csp-console-svc.aqua:8080` | Aqua management console address                 |
 | `SCANNER_AQUA_REGISTRY`       | `Harbor` | The name of the Harbor registry configured in Aqua management console     |
 | `SCANNER_AQUA_REPORTS_DIR`    | `/var/lib/scanner/reports` | Directory to save temporary scan reports                |
 | `SCANNER_AQUA_USE_IMAGE_TAG`  | `true`  | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` |
+| `SCANNER_STORE_REDIS_URL`             | `redis://harbor-harbor-redis:6379` | Redis server URI for a redis store      |
+| `SCANNER_STORE_REDIS_NAMESPACE`       | `harbor.scanner.aqua:store` | A namespace for keys in a redis store          |
+| `SCANNER_STORE_REDIS_POOL_MAX_ACTIVE` | `5`  | The max number of connections allocated by the pool for a redis store |
+| `SCANNER_STORE_REDIS_POOL_MAX_IDLE`   | `5`  | The max number of idle connections in the pool for a redis store      |
+| `SCANNER_STORE_REDIS_SCAN_JOB_TTL`    | `1h` | The time to live for persisting scan jobs and associated scan reports |
 
 ## License
 

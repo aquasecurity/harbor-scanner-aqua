@@ -30,7 +30,7 @@ func TestGetConfig(t *testing.T) {
 				AquaCSP: AquaCSP{
 					User:        "",
 					Password:    "",
-					Host:        "http://aqua-web.aqua-security:8080",
+					Host:        "http://csp-console-svc.aqua:8080",
 					Registry:    "Harbor",
 					ReportsDir:  "/var/lib/scanner/reports",
 					UseImageTag: true,
@@ -55,6 +55,7 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_API_IDLE_TIMEOUT":    "1h2m3s",
 				"SCANNER_AQUA_REPORTS_DIR":    "/somewhere/else",
 				"SCANNER_AQUA_USE_IMAGE_TAG":  "false",
+				"SCANNER_AQUA_HOST":           "http://aqua-web.aqua-security:8080",
 			},
 			expectedConfig: Config{
 				API: API{

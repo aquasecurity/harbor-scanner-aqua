@@ -54,6 +54,16 @@ spec:
               value: {{ .Values.scanner.aqua.reportsDir | quote }}
             - name: "SCANNER_AQUA_USE_IMAGE_TAG"
               value: {{ .Values.scanner.aqua.useImageTag | quote }}
+            - name: "SCANNER_STORE_REDIS_URL"
+              value: {{ .Values.scanner.store.redisURL | quote }}
+            - name: "SCANNER_STORE_REDIS_NAMESPACE"
+              value: {{ .Values.scanner.store.redisNamespace | quote }}
+            - name: "SCANNER_STORE_REDIS_POOL_MAX_ACTIVE"
+              value: {{ .Values.scanner.store.redisPoolMaxActive | quote }}
+            - name: "SCANNER_STORE_REDIS_POOL_MAX_IDLE"
+              value: {{ .Values.scanner.store.redisPoolMaxIdle | quote }}
+            - name: "SCANNER_STORE_REDIS_SCAN_JOB_TTL"
+              value: {{ .Values.scanner.store.redisScanJobTTL | quote }}
             {{- if .Values.scanner.api.tlsEnabled }}
             - name: "SCANNER_API_TLS_CERTIFICATE"
               value: "/certs/tls.crt"

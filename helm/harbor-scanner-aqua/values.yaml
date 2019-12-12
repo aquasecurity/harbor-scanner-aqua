@@ -25,7 +25,13 @@ scanner:
   aqua:
     user: ""
     password: ""
-    host: "http://aqua-web.aqua-security:8080"
+    host: "http://csp-console-svc.aqua:8080"
     registry: "Harbor"
     reportsDir: "/var/lib/scanner/reports"
     useImageTag: true
+  store:
+    redisURL: "redis://harbor-harbor-redis:6379"
+    redisNamespace: "harbor.scanner.aqua:store"
+    redisPoolMaxActive: 5
+    redisPoolMaxIdle: 5
+    redisScanJobTTL: "1h"
