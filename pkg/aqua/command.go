@@ -12,6 +12,8 @@ import (
 	"os/exec"
 )
 
+const assurancePolicyCheckFailed = 4
+
 type ImageRef struct {
 	Repository string
 	Tag        string
@@ -86,7 +88,7 @@ func (c *command) Exec(imageRef ImageRef) (report ScanReport, err error) {
 	cmd.Stderr = &stderrBuffer
 
 	stdout, err := cmd.Output()
-	if err != nil {
+	if err != nil && cmd.ProcessState.ExitCode() != assurancePolicyCheckFailed {
 		log.WithFields(log.Fields{
 			"image_ref": imageRef,
 			"exit_code": cmd.ProcessState.ExitCode(),
@@ -102,6 +104,12 @@ func (c *command) Exec(imageRef ImageRef) (report ScanReport, err error) {
 		"std_err":   stderrBuffer.String(),
 		"std_out":   string(stdout),
 	}).Trace("Running scannercli command finished")
+
+	if cmd.ProcessState.ExitCode() == assurancePolicyCheckFailed {
+		log.WithFields(log.Fields{
+			"image_ref": imageRef,
+		}).Warn("Some assurance policy checks configured in Aqua management console failed. Navigate to Aqua management console for details.")
+	}
 
 	err = json.NewDecoder(reportFile).Decode(&report)
 	if err != nil {
