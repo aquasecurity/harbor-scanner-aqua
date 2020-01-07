@@ -70,7 +70,7 @@ func (c *command) Exec(imageRef ImageRef) (report ScanReport, err error) {
 
 	args := []string{
 		"scan",
-		"--user", c.cfg.User,
+		"--user", c.cfg.Username,
 		"--password", c.cfg.Password,
 		"--host", c.cfg.Host,
 		"--registry", c.cfg.Registry,

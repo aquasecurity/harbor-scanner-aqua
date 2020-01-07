@@ -9,8 +9,12 @@ Aqua CSP Scanner as a plug-in vulnerability scanner in the Harbor registry.
 ```
 $ helm install harbor-scanner-aqua . \
                --namespace harbor \
-               --set scanner.aqua.user=$AQUA_USER \
-               --set scanner.aqua.password=$AQUA_PASSWORD \
+               --set aqua.version=4.5 \
+               --set aqua.registry.server=registry.aquasec.com \
+               --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
+               --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
+               --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+               --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
                --set scanner.aqua.host=http://csp-console-svc.aqua:8080
 ```
 
@@ -33,8 +37,12 @@ $ helm install harbor-scanner-aqua . \
                   --set scanner.api.tlsEnabled=true \
                   --set scanner.api.tlsCertificate="`cat tls.crt`" \
                   --set scanner.api.tlsKey="`cat tls.key`" \
-                  --set scanner.aqua.user=$AQUA_USER \
-                  --set scanner.aqua.password=$AQUA_PASSWORD \
+                  --set aqua.version=4.5 \
+                  --set aqua.registry.server=registry.aquasec.com \
+                  --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
+                  --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
+                  --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+                  --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
                   --set scanner.aqua.host=http://csp-console-svc.aqua:8080
    ```
 
@@ -77,8 +85,16 @@ The following table lists the configurable parameters of the scanner adapter cha
 
 |              Parameter             |                                Description                              |    Default     |
 |------------------------------------|-------------------------------------------------------------------------|----------------|
+| `aqua.version`                     | The version of Aqua CSP that the adapter operates against               | `4.5`          |
+| `aqua.registry.server`             | Aqua Docker registry server                                             | `registry.aquasec.com` |
+| `aqua.registry.username`           | Aqua Docker registry username                                           | N/A            |
+| `aqua.registry.password`           | Aqua Docker registry password                                           | N/A            |
+| `scanner.image.registry`           | Image registry                                                          | `docker.io`    |
+| `scanner.image.repository`         | Image name                                                              | `aquasec/harbor-scanner-aqua` |
+| `scanner.image.tag`                | Image tag                                                               | `{TAG_NAME}`   |
+| `scanner.image.pullPolicy`         | Image pull policy                                                       | `IfNotPresent` |
 | `scanner.logLevel`                 | The log level of `trace`, `debug`, `info`, `warn`, `warning`, `error`, `fatal` or `panic`. The standard logger logs entries with that level or anything above it | `info` |
-| `scanner.aqua.user`                | Aqua management console username (required)                             | N/A            |
+| `scanner.aqua.username`            | Aqua management console username (required)                             | N/A            |
 | `scanner.aqua.password`            | Aqua management console password (required)                             | N/A            |
 | `scanner.aqua.host`                | Aqua management console address                                         | `http://csp-console-svc.aqua:8080` |
 | `scanner.aqua.registry`            | The name of the Harbor registry configured in Aqua management console   | `Harbor`       |
@@ -97,10 +113,6 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.store.redisScanJobTTL`    | The time to live for persisting scan jobs and associated scan reports   | `1h`           |
 | `service.type`                     | Kubernetes service type                                                 | `LoadBalancer` |
 | `service.port`                     | Kubernetes service port                                                 | `8443`         |
-| `image.registry`                   | Image registry                                                          | `docker.io`    |
-| `image.repository`                 | Image name                                                              | `aquasec/harbor-scanner-aqua` |
-| `image.tag`                        | Image tag                                                               | `{TAG_NAME}`   |
-| `image.pullPolicy`                 | Image pull policy                                                       | `IfNotPresent` |
 | `replicaCount`                     | Number of scanner adapter Pods to run                                   | `1`            |
 
 The above parameters map to the env variables defined in [harbor-scanner-aqua](https://github.com/aquasecurity/harbor-scanner-aqua#configuration).
@@ -110,6 +122,6 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 ```
 $ helm install my-release . \
                --namespace my-namespace \
-               --set scanner.aqua.user=$AQUA_USER \
-               --set scanner.aqua.password=$AQUA_PASSWORD
+               --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+               --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD
 ```

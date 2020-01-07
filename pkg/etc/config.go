@@ -41,7 +41,7 @@ func (c API) IsTLSEnabled() bool {
 }
 
 type AquaCSP struct {
-	User        string `env:"SCANNER_AQUA_USER"`
+	Username    string `env:"SCANNER_AQUA_USERNAME"`
 	Password    string `env:"SCANNER_AQUA_PASSWORD"`
 	Host        string `env:"SCANNER_AQUA_HOST" envDefault:"http://csp-console-svc.aqua:8080"`
 	Registry    string `env:"SCANNER_AQUA_REGISTRY" envDefault:"Harbor"`

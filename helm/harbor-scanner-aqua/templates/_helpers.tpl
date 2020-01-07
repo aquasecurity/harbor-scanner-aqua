@@ -44,11 +44,25 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{/*
-Return the proper imageRef as used by the container template spec.
+Return the proper imageRef as used by the init conainer template spec.
 */}}
-{{- define "harbor-scanner-aqua.imageRef" -}}
-{{- $registryName := .Values.image.registry -}}
-{{- $repositoryName := .Values.image.repository -}}
-{{- $tag := .Values.image.tag | toString -}}
+{{- define "harbor-scanner-aqua.scannerImageRef" -}}
+{{- $registryName := .Values.aqua.registry.server -}}
+{{- $repositoryName := "scanner" -}}
+{{- $tag := .Values.aqua.version | toString -}}
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
+
+{{/*
+Return the proper imageRef as used by the container template spec.
+*/}}
+{{- define "harbor-scanner-aqua.adapterImageRef" -}}
+{{- $registryName := .Values.scanner.image.registry -}}
+{{- $repositoryName := .Values.scanner.image.repository -}}
+{{- $tag := .Values.scanner.image.tag | toString -}}
+{{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
+{{- end -}}
+
+{{- define "imagePullSecret" }}
+{{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.aqua.registry.server (printf "%s:%s" .Values.aqua.registry.username .Values.aqua.registry.password | b64enc) | b64enc }}
+{{- end }}
