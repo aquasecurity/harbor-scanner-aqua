@@ -28,7 +28,7 @@ func TestGetConfig(t *testing.T) {
 					IdleTimeout:  parseDuration(t, "60s"),
 				},
 				AquaCSP: AquaCSP{
-					User:        "",
+					Username:    "",
 					Password:    "",
 					Host:        "http://csp-console-svc.aqua:8080",
 					Registry:    "Harbor",
@@ -56,6 +56,8 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_AQUA_REPORTS_DIR":    "/somewhere/else",
 				"SCANNER_AQUA_USE_IMAGE_TAG":  "false",
 				"SCANNER_AQUA_HOST":           "http://aqua-web.aqua-security:8080",
+				"SCANNER_AQUA_USERNAME":       "scanner",
+				"SCANNER_AQUA_PASSWORD":       "s3cret",
 			},
 			expectedConfig: Config{
 				API: API{
@@ -67,8 +69,8 @@ func TestGetConfig(t *testing.T) {
 					IdleTimeout:    parseDuration(t, "1h2m3s"),
 				},
 				AquaCSP: AquaCSP{
-					User:        "",
-					Password:    "",
+					Username:    "scanner",
+					Password:    "s3cret",
 					Host:        "http://aqua-web.aqua-security:8080",
 					Registry:    "Harbor",
 					ReportsDir:  "/somewhere/else",

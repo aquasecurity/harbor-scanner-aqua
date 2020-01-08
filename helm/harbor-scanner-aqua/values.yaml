@@ -7,13 +7,21 @@ service:
 
 replicaCount: 1
 
-image:
-  registry: "docker.io"
-  repository: "aquasec/harbor-scanner-aqua"
-  tag: "0.1.1"
-  pullPolicy: "IfNotPresent"
+aqua:
+  version: 4.5
+  registry:
+    server: "registry.aquasec.com"
+    username: ""
+    password: ""
+  image:
+    pullPolicy: "IfNotPresent"
 
 scanner:
+  image:
+    registry: "docker.io"
+    repository: "aquasec/harbor-scanner-aqua"
+    tag: "0.2.0"
+    pullPolicy: "IfNotPresent"
   logLevel: info
   api:
     tlsEnabled: false
@@ -23,7 +31,7 @@ scanner:
     writeTimeout: 15s
     idleTimeout: 60s
   aqua:
-    user: ""
+    username: ""
     password: ""
     host: "http://csp-console-svc.aqua:8080"
     registry: "Harbor"

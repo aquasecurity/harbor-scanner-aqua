@@ -16,14 +16,33 @@ spec:
         app.kubernetes.io/name: {{ include "harbor-scanner-aqua.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      containers:
-        - name: main
-          image: {{ template "harbor-scanner-aqua.imageRef" . }}
-          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+      imagePullSecrets:
+        - name: {{ include "harbor-scanner-aqua.fullname" . }}-registry
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsNonRoot: true
+      initContainers:
+        - name: scannercli
+          image: {{ template "harbor-scanner-aqua.scannerImageRef" . }}
+          imagePullPolicy: {{ .Values.aqua.image.pullPolicy | quote }}
           securityContext:
             privileged: false
-            runAsUser: 1000
-            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+          command:
+            - cp
+          args:
+            - "/opt/aquasec/scannercli"
+            - "/downloads/scannercli"
+          volumeMounts:
+            - name: scannercli
+              mountPath: /downloads
+      containers:
+        - name: main
+          image: {{ template "harbor-scanner-aqua.adapterImageRef" . }}
+          imagePullPolicy: {{ .Values.scanner.image.pullPolicy | quote }}
+          securityContext:
+            privileged: false
             readOnlyRootFilesystem: true
           env:
             - name: "SCANNER_LOG_LEVEL"
@@ -36,11 +55,11 @@ spec:
               value: {{ .Values.scanner.api.writeTimeout }}
             - name: "SCANNER_API_IDLE_TIMEOUT"
               value: {{ .Values.scanner.api.idleTimeout }}
-            - name: "SCANNER_AQUA_USER"
+            - name: "SCANNER_AQUA_USERNAME"
               valueFrom:
                 secretKeyRef:
                   name: {{ include "harbor-scanner-aqua.fullname" . }}
-                  key: aqua_user
+                  key: aqua_username
             - name: "SCANNER_AQUA_PASSWORD"
               valueFrom:
                 secretKeyRef:
@@ -74,6 +93,9 @@ spec:
             - name: api-server
               containerPort: {{ .Values.service.port }}
           volumeMounts:
+            - name: scannercli
+              mountPath: /usr/local/bin/scannercli
+              subPath: scannercli
             - name: data
               mountPath: /var/lib/scanner/reports
               readOnly: false
@@ -86,6 +108,8 @@ spec:
               readOnly: true
             {{- end }}
       volumes:
+        - name: scannercli
+          emptyDir: {}
         - name: data
           emptyDir: {}
         - name: aqua

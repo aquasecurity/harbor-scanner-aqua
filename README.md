@@ -29,7 +29,7 @@ for providing vulnerability reports on images stored in Harbor registry as part 
 
 ## Requirements
 
-This adapter requires Aqua CSP 4.5 deployment to operate against. The adapter can be deployed before the Aqua CSP
+This adapter requires Aqua CSP >= 4.5 deployment to operate against. The adapter can be deployed before the Aqua CSP
 installation, but the Aqua CSP management console URL and credentials must be known to configure the adapter with
 the environment variables.
 
@@ -68,8 +68,8 @@ is translated to the following `scannercli` command:
 
 ```
 $ scannercli scan \
-    --user $AQUA_SCANNER_USER \
-    --password $AQUA_SCANNER_PASSWORD \
+    --user $AQUA_CONSOLE_USERNAME \
+    --password $AQUA_CONSOLE_PASSWORD \
     --host http://csp-console-svc.aqua:8080 \
     --registry "Harbor" \
     library/mongo:3.4-xenial
@@ -116,10 +116,14 @@ make container
    ```
    $ helm install harbor-scanner-aqua ./helm/harbor-scanner-aqua \
                   --namespace harbor \
-                  --set image.tag=dev \
+                  --set aqua.version=4.5 \
+                  --set aqua.registry.server=registry.aquasec.com \
+                  --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
+                  --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
+                  --set scanner.image.tag=dev \
                   --set scanner.logLevel=trace \
-                  --set scanner.aqua.user=$AQUA_USER \
-                  --set scanner.aqua.password=$AQUA_PASSWORD \
+                  --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+                  --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
                   --set scanner.aqua.host=http://csp-console-svc.aqua:8080
    ```
 
@@ -144,8 +148,10 @@ make container
                   --set scanner.api.tlsEnabled=true \
                   --set scanner.api.tlsCertificate="`cat tls.crt`" \
                   --set scanner.api.tlsKey="`cat tls.key`" \
-                  --set scanner.aqua.user=$AQUA_USER \
-                  --set scanner.aqua.password=$AQUA_PASSWORD \
+                  --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
+                  --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
+                  --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+                  --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
                   --set scanner.aqua.host=http://csp-console-svc.aqua:8080
    ```
 3. Configure the scanner adapter in Harbor web console.
@@ -171,7 +177,7 @@ Configuration of the adapter is done via environment variables at startup.
 | `SCANNER_API_READ_TIMEOUT`    | `15s`    | The maximum duration for reading the entire request, including the body   |
 | `SCANNER_API_WRITE_TIMEOUT`   | `15s`    | The maximum duration before timing out writes of the response             |
 | `SCANNER_API_IDLE_TIMEOUT`    | `60s`    | The maximum amount of time to wait for the next request when keep-alives are enabled |
-| `SCANNER_AQUA_USER`           | N/A      | Aqua management console username (required)                               |
+| `SCANNER_AQUA_USERNAME`       | N/A      | Aqua management console username (required)                               |
 | `SCANNER_AQUA_PASSWORD`       | N/A      | Aqua management console password (required)                               |
 | `SCANNER_AQUA_HOST`           | `http://csp-console-svc.aqua:8080` | Aqua management console address                 |
 | `SCANNER_AQUA_REGISTRY`       | `Harbor` | The name of the Harbor registry configured in Aqua management console     |

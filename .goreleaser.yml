@@ -30,8 +30,6 @@ dockers:
       - "docker.io/aquasec/harbor-scanner-aqua:{{ .Version }}"
     binaries:
       - scanner-adapter
-    extra_files:
-      - scannercli
     build_flag_templates:
       - "--label=org.label-schema.schema-version=1.0"
       - "--label=org.label-schema.name={{ .ProjectName }}"
