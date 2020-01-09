@@ -36,7 +36,7 @@ for providing vulnerability reports on images stored in Harbor registry as part 
    at `/usr/local/bin/scannercli`. The provided Helm chart mounts the `scannercli` executable automatically by pulling
    the `registry.aquasec.com/scanner:$AQUA_CSP_VERSION` from Aqua Registry and running it as an [init container][k8s-init-containers].
    The init container's command is configured to copy the executable from the container's filesystem to an [emptyDir][k8s-volume-emptyDir]
-   volume, which is then shared with the main container. Finally the `scannercli` executable is mounted at
+   volume, which is shared with the main container. This makes the `scannercli` executable available to the main container at
    `/usr/local/bin/scannercli` to make it accessible to the main container.
 
    > **NOTE**: Make sure that you provide valid Aqua Registry credentials received from Aqua Security as Helm values
