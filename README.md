@@ -37,7 +37,7 @@ for providing vulnerability reports on images stored in Harbor registry as part 
    the `registry.aquasec.com/scanner:$AQUA_CSP_VERSION` from Aqua Registry and running it as an [init container][k8s-init-containers].
    The init container's command is configured to copy the executable from the container's filesystem to an [emptyDir][k8s-volume-emptyDir]
    volume, which is shared with the main container. This makes the `scannercli` executable available to the main container at
-   `/usr/local/bin/scannercli` to make it accessible to the main container.
+   `/usr/local/bin/scannercli`.
 
    > **NOTE**: Make sure that you provide valid Aqua Registry credentials received from Aqua Security as Helm values
    > in order to create the corresponding image pull secret.
