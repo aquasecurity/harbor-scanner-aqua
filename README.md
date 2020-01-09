@@ -29,21 +29,32 @@ for providing vulnerability reports on images stored in Harbor registry as part 
 
 ## Requirements
 
-This adapter requires Aqua CSP >= 4.5 deployment to operate against. The adapter can be deployed before the Aqua CSP
-installation, but the Aqua CSP management console URL and credentials must be known to configure the adapter with
-the environment variables.
+1. This adapter requires Aqua CSP >= 4.5 deployment to operate against. The adapter can be deployed before the Aqua CSP
+   installation, but the Aqua CSP management console URL and credentials must be known to configure the adapter with
+   the environment variables.
+2. The adapter service requires the `scannercli` executable binary, in version matching the Aqua CSP, to be mounted
+   at `/usr/local/bin/scannercli`. The provided Helm chart mounts the `scannercli` executable automatically by pulling
+   the `registry.aquasec.com/scanner:$AQUA_CSP_VERSION` from Aqua Registry and running it as an [init container][k8s-init-containers].
+   The init container's command is configured to copy the executable from the container's filesystem to an [emptyDir][k8s-volume-emptyDir]
+   volume, which is then shared with the main container. Finally the `scannercli` executable is mounted at
+   `/usr/local/bin/scannercli` to make it accessible to the main container.
 
-It is highly recommended to create a new user in the Aqua CSP deployment with credentials dedicated to the Harbor
-adapter. The adapter does not require access to the management console. Therefore only the `Scanner` role must be
-assigned to such user in order to grant permissions for `scannercli` utilities, which are used by the adapter
-behind the scenes.
+   > **NOTE**: Make sure that you provide valid Aqua Registry credentials received from Aqua Security as Helm values
+   > in order to create the corresponding image pull secret.
 
-![Scanner user](docs/images/aqua_ui_user.png)
+   If you're not using Kubernetes to run the adapter service, you have to download the `scannercli` executable from the
+   Aqua downloads page manually and mount it at `/usr/local/bin/scannercli`.
+   See [Aqua Scanner Executable Binary][aqua-docs-scanner-binary] for more details on manual download.
+3. It is highly recommended to create a new user in the Aqua CSP deployment with credentials dedicated to the Harbor
+   adapter. The adapter does not require access to the management console. Therefore only the `Scanner` role must be
+   assigned to such user in order to grant permissions for `scannercli` utilities, which are used by the adapter
+   behind the scenes.
 
-It is also highly recommended to create a new user in Harbor with credentials dedicated to the Aqua CSP scanner.
-Use those credentials to create a new integration with Harbor registry.
+   ![Scanner user](docs/images/aqua_ui_user.png)
+4. It is also highly recommended to create a new user in Harbor with credentials dedicated to the Aqua CSP scanner.
+   Use those credentials to create a new integration with Harbor registry.
 
-![Harbor integration](docs/images/aqua_ui_harbor_registry.png)
+   ![Harbor integration](docs/images/aqua_ui_harbor_registry.png)
 
 ## How it works?
 
@@ -148,6 +159,8 @@ make container
                   --set scanner.api.tlsEnabled=true \
                   --set scanner.api.tlsCertificate="`cat tls.crt`" \
                   --set scanner.api.tlsKey="`cat tls.key`" \
+                  --set aqua.version=4.5 \
+                  --set aqua.registry.server=registry.aquasec.com \
                   --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
                   --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
                   --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
@@ -206,3 +219,6 @@ This project is licensed under the Apache 2.0 license - see the [LICENSE](LICENS
 [minikube-url]: https://github.com/kubernetes/minikube
 [harbor-url]: https://github.com/goharbor/harbor
 [image-vulnerability-scanning-proposal]: https://github.com/goharbor/community/blob/master/proposals/pluggable-image-vulnerability-scanning_proposal.md
+[k8s-init-containers]: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
+[k8s-volume-emptyDir]: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
+[aqua-docs-scanner-binary]: https://read.aquasec.com/docs/aqua-scanner-executable-binary
