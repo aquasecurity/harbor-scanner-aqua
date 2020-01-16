@@ -43,6 +43,10 @@ func NewAPIHandler(info etc.BuildInfo, enqueuer scanner.Enqueuer, store persiste
 	apiV1Router.Methods(http.MethodPost).Path("/scan").HandlerFunc(handler.acceptScanRequest)
 	apiV1Router.Methods(http.MethodGet).Path("/scan/{scan_request_id}/report").HandlerFunc(handler.getScanReport)
 
+	probeRouter := router.PathPrefix("/probe").Subrouter()
+	probeRouter.Methods(http.MethodGet).Path("/healthy").HandlerFunc(handler.getHealthy)
+	probeRouter.Methods(http.MethodGet).Path("/ready").HandlerFunc(handler.getReady)
+
 	return router
 }
 
@@ -182,7 +186,7 @@ func (h *handler) getScanReport(res http.ResponseWriter, req *http.Request) {
 	h.WriteJSON(res, scanJob.Report, api.MimeTypeScanReport, http.StatusOK)
 }
 
-func (h *handler) getMetadata(res http.ResponseWriter, req *http.Request) {
+func (h *handler) getMetadata(res http.ResponseWriter, _ *http.Request) {
 	metadata := harbor.ScannerAdapterMetadata{
 		Scanner: etc.GetScannerMetadata(),
 		Capabilities: []harbor.Capability{
@@ -205,4 +209,12 @@ func (h *handler) getMetadata(res http.ResponseWriter, req *http.Request) {
 		},
 	}
 	h.WriteJSON(res, metadata, api.MimeTypeMetadata, http.StatusOK)
+}
+
+func (h *handler) getHealthy(res http.ResponseWriter, _ *http.Request) {
+	res.WriteHeader(http.StatusOK)
+}
+
+func (h *handler) getReady(res http.ResponseWriter, _ *http.Request) {
+	res.WriteHeader(http.StatusOK)
 }
