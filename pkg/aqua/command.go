@@ -68,16 +68,25 @@ func (c *command) Exec(imageRef ImageRef) (report ScanReport, err error) {
 		image = imageRef.WithTag()
 	}
 
-	args := []string{
-		"scan",
+	flags := []string{
 		"--user", c.cfg.Username,
 		"--password", c.cfg.Password,
 		"--host", c.cfg.Host,
 		"--registry", c.cfg.Registry,
 		"--dockerless",
 		"--jsonfile", reportFile.Name(),
-		image,
 	}
+
+	if c.cfg.ScannerCLINoVerify {
+		flags = append(flags, "--no-verify")
+	}
+
+	if c.cfg.ScannerCLIShowNegligible {
+		flags = append(flags, "--show-negligible")
+	}
+
+	args := append([]string{"scan"}, flags...)
+	args = append(args, image)
 
 	log.WithFields(log.Fields{"exec": executable, "args": args}).Trace("Running scannercli")
 

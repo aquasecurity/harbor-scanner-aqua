@@ -68,6 +68,8 @@ func (t *transformer) getHarborSeverity(v aqua.Vulnerability) harbor.Severity {
 		severity = harbor.SevMedium
 	case "low":
 		severity = harbor.SevLow
+	case "negligible":
+		severity = harbor.SevNegligible
 	default:
 		log.WithField("severity", v.AquaSeverity).Warn("Unknown Aqua severity")
 		severity = harbor.SevUnknown
