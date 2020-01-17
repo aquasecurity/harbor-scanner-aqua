@@ -83,37 +83,39 @@ The command removes all the Kubernetes components associated with the chart and 
 
 The following table lists the configurable parameters of the scanner adapter chart and their default values.
 
-|              Parameter             |                                Description                              |    Default     |
-|------------------------------------|-------------------------------------------------------------------------|----------------|
-| `aqua.version`                     | The version of Aqua CSP that the adapter operates against               | `4.5`          |
-| `aqua.registry.server`             | Aqua Docker registry server                                             | `registry.aquasec.com` |
-| `aqua.registry.username`           | Aqua Docker registry username                                           | N/A            |
-| `aqua.registry.password`           | Aqua Docker registry password                                           | N/A            |
-| `scanner.image.registry`           | Image registry                                                          | `docker.io`    |
-| `scanner.image.repository`         | Image name                                                              | `aquasec/harbor-scanner-aqua` |
-| `scanner.image.tag`                | Image tag                                                               | `{TAG_NAME}`   |
-| `scanner.image.pullPolicy`         | Image pull policy                                                       | `IfNotPresent` |
-| `scanner.logLevel`                 | The log level of `trace`, `debug`, `info`, `warn`, `warning`, `error`, `fatal` or `panic`. The standard logger logs entries with that level or anything above it | `info` |
-| `scanner.aqua.username`            | Aqua management console username (required)                             | N/A            |
-| `scanner.aqua.password`            | Aqua management console password (required)                             | N/A            |
-| `scanner.aqua.host`                | Aqua management console address                                         | `http://csp-console-svc.aqua:8080` |
-| `scanner.aqua.registry`            | The name of the Harbor registry configured in Aqua management console   | `Harbor`       |
-| `scanner.aqua.reportsDir`          | Directory to save temporary scan reports                                | `/var/lib/scanner/reports` |
-| `scanner.aqua.useImageTag`         | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` | `true` |
-| `scanner.api.tlsEnabled`           | The flag to enable or disable TLS for HTTP                              | `true`         |
-| `scanner.api.tlsCertificate`       | The absolute path to the x509 certificate file                          |                |
-| `scanner.api.tlsKey`               | The absolute path to the x509 private key file                          |                |
-| `scanner.api.readTimeout`          | The maximum duration for reading the entire request, including the body | `15s`          |
-| `scanner.api.writeTimeout`         | The maximum duration before timing out writes of the response           | `15s`          |
-| `scanner.api.idleTimeout`          | The maximum amount of time to wait for the next request when keep-alives are enabled | `60s` |
-| `scanner.store.redisURL`           | Redis server URI for a redis store                                      | `redis://harbor-harbor-redis:6379` |
-| `scanner.store.redisNamespace`     | A namespace for keys in a redis store                                   | `harbor.scanner.aqua:store` |
-| `scanner.store.redisPoolMaxActive` | The max number of connections allocated by the pool for a redis store   | `5`            |
-| `scanner.store.redisPoolMaxIdle`   | The max number of idle connections in the pool for a redis store        | `5`            |
-| `scanner.store.redisScanJobTTL`    | The time to live for persisting scan jobs and associated scan reports   | `1h`           |
-| `service.type`                     | Kubernetes service type                                                 | `LoadBalancer` |
-| `service.port`                     | Kubernetes service port                                                 | `8443`         |
-| `replicaCount`                     | Number of scanner adapter Pods to run                                   | `1`            |
+|              Parameter                  |                                Description                              |    Default     |
+|-----------------------------------------|-------------------------------------------------------------------------|----------------|
+| `aqua.version`                          | The version of Aqua CSP that the adapter operates against               | `4.5`          |
+| `aqua.registry.server`                  | Aqua Docker registry server                                             | `registry.aquasec.com` |
+| `aqua.registry.username`                | Aqua Docker registry username                                           | N/A            |
+| `aqua.registry.password`                | Aqua Docker registry password                                           | N/A            |
+| `scanner.image.registry`                | Image registry                                                          | `docker.io`    |
+| `scanner.image.repository`              | Image name                                                              | `aquasec/harbor-scanner-aqua` |
+| `scanner.image.tag`                     | Image tag                                                               | `{TAG_NAME}`   |
+| `scanner.image.pullPolicy`              | Image pull policy                                                       | `IfNotPresent` |
+| `scanner.logLevel`                      | The log level of `trace`, `debug`, `info`, `warn`, `warning`, `error`, `fatal` or `panic`. The standard logger logs entries with that level or anything above it | `info` |
+| `scanner.aqua.username`                 | Aqua management console username (required)                             | N/A            |
+| `scanner.aqua.password`                 | Aqua management console password (required)                             | N/A            |
+| `scanner.aqua.host`                     | Aqua management console address                                         | `http://csp-console-svc.aqua:8080` |
+| `scanner.aqua.registry`                 | The name of the Harbor registry configured in Aqua management console   | `Harbor`       |
+| `scanner.aqua.scannerCLINoVerify`       | The flag passed to `scannercli` to skip verifying TLS certificates      | `false`        |
+| `scanner.aqua.scannerCLIShowNegligible` | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities | `true` |
+| `scanner.aqua.reportsDir`               | Directory to save temporary scan reports                                | `/var/lib/scanner/reports` |
+| `scanner.aqua.useImageTag`              | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` | `true` |
+| `scanner.api.tlsEnabled`                | The flag to enable or disable TLS for HTTP                              | `true`         |
+| `scanner.api.tlsCertificate`            | The absolute path to the x509 certificate file                          |                |
+| `scanner.api.tlsKey`                    | The absolute path to the x509 private key file                          |                |
+| `scanner.api.readTimeout`               | The maximum duration for reading the entire request, including the body | `15s`          |
+| `scanner.api.writeTimeout`              | The maximum duration before timing out writes of the response           | `15s`          |
+| `scanner.api.idleTimeout`               | The maximum amount of time to wait for the next request when keep-alives are enabled | `60s` |
+| `scanner.store.redisURL`                | Redis server URI for a redis store                                      | `redis://harbor-harbor-redis:6379` |
+| `scanner.store.redisNamespace`          | A namespace for keys in a redis store                                   | `harbor.scanner.aqua:store` |
+| `scanner.store.redisPoolMaxActive`      | The max number of connections allocated by the pool for a redis store   | `5`            |
+| `scanner.store.redisPoolMaxIdle`        | The max number of idle connections in the pool for a redis store        | `5`            |
+| `scanner.store.redisScanJobTTL`         | The time to live for persisting scan jobs and associated scan reports   | `1h`           |
+| `service.type`                          | Kubernetes service type                                                 | `LoadBalancer` |
+| `service.port`                          | Kubernetes service port                                                 | `8443`         |
+| `replicaCount`                          | Number of scanner adapter Pods to run                                   | `1`            |
 
 The above parameters map to the env variables defined in [harbor-scanner-aqua](https://github.com/aquasecurity/harbor-scanner-aqua#configuration).
 

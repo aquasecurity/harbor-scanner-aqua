@@ -69,6 +69,10 @@ spec:
               value: {{ .Values.scanner.aqua.host | quote }}
             - name: "SCANNER_AQUA_REGISTRY"
               value: {{ .Values.scanner.aqua.registry | quote }}
+            - name: "SCANNER_CLI_NO_VERIFY"
+              value: {{ .Values.scanner.aqua.scannerCLINoVerify | quote }}
+            - name: "SCANNER_CLI_SHOW_NEGLIGIBLE"
+              value: {{ .Values.scanner.aqua.scannerCLIShowNegligible | quote }}
             - name: "SCANNER_AQUA_REPORTS_DIR"
               value: {{ .Values.scanner.aqua.reportsDir | quote }}
             - name: "SCANNER_AQUA_USE_IMAGE_TAG"

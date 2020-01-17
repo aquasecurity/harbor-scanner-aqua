@@ -13,6 +13,7 @@ type Severity int64
 const (
 	_ Severity = iota
 	SevUnknown
+	SevNegligible
 	SevLow
 	SevMedium
 	SevHigh
@@ -24,19 +25,21 @@ func (s Severity) String() string {
 }
 
 var severityToString = map[Severity]string{
-	SevUnknown:  "Unknown",
-	SevLow:      "Low",
-	SevMedium:   "Medium",
-	SevHigh:     "High",
-	SevCritical: "Critical",
+	SevUnknown:    "Unknown",
+	SevNegligible: "Negligible",
+	SevLow:        "Low",
+	SevMedium:     "Medium",
+	SevHigh:       "High",
+	SevCritical:   "Critical",
 }
 
 var stringToSeverity = map[string]Severity{
-	"Unknown":  SevUnknown,
-	"Low":      SevLow,
-	"Medium":   SevMedium,
-	"High":     SevHigh,
-	"Critical": SevCritical,
+	"Unknown":    SevUnknown,
+	"Negligible": SevNegligible,
+	"Low":        SevLow,
+	"Medium":     SevMedium,
+	"High":       SevHigh,
+	"Critical":   SevCritical,
 }
 
 // MarshalJSON marshals the Severity enum value as a quoted JSON string.

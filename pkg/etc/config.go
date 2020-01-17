@@ -41,12 +41,16 @@ func (c API) IsTLSEnabled() bool {
 }
 
 type AquaCSP struct {
-	Username    string `env:"SCANNER_AQUA_USERNAME"`
-	Password    string `env:"SCANNER_AQUA_PASSWORD"`
-	Host        string `env:"SCANNER_AQUA_HOST" envDefault:"http://csp-console-svc.aqua:8080"`
-	Registry    string `env:"SCANNER_AQUA_REGISTRY" envDefault:"Harbor"`
+	Username string `env:"SCANNER_AQUA_USERNAME"`
+	Password string `env:"SCANNER_AQUA_PASSWORD"`
+	Host     string `env:"SCANNER_AQUA_HOST" envDefault:"http://csp-console-svc.aqua:8080"`
+	Registry string `env:"SCANNER_AQUA_REGISTRY" envDefault:"Harbor"`
+
 	ReportsDir  string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/var/lib/scanner/reports"`
 	UseImageTag bool   `env:"SCANNER_AQUA_USE_IMAGE_TAG" envDefault:"true"`
+
+	ScannerCLINoVerify       bool `env:"SCANNER_CLI_NO_VERIFY" envDefault:"false"`
+	ScannerCLIShowNegligible bool `env:"SCANNER_CLI_SHOW_NEGLIGIBLE" envDefault:"true"`
 }
 
 type Store struct {

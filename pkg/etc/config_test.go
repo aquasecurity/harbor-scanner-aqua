@@ -34,6 +34,9 @@ func TestGetConfig(t *testing.T) {
 					Registry:    "Harbor",
 					ReportsDir:  "/var/lib/scanner/reports",
 					UseImageTag: true,
+
+					ScannerCLINoVerify:       false,
+					ScannerCLIShowNegligible: true,
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",
@@ -58,6 +61,8 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_AQUA_HOST":           "http://aqua-web.aqua-security:8080",
 				"SCANNER_AQUA_USERNAME":       "scanner",
 				"SCANNER_AQUA_PASSWORD":       "s3cret",
+				"SCANNER_CLI_NO_VERIFY":       "true",
+				"SCANNER_CLI_SHOW_NEGLIGIBLE": "false",
 			},
 			expectedConfig: Config{
 				API: API{
@@ -69,12 +74,14 @@ func TestGetConfig(t *testing.T) {
 					IdleTimeout:    parseDuration(t, "1h2m3s"),
 				},
 				AquaCSP: AquaCSP{
-					Username:    "scanner",
-					Password:    "s3cret",
-					Host:        "http://aqua-web.aqua-security:8080",
-					Registry:    "Harbor",
-					ReportsDir:  "/somewhere/else",
-					UseImageTag: false,
+					Username:                 "scanner",
+					Password:                 "s3cret",
+					Host:                     "http://aqua-web.aqua-security:8080",
+					Registry:                 "Harbor",
+					ReportsDir:               "/somewhere/else",
+					UseImageTag:              false,
+					ScannerCLINoVerify:       true,
+					ScannerCLIShowNegligible: false,
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",
