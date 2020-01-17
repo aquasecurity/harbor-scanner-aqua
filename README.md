@@ -79,10 +79,12 @@ is translated to the following `scannercli` command:
 
 ```
 $ scannercli scan \
-    --user $AQUA_CONSOLE_USERNAME \
-    --password $AQUA_CONSOLE_PASSWORD \
-    --host http://csp-console-svc.aqua:8080 \
-    --registry "Harbor" \
+    --user $SCANNER_AQUA_USERNAME \
+    --password $SCANNER_AQUA_PASSWORD \
+    --host $SCANNER_AQUA_HOST \
+    --registry $SCANNER_AQUA_REGISTRY \
+    --dockerless \
+    --jsonfile /var/lib/scanner/reports/scan_report_071315299.json
     library/mongo:3.4-xenial
 ```
 
@@ -110,7 +112,7 @@ make
 To build into a Docker container:
 
 ```
-make container
+make build-image
 ```
 
 ### Running on [minikube][minikube-url]
