@@ -63,6 +63,17 @@ Return the proper imageRef as used by the container template spec.
 {{- printf "%s/%s:%s" $registryName $repositoryName $tag -}}
 {{- end -}}
 
-{{- define "imagePullSecret" }}
+{{- define "imagePullSecret" -}}
 {{- printf "{\"auths\": {\"%s\": {\"auth\": \"%s\"}}}" .Values.aqua.registry.server (printf "%s:%s" .Values.aqua.registry.username .Values.aqua.registry.password | b64enc) | b64enc }}
 {{- end }}
+
+{{/*
+Return the proper scheme for liveness and readiness probe spec.
+*/}}
+{{- define "probeScheme" -}}
+{{- if .Values.scanner.api.tlsEnabled -}}
+HTTPS
+{{- else -}}
+HTTP
+{{- end -}}
+{{- end -}}

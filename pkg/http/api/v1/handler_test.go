@@ -55,4 +55,15 @@ func TestHandler(t *testing.T) {
 }`, string(bodyBytes))
 	})
 
+	t.Run("GET /probe/healthy", func(t *testing.T) {
+		rs, err := ts.Client().Get(ts.URL + "/probe/healthy")
+		require.NoError(t, err)
+		assert.Equal(t, http.StatusOK, rs.StatusCode)
+	})
+
+	t.Run("GET /probe/ready", func(t *testing.T) {
+		rs, err := ts.Client().Get(ts.URL + "/probe/ready")
+		require.NoError(t, err)
+		assert.Equal(t, http.StatusOK, rs.StatusCode)
+	})
 }
