@@ -34,7 +34,7 @@ for providing vulnerability reports on images stored in Harbor registry as part 
    the environment variables.
 2. The adapter service requires the `scannercli` executable binary, in version matching the Aqua CSP, to be mounted
    at `/usr/local/bin/scannercli`. The provided Helm chart mounts the `scannercli` executable automatically by pulling
-   the `registry.aquasec.com/scanner:$AQUA_CSP_VERSION` from Aqua Registry and running it as an [init container][k8s-init-containers].
+   the `registry.aquasec.com/scanner:$AQUA_CSP_VERSION` image from Aqua Registry and running it as an [init container][k8s-init-containers].
    The init container's command is configured to copy the executable from the container's filesystem to an [emptyDir][k8s-volume-emptyDir]
    volume, which is shared with the main container. This makes the `scannercli` executable available to the main container at
    `/usr/local/bin/scannercli`.
@@ -129,7 +129,7 @@ make build-image
    ```
    $ helm install harbor-scanner-aqua ./helm/harbor-scanner-aqua \
                   --namespace harbor \
-                  --set aqua.version=4.5 \
+                  --set aqua.version=$AQUA_VERSION \
                   --set aqua.registry.server=registry.aquasec.com \
                   --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
                   --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
@@ -161,7 +161,7 @@ make build-image
                   --set scanner.api.tlsEnabled=true \
                   --set scanner.api.tlsCertificate="`cat tls.crt`" \
                   --set scanner.api.tlsKey="`cat tls.key`" \
-                  --set aqua.version=4.5 \
+                  --set aqua.version=$AQUA_VERSION \
                   --set aqua.registry.server=registry.aquasec.com \
                   --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
                   --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \

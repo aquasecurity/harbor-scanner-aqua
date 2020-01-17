@@ -9,7 +9,7 @@ Aqua CSP Scanner as a plug-in vulnerability scanner in the Harbor registry.
 ```
 $ helm install harbor-scanner-aqua . \
                --namespace harbor \
-               --set aqua.version=4.5 \
+               --set aqua.version=$AQUA_VERSION \
                --set aqua.registry.server=registry.aquasec.com \
                --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
                --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
@@ -37,7 +37,7 @@ $ helm install harbor-scanner-aqua . \
                   --set scanner.api.tlsEnabled=true \
                   --set scanner.api.tlsCertificate="`cat tls.crt`" \
                   --set scanner.api.tlsKey="`cat tls.key`" \
-                  --set aqua.version=4.5 \
+                  --set aqua.version=$AQUA_VERSION \
                   --set aqua.registry.server=registry.aquasec.com \
                   --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
                   --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
