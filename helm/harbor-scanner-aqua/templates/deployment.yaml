@@ -18,6 +18,7 @@ spec:
     spec:
       imagePullSecrets:
         - name: {{ include "harbor-scanner-aqua.fullname" . }}-registry
+      automountServiceAccountToken: false
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
@@ -28,12 +29,20 @@ spec:
           imagePullPolicy: {{ .Values.aqua.image.pullPolicy | quote }}
           securityContext:
             privileged: false
+            allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - NET_RAW
           command:
             - cp
           args:
             - "/opt/aquasec/scannercli"
             - "/downloads/scannercli"
+          {{- if .Values.initResources }}
+          resources:
+{{ toYaml .Values.initResources | indent 12 }}
+          {{- end }}
           volumeMounts:
             - name: scannercli
               mountPath: /downloads
@@ -43,7 +52,11 @@ spec:
           imagePullPolicy: {{ .Values.scanner.image.pullPolicy | quote }}
           securityContext:
             privileged: false
+            allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - NET_RAW
           env:
             - name: "SCANNER_LOG_LEVEL"
               value: {{ .Values.scanner.logLevel }}
@@ -114,6 +127,10 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
+          {{- if .Values.mainResources }}
+          resources:
+{{ toYaml .Values.mainResources | indent 12 }}
+          {{- end}}
           volumeMounts:
             - name: scannercli
               mountPath: /usr/local/bin/scannercli

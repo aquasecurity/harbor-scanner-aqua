@@ -66,4 +66,10 @@ func TestHandler(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, rs.StatusCode)
 	})
+
+	t.Run("GET /metrics", func(t *testing.T) {
+		rs, err := ts.Client().Get(ts.URL + "/metrics")
+		require.NoError(t, err)
+		assert.Equal(t, http.StatusOK, rs.StatusCode)
+	})
 }

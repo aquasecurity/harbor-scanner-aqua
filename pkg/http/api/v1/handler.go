@@ -10,6 +10,7 @@ import (
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/persistence"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/scanner"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
@@ -46,6 +47,8 @@ func NewAPIHandler(info etc.BuildInfo, enqueuer scanner.Enqueuer, store persiste
 	probeRouter := router.PathPrefix("/probe").Subrouter()
 	probeRouter.Methods(http.MethodGet).Path("/healthy").HandlerFunc(handler.getHealthy)
 	probeRouter.Methods(http.MethodGet).Path("/ready").HandlerFunc(handler.getReady)
+
+	router.Methods(http.MethodGet).Path("/metrics").Handler(promhttp.Handler())
 
 	return router
 }
