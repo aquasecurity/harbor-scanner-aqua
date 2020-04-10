@@ -14,5 +14,5 @@ test-integration: build
 $(BINARY): $(SOURCES)
 	GOOS=linux GO111MODULE=on CGO_ENABLED=0 go build -o $(BINARY) cmd/scanner-adapter/main.go
 
-build-image: build
+docker-build: build
 	docker build --no-cache -t $(IMAGE) .

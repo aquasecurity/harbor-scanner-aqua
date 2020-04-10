@@ -14,6 +14,8 @@ jobs:
           go-version: 1.13
       - name: Checkout code
         uses: actions/checkout@v1
+      - name: Unshallow # This step is required for the changelog to work correctly
+        run: git fetch --prune --unshallow
       - name: Run unit tests
         run: make test
       - name: Run integration tests
