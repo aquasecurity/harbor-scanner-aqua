@@ -48,9 +48,9 @@ for providing vulnerability reports on images stored in Harbor registry as part 
    Aqua downloads page manually and mount it at `/usr/local/bin/scannercli`.
    See [Aqua Scanner Executable Binary][aqua-docs-scanner-binary] for more details on manual download.
 4. It is highly recommended to create a new user in the Aqua CSP management console with credentials dedicated to the
-   Harbor adapter, e.g. `harbor_scanner`. The adapter does not require the full access to the management console.
-   Therefore, only the `Scanner` role should be assigned to such user. The `Scanner` role is the only permission
-   required by the `scannercli` executable binary which is run by the adapter service on each scan request.
+   Harbor adapter, e.g. `harbor_scanner`. The adapter does not need full access to Aqua: the `Scanner` role is the only permission
+   required for the `scannercli` executable binary which is run by the adapter service on each scan request.
+   Therefore, create your `harbor_scanner` user and assign it only the `Scanner` role. 
 
    ![](docs/images/aqua_user_for_harbor.png)
 5. It is also highly recommended to create a new user in Harbor with the only permission to pull images by the Aqua CSP
