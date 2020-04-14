@@ -95,7 +95,7 @@ $ scannercli scan \
     library/mongo:3.4-xenial
 ```
 
-Finally, the output report is transformed to Harbor model and display in Harbor UI.
+Finally, the output report is transformed to Harbor's model and displayed in Harbor UI.
 
 ## Getting started
 
