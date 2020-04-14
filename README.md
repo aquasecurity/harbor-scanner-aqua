@@ -48,13 +48,14 @@ for providing vulnerability reports on images stored in Harbor registry as part 
    Aqua downloads page manually and mount it at `/usr/local/bin/scannercli`.
    See [Aqua Scanner Executable Binary][aqua-docs-scanner-binary] for more details on manual download.
 4. It is highly recommended to create a new user in the Aqua CSP management console with credentials dedicated to the
-   Harbor adapter, e.g. `harbor_scanner`. The adapter does not need full access to Aqua: the `Scanner` role is the only permission
-   required for the `scannercli` executable binary which is run by the adapter service on each scan request.
-   Therefore, create your `harbor_scanner` user and assign it only the `Scanner` role. 
+   Harbor adapter, e.g. `harbor_scanner`. The adapter does not need full access to Aqua: the `Scanner` role is the only
+   permission required for the `scannercli` executable binary which is run by the adapter service on each scan request.
+   Therefore, create your `harbor_scanner` user and assign it only the `Scanner` role.
 
    ![](docs/images/aqua_user_for_harbor.png)
-5. It is also highly recommended to create a new user in Harbor for the Aqua CSP scanner, with permission only to pull images from Harbor, e.g. `aqua_scanner`. Please remember to add this user as a member of the project in Harbor that you intend to
-   scan the images from.
+5. It is also highly recommended to create a new user in Harbor for the Aqua CSP scanner, with permission only to pull
+   images from Harbor, e.g. `aqua_scanner`. Please remember to add this user as a member of the project in Harbor that
+   you intend to scan the images from.
 
    ![](docs/images/harbor_user_for_aqua.png)
 6. Finally add a new Harbor registry integration in Aqua CSP management console and use the credentials of the user
@@ -121,7 +122,7 @@ $ make
 To build into a Docker container:
 
 ```
-$ make build-image
+$ make docker-build
 ```
 
 ### Running on Kubernetes
@@ -131,9 +132,9 @@ $ make build-image
 > ```
 > $ helm repo add harbor https://helm.goharbor.io
 > $ kubectl create namespace harbor
-> $ helm install harbor harbor/harbor --version $HARBOR_VERSION \
+> $ helm install harbor harbor/harbor --version $HARBOR_CHART_VERSION \
 >     --namespace harbor \
->     --set clair-enabled=false
+>     --set clair.enabled=false
 > ```
 >
 > I also assume that you installed Aqua CSP >= 4.5 with [Aqua Security Helm charts][aqua-helm-chart] in the `aqua`
@@ -141,7 +142,7 @@ $ make build-image
 > ```
 > $ helm repo add aqua-helm https://helm.aquasec.com
 > $ kubectl create namespace aqua
-> $ helm install csp aqua-helm/server --version $AQUA_VERSION \
+> $ helm install csp aqua-helm/server --version $AQUA_CHART_VERSION \
 >     --namespace aqua \
 >     --set imageCredentials.repositoryUriPrefix="registry.aquasec.com" \
 >     --set imageCredentials.registry="registry.aquasec.com" \
@@ -255,7 +256,8 @@ Currently, there's a limitation of `scannercli` which does not accept Harbor rob
 Harbor scan job to the adapter service. This effectively means that the Aqua CSP scanner is using the credentials
 provided in Aqua CSP management console under the **Integrations** / **Image Registries** section. However, these
 credentials do not have enough permissions to bypass the deployment security checker when it's enabled in the Harbor
-project configuration. In other words, the deployment security checker prevents the Aqua CSP scanner from pulling an image, which it needs to be able to do in order to scan it.  
+project configuration. In other words, the deployment security checker prevents the Aqua CSP scanner from pulling
+an image, which it needs to be able to do in order to scan it.
  
 ![](docs/images/harbor_deployment_security.png)
 
