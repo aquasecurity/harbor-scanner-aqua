@@ -254,8 +254,8 @@ Configuration of the adapter is done via environment variables at startup.
 Currently, there's a limitation of `scannercli` which does not accept Harbor robot account credentials passed by a
 Harbor scan job to the adapter service. This effectively means that the Aqua CSP scanner is using the credentials
 provided in Aqua CSP management console under the **Integrations** / **Image Registries** section. However, these
-credentials do not have enough permissions to bypass deployment security checker when it's enabled in the Harbor
-project configuration.
+credentials do not have enough permissions to bypass the deployment security checker when it's enabled in the Harbor
+project configuration. In other words, the deployment security checker prevents the Aqua CSP scanner from pulling an image, which it needs to be able to do in order to scan it.  
  
 ![](docs/images/harbor_deployment_security.png)
 
