@@ -53,8 +53,7 @@ for providing vulnerability reports on images stored in Harbor registry as part 
    Therefore, create your `harbor_scanner` user and assign it only the `Scanner` role. 
 
    ![](docs/images/aqua_user_for_harbor.png)
-5. It is also highly recommended to create a new user in Harbor with the only permission to pull images by the Aqua CSP
-   scanner, e.g. `aqua_scanner`. Please remember to add also such user as a member of the project that you intend to
+5. It is also highly recommended to create a new user in Harbor for the Aqua CSP scanner, with permission only to pull images from Harbor, e.g. `aqua_scanner`. Please remember to add this user as a member of the project in Harbor that you intend to
    scan the images from.
 
    ![](docs/images/harbor_user_for_aqua.png)
