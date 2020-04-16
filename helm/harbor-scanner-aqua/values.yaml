@@ -2,7 +2,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 service:
-  type: "LoadBalancer"
+  type: "ClusterIP"
   port: 8080
 
 replicaCount: 1
@@ -24,7 +24,7 @@ mainResources:
     memory: 512Mi
 
 aqua:
-  version: 4.5
+  version: 4.6
   registry:
     server: "registry.aquasec.com"
     username: ""
