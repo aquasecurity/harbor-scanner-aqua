@@ -1,18 +1,14 @@
 package aqua
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
-	log "github.com/sirupsen/logrus"
-	"golang.org/x/xerrors"
-	"io/ioutil"
-	"os"
 	"os/exec"
-)
 
-const assurancePolicyCheckFailed = 4
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/ext"
+	log "github.com/sirupsen/logrus"
+)
 
 type ImageRef struct {
 	Repository string
@@ -31,35 +27,37 @@ func (ir *ImageRef) WithDigest() string {
 // Command represents the CLI interface for the Aqua CSP scanner,
 // i.e. scannercli executable.
 type Command interface {
-	Exec(imageRef ImageRef) (ScanReport, error)
+	Scan(imageRef ImageRef) (ScanReport, error)
 }
 
 // NewCommands constructs Aqua CSP scanner command with the given configuration.
-func NewCommand(cfg etc.AquaCSP) Command {
+func NewCommand(cfg etc.AquaCSP, ambassador ext.Ambassador) Command {
 	return &command{
-		cfg: cfg,
+		cfg:        cfg,
+		ambassador: ambassador,
 	}
 }
 
 type command struct {
-	cfg etc.AquaCSP
+	cfg        etc.AquaCSP
+	ambassador ext.Ambassador
 }
 
-func (c *command) Exec(imageRef ImageRef) (report ScanReport, err error) {
-	executable, err := exec.LookPath("scannercli")
+func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
+	executable, err := c.ambassador.LookPath("scannercli")
 	if err != nil {
-		return report, xerrors.Errorf("searching for scannercli executable: %w", err)
+		return report, fmt.Errorf("searching for scannercli executable: %w", err)
 	}
-	reportFile, err := ioutil.TempFile(c.cfg.ReportsDir, "scan_report_*.json")
+	reportFile, err := c.ambassador.TempFile(c.cfg.ReportsDir, "aqua_scan_report_*.json")
 	if err != nil {
-		return report, xerrors.Errorf("creating tmp file for scan report: %w", err)
+		return report, fmt.Errorf("creating tmp scan report file: %w", err)
 	}
-	log.WithField("path", reportFile.Name()).Debug("Saving scan report to tmp file")
+	log.WithField("path", reportFile.Name()).Debug("Saving tmp scan report file")
 	defer func() {
-		log.WithField("path", reportFile.Name()).Debug("Removing scan report tmp file")
-		err := os.Remove(reportFile.Name())
+		log.WithField("path", reportFile.Name()).Debug("Removing tmp scan report file")
+		err := c.ambassador.Remove(reportFile.Name())
 		if err != nil {
-			log.WithError(err).Warn("Error while removing scan report file")
+			log.WithError(err).Warn("Error while removing tmp scan report file")
 		}
 	}()
 
@@ -68,61 +66,46 @@ func (c *command) Exec(imageRef ImageRef) (report ScanReport, err error) {
 		image = imageRef.WithTag()
 	}
 
-	flags := []string{
-		"--user", c.cfg.Username,
-		"--password", c.cfg.Password,
-		"--host", c.cfg.Host,
-		"--registry", c.cfg.Registry,
+	args := []string{
+		"scan",
+		"--checkonly",
 		"--dockerless",
-		"--jsonfile", reportFile.Name(),
+		fmt.Sprintf("--user=%s", c.cfg.Username),
+		fmt.Sprintf("--password=%s", c.cfg.Password),
+		fmt.Sprintf("--host=%s", c.cfg.Host),
+		fmt.Sprintf("--registry=%s", c.cfg.Registry),
+		fmt.Sprintf("--no-verify=%t", c.cfg.ScannerCLINoVerify),
+		fmt.Sprintf("--show-negligible=%t", c.cfg.ScannerCLIShowNegligible),
+		fmt.Sprintf("--show-will-not-fix=%t", c.cfg.ScannerCLIShowWillNotFix),
+		fmt.Sprintf("--hide-base=%t", c.cfg.ScannerCLIHideBase),
+		fmt.Sprintf("--jsonfile=%s", reportFile.Name()),
+		image,
 	}
 
-	if c.cfg.ScannerCLINoVerify {
-		flags = append(flags, "--no-verify")
-	}
-
-	if c.cfg.ScannerCLIShowNegligible {
-		flags = append(flags, "--show-negligible")
-	}
-
-	args := append([]string{"scan"}, flags...)
-	args = append(args, image)
-
-	log.WithFields(log.Fields{"exec": executable, "args": args}).Trace("Running scannercli")
+	// TODO Sanitize the args so the password is not printed no matter what's the log level!
+	log.WithFields(log.Fields{"exec": executable, "args": args}).Debug("Running scannercli")
 
 	cmd := exec.Command(executable, args...)
 
-	stderrBuffer := bytes.Buffer{}
-
-	cmd.Stderr = &stderrBuffer
-
-	stdout, err := cmd.Output()
-	if err != nil && cmd.ProcessState.ExitCode() != assurancePolicyCheckFailed {
+	stdout, exitCode, err := c.ambassador.RunCmd(cmd)
+	if err != nil {
 		log.WithFields(log.Fields{
 			"image_ref": imageRef,
-			"exit_code": cmd.ProcessState.ExitCode(),
-			"std_err":   stderrBuffer.String(),
+			"exit_code": exitCode,
 			"std_out":   string(stdout),
 		}).Error("Error while running scannercli command")
-		return report, xerrors.Errorf("running command: %v: %v", err, stderrBuffer.String())
+		return report, fmt.Errorf("running command: %v: %v", err, string(stdout))
 	}
 
 	log.WithFields(log.Fields{
 		"image_ref": imageRef,
-		"exit_code": cmd.ProcessState.ExitCode(),
-		"std_err":   stderrBuffer.String(),
+		"exit_code": exitCode,
 		"std_out":   string(stdout),
 	}).Trace("Running scannercli command finished")
 
-	if cmd.ProcessState.ExitCode() == assurancePolicyCheckFailed {
-		log.WithFields(log.Fields{
-			"image_ref": imageRef,
-		}).Warn("Some assurance policy checks configured in Aqua management console failed. Navigate to Aqua management console for details.")
-	}
-
 	err = json.NewDecoder(reportFile).Decode(&report)
 	if err != nil {
-		return report, xerrors.Errorf("decoding scan report from file %v", err)
+		return report, fmt.Errorf("decoding scan report from file: %w", err)
 	}
 	return
 }

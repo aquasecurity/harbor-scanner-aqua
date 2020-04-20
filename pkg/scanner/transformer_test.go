@@ -2,7 +2,7 @@ package scanner
 
 import (
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/aqua"
-	"github.com/aquasecurity/harbor-scanner-aqua/pkg/clock"
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/ext"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -52,7 +52,7 @@ func TestTransformer_Transform(t *testing.T) {
 		},
 	}
 
-	harborReport := NewTransformer(clock.NewFixedClock(now)).Transform(artifact, aquaReport)
+	harborReport := NewTransformer(ext.NewFixedClock(now)).Transform(artifact, aquaReport)
 	assert.Equal(t, harbor.ScanReport{
 		GeneratedAt: now,
 		Artifact: harbor.Artifact{

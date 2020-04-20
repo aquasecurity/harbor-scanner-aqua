@@ -1,12 +1,13 @@
 package etc
 
 import (
-	"github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type envs map[string]string
@@ -37,6 +38,8 @@ func TestGetConfig(t *testing.T) {
 
 					ScannerCLINoVerify:       false,
 					ScannerCLIShowNegligible: true,
+					ScannerCLIShowWillNotFix: false,
+					ScannerCLIHideBase:       true,
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",
@@ -50,19 +53,21 @@ func TestGetConfig(t *testing.T) {
 		{
 			name: "Should overwrite default config with environment variables",
 			envs: envs{
-				"SCANNER_API_ADDR":            ":4200",
-				"SCANNER_API_TLS_CERTIFICATE": "/certs/tls.crt",
-				"SCANNER_API_TLS_KEY":         "/certs/tls.key",
-				"SCANNER_API_READ_TIMEOUT":    "1h",
-				"SCANNER_API_WRITE_TIMEOUT":   "2m",
-				"SCANNER_API_IDLE_TIMEOUT":    "1h2m3s",
-				"SCANNER_AQUA_REPORTS_DIR":    "/somewhere/else",
-				"SCANNER_AQUA_USE_IMAGE_TAG":  "false",
-				"SCANNER_AQUA_HOST":           "http://aqua-web.aqua-security:8080",
-				"SCANNER_AQUA_USERNAME":       "scanner",
-				"SCANNER_AQUA_PASSWORD":       "s3cret",
-				"SCANNER_CLI_NO_VERIFY":       "true",
-				"SCANNER_CLI_SHOW_NEGLIGIBLE": "false",
+				"SCANNER_API_ADDR":              ":4200",
+				"SCANNER_API_TLS_CERTIFICATE":   "/certs/tls.crt",
+				"SCANNER_API_TLS_KEY":           "/certs/tls.key",
+				"SCANNER_API_READ_TIMEOUT":      "1h",
+				"SCANNER_API_WRITE_TIMEOUT":     "2m",
+				"SCANNER_API_IDLE_TIMEOUT":      "1h2m3s",
+				"SCANNER_AQUA_REPORTS_DIR":      "/somewhere/else",
+				"SCANNER_AQUA_USE_IMAGE_TAG":    "false",
+				"SCANNER_AQUA_HOST":             "http://aqua-web.aqua-security:8080",
+				"SCANNER_AQUA_USERNAME":         "scanner",
+				"SCANNER_AQUA_PASSWORD":         "s3cret",
+				"SCANNER_CLI_NO_VERIFY":         "true",
+				"SCANNER_CLI_SHOW_NEGLIGIBLE":   "false",
+				"SCANNER_CLI_SHOW_WILL_NOT_FIX": "true",
+				"SCANNER_CLI_HIDE_BASE":         "false",
 			},
 			expectedConfig: Config{
 				API: API{
@@ -82,6 +87,8 @@ func TestGetConfig(t *testing.T) {
 					UseImageTag:              false,
 					ScannerCLINoVerify:       true,
 					ScannerCLIShowNegligible: false,
+					ScannerCLIShowWillNotFix: true,
+					ScannerCLIHideBase:       false,
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",

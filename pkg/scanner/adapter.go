@@ -22,7 +22,7 @@ func NewAdapter(command aqua.Command, transformer Transformer) Adapter {
 }
 
 func (s *adapter) Scan(req harbor.ScanRequest) (harbor.ScanReport, error) {
-	aquaScanReport, err := s.command.Exec(aqua.ImageRef{
+	aquaScanReport, err := s.command.Scan(aqua.ImageRef{
 		Repository: req.Artifact.Repository,
 		Tag:        req.Artifact.Tag,
 		Digest:     req.Artifact.Digest,
