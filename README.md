@@ -24,6 +24,8 @@ for providing vulnerability reports on images stored in Harbor registry as part 
   - [Running on Kubernetes](#running-on-kubernetes)
 - [Deployment](#deployment)
   - [Kubernetes](#kubernetes)
+  - [Docker](#docker)
+  - [Configuring Harbor scanner](#configuring-harbor-scanner)
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
 - [License](#license)
@@ -186,6 +188,12 @@ $ make docker-build
 
 ## Deployment
 
+Harbor can be [installed as a Docker service][harbor-docs-installer] or deployed with [high availability via Helm][harbor-docs-helm].
+This section describes how to perform a new installation of the adapter service in both cases.
+
+Technically it's also possible to deploy Harbor with Docker and Aqua CSP on Kubernetes, and you should be able to figure
+it out based on the following instructions.
+
 ### Kubernetes
 
 > I assume that you installed Aqua CSP >= 4.5 with [Aqua Security Helm charts][aqua-helm-chart] in the `aqua`
@@ -216,13 +224,120 @@ $ make docker-build
        --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
        --set scanner.aqua.host=http://csp-console-svc.aqua:8080
    ```
-3. Configure the scanner adapter in Harbor web console.
-   1. Navigate to **Interrogation Services** and click **+ NEW SCANNER**.
-      ![Scanners config](docs/images/harbor_ui_scanners_config.png)
-   2. Enter https://harbor-scanner-aqua.harbor:8443 as the **Endpoint** URL and click **TEST CONNECTION**.
-      ![Add scanner](docs/images/harbor_ui_add_scanner.png)
-   3. If everything is fine click **ADD** to save the configuration.
-4. Select the **Aqua** scanner and set it as default by clicking **SET AS DEFAULT**.
+   The scanner service should be accessible at https://harbor-scanner-aqua.harbor:8443 from within the cluster.
+3. [Connect Harbor to Aqua scanner.](#configuring-harbor-scanner)
+
+### Docker
+
+> I assume that you installed Harbor >= 1.10 with an online or offline installer script in the `$HARBOR_HOME` directory,
+> and it's accessible at https://harbor.domain.
+>
+> I also assume that you installed Aqua CSP >= 4.5, and the management console is accessible at https://aqua.domain.
+
+1. Change directory to `$HARBOR_HOME`:
+   ```
+   $ cd $HARBOR_HOME
+   ```
+2. Create the config and data directories for the adapter service:
+   ```
+   $ mkdir -p ./common/config/aqua-scanner
+   $ mkdir -p ./data/aqua-scanner/reports
+   ```
+3. Generate certificate and private key files:
+   ```
+   $ mkdir -p ./common/config/aqua-scanner/cert
+   $ openssl genrsa -out ./common/config/aqua-scanner/cert/aqua-scanner.key 2048
+   $ openssl req -new -x509 \
+       -key ./common/config/aqua-scanner/cert/aqua-scanner.key \
+       -out ./common/config/aqua-scanner/cert/aqua-scanner.crt \
+       -days 365 \
+       -subj /CN=aqua-scanner
+   ```
+4. Create the `env` file to configure the adapter service:
+   ```
+   $ cat << EOF > ./common/config/aqua-scanner/env
+   SCANNER_LOG_LEVEL=info
+   SCANNER_API_ADDR=:8443
+   SCANNER_API_TLS_KEY=/cert/aqua-scanner.key
+   SCANNER_API_TLS_CERTIFICATE=/cert/aqua-scanner.crt
+   SCANNER_AQUA_USERNAME=$AQUA_CONSOLE_USERNAME
+   SCANNER_AQUA_PASSWORD=$AQUA_CONSOLE_PASSWORD
+   SCANNER_AQUA_HOST=https://aqua.domain
+   SCANNER_AQUA_REGISTRY=Harbor
+   SCANNER_AQUA_REPORTS_DIR=/var/lib/scanners/reports
+   SCANNER_STORE_REDIS_URL=redis://redis:6379
+   EOF
+   ```
+5. Download the `scannercli` executable binary
+   1. You can download the binary from the [docs][download-scannercli] page and save it to `$HARBOR_HOME/scannercli`
+   2. Alternatively you can use the `registry.aquasec.com/scanner` image to copy the `scannercli` binary from the container's file system:
+      ```
+      $ echo $AQUA_REGISTRY_PASSWORD | docker login registry.aquasec.com \
+          -u $AQUA_REGISTRY_USERNAME --password-stdin
+      $ docker run --rm --entrypoint "" \
+          -v $HARBOR_HOME:/out registry.aquasec.com/scanner:$AQUA_VERSION \
+          cp /opt/aquasec/scannercli /out
+      ```
+6. Create the `docker-compose.override.yml` to install the adapter service:
+   ```
+   $ cat << EOF > ./docker-compose.override.yml
+   version: '2.3'
+   services:
+     aqua-scanner:
+       networks:
+         - harbor
+       container_name: aqua-scanner
+       image: docker.io/aquasec/harbor-scanner-aqua:0.5.0
+       restart: always
+       cap_drop:
+         - ALL
+       depends_on:
+         - redis
+       volumes:
+         - type: bind
+           source: ./scannercli
+           target: /usr/local/bin/scannercli
+         - type: bind
+           source: ./common/config/aqua-scanner/cert
+           target: /cert
+         - type: bind
+           source: ./data/aqua-scanner/reports
+           target: /var/lib/scanners/reports
+       logging:
+         driver: "syslog"
+         options:
+           syslog-address: "tcp://127.0.0.1:1514"
+           tag: "aqua-scanner"
+       env_file:
+         ./common/config/aqua-scanner/env
+   EOF
+   ```
+7. Start the adapter service:
+   ```
+   $ docker-compose up -d
+   ```
+   The scanner service should be accessible at https://aqua-scanner:8443 from within the `harbor` Docker network.
+8. [Connect Harbor to Aqua scanner.](#configuring-harbor-scanner)
+
+### Configuring Harbor scanner
+
+1. Log in to the Harbor interface with an account that has Harbor system administrator privileges.
+2. Expand **Administration**, and select **Interrogation Services**.
+   ![Scanners config](docs/images/harbor_ui_scanners_config.png)
+3. Click the **NEW SCANNER** button.
+4. Enter the information to identify the scanner.
+   1. A unique name for this scanner instance, to display in the Harbor interface.
+   2. The API endpoint of the adapter service
+
+   **NOTE**: For the adapter deployed on Kubernetes the URL is https://harbor-scanner-aqua.harbor:8443.
+   For Docker, it's https://aqua-scanner:8443
+
+   ![Add scanner](docs/images/harbor_ui_add_scanner.png)
+   3. Optionally select **Skip certificate verification** if the scanner uses a self-signed or untrusted certificate.
+5. Click **TEST CONNECTION** to make sure that Harbor can connect successfully to the scanner.
+6. If everything is fine click **ADD** to save the configuration and connect Harbor to the scanner.
+7. If you configured multiple scanners, you can designate the Aqua CSP scanner as the default one by selecting it and
+   clicking **SET AS DEFAULT**.
    ![Set default scanner](docs/images/harbor_ui_default_scanner.png)
    Make sure the **Default** label is displayed next to the **Aqua** scanner's name.
 
@@ -293,9 +408,12 @@ This project is licensed under the [Apache 2.0](LICENSE).
 [license]: https://github.com/aquasecurity/harbor-scanner-aqua/blob/master/LICENSE
 [harbor-url]: https://github.com/goharbor/harbor
 [harbor-helm-chart]: https://github.com/goharbor/harbor-helm
+[harbor-docs-installer]: https://goharbor.io/docs/1.10/install-config/download-installer/
+[harbor-docs-helm]: https://goharbor.io/docs/1.10/install-config/harbor-ha-helm/
 [image-vulnerability-scanning-proposal]: https://github.com/goharbor/community/blob/master/proposals/pluggable-image-vulnerability-scanning_proposal.md
 [k8s-init-containers]: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 [k8s-volume-emptyDir]: https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
 [aqua-docs-scanner-binary]: https://read.aquasec.com/docs/aqua-scanner-executable-binary
 [aqua-helm-chart]: https://github.com/aquasecurity/aqua-helm
+[download-scannercli]: https://read.aquasec.com/docs/aqua-scanner-command-line#section-obtain-the-scanner-executable-binary
 [coc-url]: https://github.com/aquasecurity/.github/blob/master/CODE_OF_CONDUCT.md
