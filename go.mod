@@ -11,6 +11,5 @@ require (
 	github.com/sirupsen/logrus v1.5.0
 	github.com/stretchr/testify v1.5.1
 	github.com/testcontainers/testcontainers-go v0.3.1
-	golang.org/x/tools v0.0.0-20200420001825-978e26b7c37c // indirect
 	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
 )
