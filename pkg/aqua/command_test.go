@@ -74,7 +74,6 @@ func TestCommand_Scan(t *testing.T) {
 				"--checkonly",
 				"--dockerless",
 				"--user=scanner",
-				"--password=ch@ng3me!",
 				"--host=https://aqua.domain:8080",
 				"--registry=Harbor",
 				"--no-verify=true",
@@ -82,6 +81,7 @@ func TestCommand_Scan(t *testing.T) {
 				"--show-will-not-fix=true",
 				"--hide-base=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
+				"--password=ch@ng3me!",
 				"library/alpine:3.10.2",
 			},
 		}).Return([]byte("killed"), 137, errors.New("boom"))
@@ -111,7 +111,6 @@ func TestCommand_Scan(t *testing.T) {
 				"--checkonly",
 				"--dockerless",
 				"--user=scanner",
-				"--password=ch@ng3me!",
 				"--host=https://aqua.domain:8080",
 				"--registry=Harbor",
 				"--no-verify=true",
@@ -119,6 +118,7 @@ func TestCommand_Scan(t *testing.T) {
 				"--show-will-not-fix=true",
 				"--hide-base=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
+				"--password=ch@ng3me!",
 				"library/alpine:3.10.2",
 			},
 		}).Return([]byte{}, 0, NoError)

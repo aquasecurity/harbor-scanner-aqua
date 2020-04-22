@@ -71,7 +71,6 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		"--checkonly",
 		"--dockerless",
 		fmt.Sprintf("--user=%s", c.cfg.Username),
-		fmt.Sprintf("--password=%s", c.cfg.Password),
 		fmt.Sprintf("--host=%s", c.cfg.Host),
 		fmt.Sprintf("--registry=%s", c.cfg.Registry),
 		fmt.Sprintf("--no-verify=%t", c.cfg.ScannerCLINoVerify),
@@ -79,11 +78,11 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		fmt.Sprintf("--show-will-not-fix=%t", c.cfg.ScannerCLIShowWillNotFix),
 		fmt.Sprintf("--hide-base=%t", c.cfg.ScannerCLIHideBase),
 		fmt.Sprintf("--jsonfile=%s", reportFile.Name()),
-		image,
 	}
 
-	// TODO Sanitize the args so the password is not printed no matter what's the log level!
 	log.WithFields(log.Fields{"exec": executable, "args": args}).Debug("Running scannercli")
+
+	args = append(args, fmt.Sprintf("--password=%s", c.cfg.Password), image)
 
 	cmd := exec.Command(executable, args...)
 
