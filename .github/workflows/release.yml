@@ -11,9 +11,9 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v1
         with:
-          go-version: 1.13
+          go-version: 1.14
       - name: Checkout code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Unshallow # This step is required for the changelog to work correctly
         run: git fetch --prune --unshallow
       - name: Run unit tests
