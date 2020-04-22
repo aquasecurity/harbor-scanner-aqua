@@ -1,19 +1,20 @@
 package pkg
 
 import (
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/aqua"
-	"github.com/aquasecurity/harbor-scanner-aqua/pkg/clock"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/ext"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/http/api"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/http/api/v1"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/persistence/redis"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/scanner"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/work"
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/xerrors"
-	"os"
-	"os/signal"
-	"syscall"
 )
 
 func Run(info etc.BuildInfo) error {
@@ -25,20 +26,20 @@ func Run(info etc.BuildInfo) error {
 
 	config, err := etc.GetConfig()
 	if err != nil {
-		return xerrors.Errorf("getting config: %w", err)
+		return fmt.Errorf("getting config: %w", err)
 	}
 
 	if _, err := os.Stat(config.AquaCSP.ReportsDir); os.IsNotExist(err) {
 		log.WithField("path", config.AquaCSP.ReportsDir).Debug("Creating reports dir")
 		err = os.MkdirAll(config.AquaCSP.ReportsDir, os.ModeDir)
 		if err != nil {
-			return xerrors.Errorf("creating reports dir: %w", err)
+			return fmt.Errorf("creating reports dir: %w", err)
 		}
 	}
 
 	workPool := work.New()
-	command := aqua.NewCommand(config.AquaCSP)
-	transformer := scanner.NewTransformer(clock.NewSystemClock())
+	command := aqua.NewCommand(config.AquaCSP, ext.DefaultAmbassador)
+	transformer := scanner.NewTransformer(ext.NewSystemClock())
 	adapter := scanner.NewAdapter(command, transformer)
 	store := redis.NewStore(config.Store)
 	enqueuer := scanner.NewEnqueuer(workPool, adapter, store)

@@ -22,7 +22,7 @@ func TestAdapter_Scan(t *testing.T) {
 	aquaReport := aqua.ScanReport{}
 	harborReport := harbor.ScanReport{}
 
-	command.On("Exec", aqua.ImageRef{Repository: "library/golang", Tag: "1.12.4"}).Return(aquaReport, nil)
+	command.On("Scan", aqua.ImageRef{Repository: "library/golang", Tag: "1.12.4"}).Return(aquaReport, nil)
 	transformer.On("Transform", artifact, aquaReport).Return(harborReport)
 
 	adapter := NewAdapter(command, transformer)

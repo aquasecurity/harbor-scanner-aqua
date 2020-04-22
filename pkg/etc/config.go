@@ -1,15 +1,16 @@
 package etc
 
 import (
-	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
-	"github.com/caarlos0/env/v6"
-	"github.com/sirupsen/logrus"
-	log "github.com/sirupsen/logrus"
-	"golang.org/x/xerrors"
+	"fmt"
 	"os"
 	"os/exec"
 	"sync"
 	"time"
+
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
+	"github.com/caarlos0/env/v6"
+	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 var version = "Unknown"
@@ -46,11 +47,12 @@ type AquaCSP struct {
 	Host     string `env:"SCANNER_AQUA_HOST" envDefault:"http://csp-console-svc.aqua:8080"`
 	Registry string `env:"SCANNER_AQUA_REGISTRY" envDefault:"Harbor"`
 
-	ReportsDir  string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/var/lib/scanner/reports"`
-	UseImageTag bool   `env:"SCANNER_AQUA_USE_IMAGE_TAG" envDefault:"true"`
-
-	ScannerCLINoVerify       bool `env:"SCANNER_CLI_NO_VERIFY" envDefault:"false"`
-	ScannerCLIShowNegligible bool `env:"SCANNER_CLI_SHOW_NEGLIGIBLE" envDefault:"true"`
+	UseImageTag              bool   `env:"SCANNER_AQUA_USE_IMAGE_TAG" envDefault:"true"`
+	ReportsDir               string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/var/lib/scanner/reports"`
+	ScannerCLINoVerify       bool   `env:"SCANNER_CLI_NO_VERIFY" envDefault:"false"`
+	ScannerCLIShowNegligible bool   `env:"SCANNER_CLI_SHOW_NEGLIGIBLE" envDefault:"true"`
+	ScannerCLIShowWillNotFix bool   `env:"SCANNER_CLI_SHOW_WILL_NOT_FIX" envDefault:"false"`
+	ScannerCLIHideBase       bool   `env:"SCANNER_CLI_HIDE_BASE" envDefault:"true"`
 }
 
 type Store struct {
@@ -64,7 +66,7 @@ type Store struct {
 func GetConfig() (cfg Config, err error) {
 	err = env.Parse(&cfg)
 	if err != nil {
-		return cfg, xerrors.Errorf("parsing config: %w", err)
+		return cfg, fmt.Errorf("parsing config: %w", err)
 	}
 	return
 }
