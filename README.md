@@ -191,7 +191,7 @@ $ make docker-build
 Harbor can be [installed as a Docker service][harbor-docs-installer] or deployed with [high availability via Helm][harbor-docs-helm].
 This section describes how to perform a new installation of the adapter service in both cases.
 
-Technically it's also possible to deploy Harbor with Docker and Aqua CSP on Kubernetes, and you should be able to figure
+It's also possible to deploy Harbor on Docker (outside the Kubernetes environment) to work with Aqua CSP on Kubernetes, and you should be able to figure
 it out based on the following instructions.
 
 ### Kubernetes
