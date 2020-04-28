@@ -87,7 +87,7 @@ spec:
             - name: "SCANNER_CLI_SHOW_NEGLIGIBLE"
               value: {{ .Values.scanner.aqua.scannerCLIShowNegligible | default true | quote }}
             - name: "SCANNER_CLI_SHOW_WILL_NOT_FIX"
-              value: {{ .Values.scanner.aqua.scannerCLIShowWillNotFix | default true | quote }}
+              value: {{ .Values.scanner.aqua.scannerCLIShowWillNotFix | default false | quote }}
             - name: "SCANNER_AQUA_REPORTS_DIR"
               value: {{ .Values.scanner.aqua.reportsDir | quote }}
             - name: "SCANNER_CLI_HIDE_BASE"

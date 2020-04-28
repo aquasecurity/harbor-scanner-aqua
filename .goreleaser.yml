@@ -23,8 +23,8 @@ changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - '^docs'
+      - '^test'
 dockers:
   - image_templates:
       - "docker.io/aquasec/harbor-scanner-aqua:{{ .Version }}"
