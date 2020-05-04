@@ -89,21 +89,21 @@ is translated to the following `scannercli` command:
 
 ```
 $ scannercli scan \
-    --checkonly,
-    --dockerless,
+    --checkonly \
+    --dockerless \
     --user=$SCANNER_AQUA_USERNAME \
     --password=$SCANNER_AQUA_PASSWORD \
     --host=$SCANNER_AQUA_HOST \
-    --registry-$SCANNER_AQUA_REGISTRY \
+    --registry=$SCANNER_AQUA_REGISTRY \
     --no-verify=$SCANNER_CLI_NO_VERIFY \
     --show-negligible=$SCANNER_CLI_SHOW_NEGLIGIBLE \
     --show-will-not-fix=$SCANNER_CLI_SHOW_WILL_NOT_FIX \
     --hide-base=$SCANNER_CLI_HIDE_BASE \
-    --jsonfile /var/lib/scanner/reports/aqua_scan_report_071315299.json \
+    --jsonfile /var/lib/scanner/reports/aqua_scan_report_0123456789.json \
     library/mongo:3.4-xenial
 ```
 
-Finally, the output report is transformed to Harbor's model and displayed in Harbor UI.
+Finally, the output report is transformed to Harbor's model and displayed in the Harbor interface.
 
 ## Getting started
 
@@ -156,7 +156,7 @@ $ make docker-build
 >     --set imageCredentials.username=$AQUA_REGISTRY_USERNAME \
 >     --set imageCredentials.password=$AQUA_REGISTRY_PASSWORD \
 >     --set admin.token=$AQUA_ADMIN_TOKEN \
->     --set admin.password=$AQUA_ADMIN_PASSWORD
+>     --set admin.password=$AQUA_ADMIN_PASSWORD \
 >     --set scanner.enabled="true" \
 >     --set scanner.replicaCount=1 \
 >     --set scanner.user=$SCANNER_USER \
@@ -287,7 +287,7 @@ it out based on the following instructions.
        networks:
          - harbor
        container_name: aqua-scanner
-       image: docker.io/aquasec/harbor-scanner-aqua:0.5.0
+       image: docker.io/aquasec/harbor-scanner-aqua:0.5.1
        restart: always
        cap_drop:
          - ALL
