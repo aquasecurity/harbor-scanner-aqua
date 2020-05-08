@@ -22,13 +22,16 @@ func TestRegistry_GetBasicCredentials(t *testing.T) {
 		},
 		{
 			Authorization: "Basic aGFyYm9yOnMzY3JldA==",
-
 			ExpectedUsername: "harbor",
 			ExpectedPassword: "s3cret",
 		},
 		{
 			Authorization: "Basic aGFyYm9yTmFtZQ==",
 			ExpectedError: "username and password not split by single colon",
+		},
+		{
+			Authorization: "Basic invalidbase64",
+			ExpectedError: "illegal base64 data at input byte 12",
 		},
 		{
 			Authorization: "APIKey 0123456789",
