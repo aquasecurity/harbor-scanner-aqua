@@ -53,6 +53,8 @@ type AquaCSP struct {
 	ScannerCLIShowNegligible bool   `env:"SCANNER_CLI_SHOW_NEGLIGIBLE" envDefault:"true"`
 	ScannerCLIShowWillNotFix bool   `env:"SCANNER_CLI_SHOW_WILL_NOT_FIX" envDefault:"false"`
 	ScannerCLIHideBase       bool   `env:"SCANNER_CLI_HIDE_BASE" envDefault:"true"`
+
+	ScannerCLIOverrideRegistryCredentials bool `env:"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS" envDefault:"false"`
 }
 
 type Store struct {

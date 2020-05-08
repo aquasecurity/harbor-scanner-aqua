@@ -20,21 +20,26 @@ var (
 func TestCommand_Scan(t *testing.T) {
 
 	config := etc.AquaCSP{
-		ReportsDir:               "/var/lib/reports",
-		Username:                 "scanner",
-		Password:                 "ch@ng3me!",
-		Host:                     "https://aqua.domain:8080",
-		Registry:                 "Harbor",
-		UseImageTag:              true,
-		ScannerCLINoVerify:       true,
-		ScannerCLIShowNegligible: true,
-		ScannerCLIShowWillNotFix: true,
-		ScannerCLIHideBase:       true,
+		ReportsDir:                            "/var/lib/reports",
+		Username:                              "scanner",
+		Password:                              "ch@ng3me!",
+		Host:                                  "https://aqua.domain:8080",
+		Registry:                              "Harbor",
+		UseImageTag:                           true,
+		ScannerCLINoVerify:                    true,
+		ScannerCLIShowNegligible:              true,
+		ScannerCLIShowWillNotFix:              true,
+		ScannerCLIHideBase:                    true,
+		ScannerCLIOverrideRegistryCredentials: true,
 	}
 
 	imageRef := ImageRef{
 		Repository: "library/alpine",
 		Tag:        "3.10.2",
+		Auth: RegistryAuth{
+			Username: "robotName",
+			Password: "robotPassword",
+		},
 	}
 
 	t.Run("Should return error when scannercli lookup returns error", func(t *testing.T) {
@@ -81,6 +86,8 @@ func TestCommand_Scan(t *testing.T) {
 				"--show-will-not-fix=true",
 				"--hide-base=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
+				"--registry-username=robotName",
+				"--registry-password=robotPassword",
 				"--password=ch@ng3me!",
 				"library/alpine:3.10.2",
 			},
@@ -118,6 +125,8 @@ func TestCommand_Scan(t *testing.T) {
 				"--show-will-not-fix=true",
 				"--hide-base=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
+				"--registry-username=robotName",
+				"--registry-password=robotPassword",
 				"--password=ch@ng3me!",
 				"library/alpine:3.10.2",
 			},

@@ -14,6 +14,12 @@ type ImageRef struct {
 	Repository string
 	Tag        string
 	Digest     string
+	Auth       RegistryAuth
+}
+
+type RegistryAuth struct {
+	Username string
+	Password string
 }
 
 func (ir *ImageRef) WithTag() string {
@@ -82,6 +88,10 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 
 	log.WithFields(log.Fields{"exec": executable, "args": args}).Debug("Running scannercli")
 
+	if c.cfg.ScannerCLIOverrideRegistryCredentials {
+		args = append(args, fmt.Sprintf("--registry-username=%s", imageRef.Auth.Username),
+			fmt.Sprintf("--registry-password=%s", imageRef.Auth.Password))
+	}
 	args = append(args, fmt.Sprintf("--password=%s", c.cfg.Password), image)
 
 	cmd := exec.Command(executable, args...)

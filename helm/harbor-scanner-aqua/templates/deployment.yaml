@@ -92,6 +92,8 @@ spec:
               value: {{ .Values.scanner.aqua.reportsDir | quote }}
             - name: "SCANNER_CLI_HIDE_BASE"
               value: {{ .Values.scanner.aqua.scannerCLIHideBase | default true | quote }}
+            - name: "SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS"
+              value: {{ .Values.scanner.aqua.scannerCLIOverrideRegistryCredentials | default false | quote }}
             - name: "SCANNER_AQUA_USE_IMAGE_TAG"
               value: {{ .Values.scanner.aqua.useImageTag | quote }}
             - name: "SCANNER_STORE_REDIS_URL"
