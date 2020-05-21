@@ -2,9 +2,12 @@ nameOverride: ""
 fullnameOverride: ""
 
 service:
+  ## type Kubernetes service type
   type: "ClusterIP"
+  ## port Kubernetes service port
   port: 8080
 
+## replicaCount the number of scanner adapter Pods to run
 replicaCount: 1
 
 initResources:
@@ -24,10 +27,14 @@ mainResources:
     memory: 512Mi
 
 aqua:
+  ## version the version of Aqua CSP that the adapter operates against
   version: 4.6
   registry:
+    ## server the Aqua Docker registry server
     server: "registry.aquasec.com"
+    ## username the Aqua Docker registry username
     username: ""
+    ## password the Aqua Docker registry password
     password: ""
   image:
     pullPolicy: "IfNotPresent"
@@ -36,7 +43,7 @@ scanner:
   image:
     registry: "docker.io"
     repository: "aquasec/harbor-scanner-aqua"
-    tag: "0.5.1"
+    tag: "0.6.0"
     pullPolicy: "IfNotPresent"
   logLevel: info
   api:
@@ -47,25 +54,25 @@ scanner:
     writeTimeout: 15s
     idleTimeout: 60s
   aqua:
-    # username Aqua management console username
+    ## username Aqua management console username
     username: ""
-    # password Aqua management console password
+    ## password Aqua management console password
     password: ""
-    # host Aqua management console address
+    ## host Aqua management console address
     host: "http://csp-console-svc.aqua:8080"
-    # registry the name of the Harbor registry configured in Aqua management console
+    ## registry the name of the Harbor registry configured in Aqua management console
     registry: "Harbor"
-    # reportsDir directory to save temporary scan reports
+    ## reportsDir directory to save temporary scan reports
     reportsDir: "/var/lib/scanner/reports"
-    # useImageTag the flag to determine whether the image tag or digest is used in the image reference passed to `scannercli`
+    ## useImageTag the flag to determine whether the image tag or digest is used in the image reference passed to `scannercli`
     useImageTag: true
-    # scannerCLINoVerify the flag passed to `scannercli` to skip verifying TLS certificates
+    ## scannerCLINoVerify the flag passed to `scannercli` to skip verifying TLS certificates
     scannerCLINoVerify: false
-    # scannerCLIShowNegligible the flag passed to `scannercli` to show negligible/unknown severity vulnerabilities
+    ## scannerCLIShowNegligible the flag passed to `scannercli` to show negligible/unknown severity vulnerabilities
     scannerCLIShowNegligible: true
-    # scannerCLIShowWillNotFix the flag passed to `scannercli` to show vulnerabilities that will not be fixed
+    ## scannerCLIShowWillNotFix the flag passed to `scannercli` to show vulnerabilities that will not be fixed
     scannerCLIShowWillNotFix: false
-    # scannerCLIHideBase the flag passed to `scannercli` to hide vulnerabilities in the base image
+    ## scannerCLIHideBase the flag passed to `scannercli` to hide vulnerabilities in the base image
     scannerCLIHideBase: true
   store:
     redisURL: "redis://harbor-harbor-redis:6379"
