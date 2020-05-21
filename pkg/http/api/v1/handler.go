@@ -3,6 +3,10 @@ package v1
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
+
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/http/api"
@@ -12,8 +16,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
-	"net/http"
-	"net/url"
 )
 
 const (
@@ -21,16 +23,18 @@ const (
 )
 
 type handler struct {
-	info etc.BuildInfo
+	info   etc.BuildInfo
+	config etc.Config
 	api.BaseHandler
 
 	enqueuer scanner.Enqueuer
 	store    persistence.Store
 }
 
-func NewAPIHandler(info etc.BuildInfo, enqueuer scanner.Enqueuer, store persistence.Store) http.Handler {
+func NewAPIHandler(info etc.BuildInfo, config etc.Config, enqueuer scanner.Enqueuer, store persistence.Store) http.Handler {
 	handler := &handler{
 		info:     info,
+		config:   config,
 		enqueuer: enqueuer,
 		store:    store,
 	}
@@ -209,6 +213,14 @@ func (h *handler) getMetadata(res http.ResponseWriter, _ *http.Request) {
 			"org.label-schema.build-date":         h.info.Date,
 			"org.label-schema.vcs-ref":            h.info.Commit,
 			"org.label-schema.vcs":                "https://github.com/aquasecurity/harbor-scanner-aqua",
+			"env.SCANNER_AQUA_HOST":               h.config.AquaCSP.Host,
+			"env.SCANNER_AQUA_REGISTRY":           h.config.AquaCSP.Registry,
+			"env.SCANNER_AQUA_REPORTS_DIR":        h.config.AquaCSP.ReportsDir,
+			"env.SCANNER_AQUA_USE_IMAGE_TAG":      strconv.FormatBool(h.config.AquaCSP.UseImageTag),
+			"env.SCANNER_CLI_NO_VERIFY":           strconv.FormatBool(h.config.AquaCSP.ScannerCLINoVerify),
+			"env.SCANNER_CLI_SHOW_NEGLIGIBLE":     strconv.FormatBool(h.config.AquaCSP.ScannerCLIShowNegligible),
+			"env.SCANNER_CLI_SHOW_WILL_NOT_FIX":   strconv.FormatBool(h.config.AquaCSP.ScannerCLIShowWillNotFix),
+			"env.SCANNER_CLI_HIDE_BASE":           strconv.FormatBool(h.config.AquaCSP.ScannerCLIHideBase),
 		},
 	}
 	h.WriteJSON(res, metadata, api.MimeTypeMetadata, http.StatusOK)
