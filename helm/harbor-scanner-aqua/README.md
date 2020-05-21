@@ -85,7 +85,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 
 |              Parameter                  |                                Description                              |    Default     |
 |-----------------------------------------|-------------------------------------------------------------------------|----------------|
-| `aqua.version`                          | The version of Aqua CSP that the adapter operates against               | `4.5`          |
+| `aqua.version`                          | The version of Aqua CSP that the adapter operates against               | `4.6`          |
 | `aqua.registry.server`                  | Aqua Docker registry server                                             | `registry.aquasec.com` |
 | `aqua.registry.username`                | Aqua Docker registry username                                           | N/A            |
 | `aqua.registry.password`                | Aqua Docker registry password                                           | N/A            |
@@ -117,7 +117,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.store.redisScanJobTTL`         | The time to live for persisting scan jobs and associated scan reports   | `1h`           |
 | `service.type`                          | Kubernetes service type                                                 | `LoadBalancer` |
 | `service.port`                          | Kubernetes service port                                                 | `8443`         |
-| `replicaCount`                          | Number of scanner adapter Pods to run                                   | `1`            |
+| `replicaCount`                          | The number of scanner adapter Pods to run                               | `1`            |
 
 The above parameters map to the env variables defined in [harbor-scanner-aqua](https://github.com/aquasecurity/harbor-scanner-aqua#configuration).
 

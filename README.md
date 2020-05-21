@@ -287,7 +287,7 @@ it out based on the following instructions.
        networks:
          - harbor
        container_name: aqua-scanner
-       image: docker.io/aquasec/harbor-scanner-aqua:0.5.1
+       image: docker.io/aquasec/harbor-scanner-aqua:$HARBOR_SCANNER_AQUA_VERSION
        restart: always
        cap_drop:
          - ALL
