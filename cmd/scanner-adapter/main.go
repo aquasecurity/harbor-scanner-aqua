@@ -1,10 +1,11 @@
 package main
 
 import (
+	"os"
+
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
 	log "github.com/sirupsen/logrus"
-	"os"
 )
 
 var (

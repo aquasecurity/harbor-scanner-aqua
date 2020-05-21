@@ -43,7 +43,7 @@ func Run(info etc.BuildInfo) error {
 	adapter := scanner.NewAdapter(command, transformer)
 	store := redis.NewStore(config.Store)
 	enqueuer := scanner.NewEnqueuer(workPool, adapter, store)
-	apiServer := api.NewServer(config.API, v1.NewAPIHandler(info, enqueuer, store))
+	apiServer := api.NewServer(config.API, v1.NewAPIHandler(info, config, enqueuer, store))
 
 	shutdownComplete := make(chan struct{})
 	go func() {

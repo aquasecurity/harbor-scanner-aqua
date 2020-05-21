@@ -1,21 +1,26 @@
 package v1
 
 import (
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/persistence/mock"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/scanner"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestHandler(t *testing.T) {
+
+	buildInfo := etc.BuildInfo{Version: "v0.0.5", Commit: "abc", Date: "20-04-1319T13:45:00"}
+	config, err := etc.GetConfig()
+	require.NoError(t, err)
 	enqueuer := &scanner.MockEnqueuer{}
 	store := &mock.Store{}
-	handler := NewAPIHandler(etc.BuildInfo{Version: "v0.0.5", Commit: "abc", Date: "20-04-1319T13:45:00"}, enqueuer, store)
+	handler := NewAPIHandler(buildInfo, config, enqueuer, store)
 
 	ts := httptest.NewServer(handler)
 	defer ts.Close()
@@ -47,10 +52,20 @@ func TestHandler(t *testing.T) {
   ],
   "properties": {
     "harbor.scanner-adapter/scanner-type": "os-package-vulnerability",
-    "org.label-schema.version": "v0.0.5",
+
+    "org.label-schema.version":    "v0.0.5",
     "org.label-schema.build-date": "20-04-1319T13:45:00",
-    "org.label-schema.vcs-ref": "abc",
-    "org.label-schema.vcs": "https://github.com/aquasecurity/harbor-scanner-aqua"
+    "org.label-schema.vcs-ref":    "abc",
+    "org.label-schema.vcs":        "https://github.com/aquasecurity/harbor-scanner-aqua",
+
+    "env.SCANNER_AQUA_HOST":             "http://csp-console-svc.aqua:8080",
+    "env.SCANNER_AQUA_REGISTRY":         "Harbor",
+    "env.SCANNER_AQUA_REPORTS_DIR":      "/var/lib/scanner/reports",
+    "env.SCANNER_AQUA_USE_IMAGE_TAG":    "true",
+    "env.SCANNER_CLI_NO_VERIFY":         "false",
+    "env.SCANNER_CLI_SHOW_NEGLIGIBLE":   "true",
+    "env.SCANNER_CLI_SHOW_WILL_NOT_FIX": "false",
+    "env.SCANNER_CLI_HIDE_BASE":         "true"
   }
 }`, string(bodyBytes))
 	})
