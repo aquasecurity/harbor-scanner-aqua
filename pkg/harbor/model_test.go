@@ -21,7 +21,7 @@ func TestRegistry_GetBasicCredentials(t *testing.T) {
 			ExpectedError: "parsing authorization: expected <type> <credentials> got []",
 		},
 		{
-			Authorization: "Basic aGFyYm9yOnMzY3JldA==",
+			Authorization:    "Basic aGFyYm9yOnMzY3JldA==",
 			ExpectedUsername: "harbor",
 			ExpectedPassword: "s3cret",
 		},

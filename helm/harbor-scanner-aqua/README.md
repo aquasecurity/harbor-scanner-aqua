@@ -102,7 +102,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.aqua.scannerCLIShowNegligible` | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities | `true` |
 | `scanner.aqua.scannerCLIShowWillNotFix` | The flag passed to `scannercli` to show vulnerabilities that will not be fixed | `false` |
 | `scanner.aqua.scannerCLIHideBase`       | The flag passed to `scannercli` to hide vulnerabilities in the base image | `true` |
-| `scanner.aqua.scannerCLIOverrideRegistryCredentials` | The flag to enable passing `--registry-username` and `--registry-password` flags to the `scannercli` executable binary | `false` |
+| `scanner.aqua.scannerCLIOverrideRegistryCredentials` | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary | `false` |
 | `scanner.aqua.reportsDir`               | Directory to save temporary scan reports                                | `/var/lib/scanner/reports` |
 | `scanner.aqua.useImageTag`              | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` | `true` |
 | `scanner.api.tlsEnabled`                | The flag to enable or disable TLS for HTTP                              | `true`         |

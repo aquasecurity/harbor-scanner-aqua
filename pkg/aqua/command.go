@@ -89,8 +89,8 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 	log.WithFields(log.Fields{"exec": executable, "args": args}).Debug("Running scannercli")
 
 	if c.cfg.ScannerCLIOverrideRegistryCredentials {
-		args = append(args, fmt.Sprintf("--registry-username=%s", imageRef.Auth.Username),
-			fmt.Sprintf("--registry-password=%s", imageRef.Auth.Password))
+		args = append(args, fmt.Sprintf("--robot-username=%s", imageRef.Auth.Username),
+			fmt.Sprintf("--robot-password=%s", imageRef.Auth.Password))
 	}
 	args = append(args, fmt.Sprintf("--password=%s", c.cfg.Password), image)
 
@@ -99,17 +99,21 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 	stdout, exitCode, err := c.ambassador.RunCmd(cmd)
 	if err != nil {
 		log.WithFields(log.Fields{
-			"image_ref": imageRef,
-			"exit_code": exitCode,
-			"std_out":   string(stdout),
+			"image_ref_repository": imageRef.Repository,
+			"image_ref_tag":        imageRef.Tag,
+			"image_ref_digest":     imageRef.Digest,
+			"exit_code":            exitCode,
+			"std_out":              string(stdout),
 		}).Error("Error while running scannercli command")
 		return report, fmt.Errorf("running command: %v: %v", err, string(stdout))
 	}
 
 	log.WithFields(log.Fields{
-		"image_ref": imageRef,
-		"exit_code": exitCode,
-		"std_out":   string(stdout),
+		"image_ref_repository": imageRef.Repository,
+		"image_ref_tag":        imageRef.Tag,
+		"image_ref_digest":     imageRef.Digest,
+		"exit_code":            exitCode,
+		"std_out":              string(stdout),
 	}).Trace("Running scannercli command finished")
 
 	err = json.NewDecoder(reportFile).Decode(&report)
