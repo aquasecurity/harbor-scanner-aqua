@@ -8,14 +8,14 @@ Aqua CSP Scanner as a plug-in vulnerability scanner in the Harbor registry.
 
 ```
 $ helm install harbor-scanner-aqua . \
-               --namespace harbor \
-               --set aqua.version=$AQUA_VERSION \
-               --set aqua.registry.server=registry.aquasec.com \
-               --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
-               --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
-               --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
-               --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
-               --set scanner.aqua.host=http://csp-console-svc.aqua:8080
+    --namespace harbor \
+    --set aqua.version=$AQUA_VERSION \
+    --set aqua.registry.server=registry.aquasec.com \
+    --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
+    --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
+    --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+    --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
+    --set scanner.aqua.host=http://csp-console-svc.aqua:8080
 ```
 
 ### With TLS
@@ -24,26 +24,26 @@ $ helm install harbor-scanner-aqua . \
    ```
    $ openssl genrsa -out tls.key 2048
    $ openssl req -new -x509 \
-                 -key tls.key \
-                 -out tls.crt \
-                 -days 365 \
-                 -subj /CN=harbor-scanner-aqua.harbor
+       -key tls.key \
+       -out tls.crt \
+       -days 365 \
+       -subj /CN=harbor-scanner-aqua.harbor
    ```
 2. Install the `harbor-scanner-aqua` chart:
    ```
    $ helm install harbor-scanner-aqua . \
-                  --namespace harbor \
-                  --set service.port=8443 \
-                  --set scanner.api.tlsEnabled=true \
-                  --set scanner.api.tlsCertificate="`cat tls.crt`" \
-                  --set scanner.api.tlsKey="`cat tls.key`" \
-                  --set aqua.version=$AQUA_VERSION \
-                  --set aqua.registry.server=registry.aquasec.com \
-                  --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
-                  --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
-                  --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
-                  --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
-                  --set scanner.aqua.host=http://csp-console-svc.aqua:8080
+       --namespace harbor \
+       --set service.port=8443 \
+       --set scanner.api.tlsEnabled=true \
+       --set scanner.api.tlsCertificate="`cat tls.crt`" \
+       --set scanner.api.tlsKey="`cat tls.key`" \
+       --set aqua.version=$AQUA_VERSION \
+       --set aqua.registry.server=registry.aquasec.com \
+       --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
+       --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
+       --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+       --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
+       --set scanner.aqua.host=http://csp-console-svc.aqua:8080
    ```
 
 ## Introduction
@@ -102,6 +102,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.aqua.scannerCLIShowNegligible` | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities | `true` |
 | `scanner.aqua.scannerCLIShowWillNotFix` | The flag passed to `scannercli` to show vulnerabilities that will not be fixed | `false` |
 | `scanner.aqua.scannerCLIHideBase`       | The flag passed to `scannercli` to hide vulnerabilities in the base image | `true` |
+| `scanner.aqua.scannerCLIOverrideRegistryCredentials` | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary | `false` |
 | `scanner.aqua.reportsDir`               | Directory to save temporary scan reports                                | `/var/lib/scanner/reports` |
 | `scanner.aqua.useImageTag`              | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` | `true` |
 | `scanner.api.tlsEnabled`                | The flag to enable or disable TLS for HTTP                              | `true`         |
@@ -125,7 +126,7 @@ Specify each parameter using the `--set key=value[,key=value]` argument to `helm
 
 ```
 $ helm install my-release . \
-               --namespace my-namespace \
-               --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
-               --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD
+    --namespace my-namespace \
+    --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+    --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD
 ```

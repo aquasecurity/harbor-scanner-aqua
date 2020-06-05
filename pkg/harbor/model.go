@@ -2,7 +2,11 @@ package harbor
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"strings"
 	"time"
 )
 
@@ -64,6 +68,37 @@ func (s *Severity) UnmarshalJSON(b []byte) error {
 type Registry struct {
 	URL           string `json:"url"`
 	Authorization string `json:"authorization"`
+}
+
+func (r Registry) GetBasicCredentials() (username, password string, err error) {
+	tokens := strings.Split(r.Authorization, " ")
+	if len(tokens) != 2 {
+		err = fmt.Errorf("parsing authorization: expected <type> <credentials> got [%s]", r.Authorization)
+		return
+	}
+	switch tokens[0] {
+	case "Basic":
+		return r.decodeBasicAuthentication(tokens[1])
+	}
+	err = fmt.Errorf("unsupported authorization type: %s", tokens[0])
+	return
+}
+
+func (r Registry) decodeBasicAuthentication(value string) (username, password string, err error) {
+	creds, err := base64.StdEncoding.DecodeString(value)
+	if err != nil {
+		return
+	}
+	tokens := strings.Split(string(creds), ":")
+	if len(tokens) != 2 {
+		err = errors.New("username and password not split by single colon")
+		return
+	}
+
+	username = tokens[0]
+	password = tokens[1]
+
+	return
 }
 
 type Artifact struct {

@@ -74,6 +74,9 @@ scanner:
     scannerCLIShowWillNotFix: false
     ## scannerCLIHideBase the flag passed to `scannercli` to hide vulnerabilities in the base image
     scannerCLIHideBase: true
+    ## scannerCLIOverrideRegistryCredentials the flag to enable passing `--robot-username` and `--robot-password`
+    ## flags to the `scannercli` executable binary
+    scannerCLIOverrideRegistryCredentials: false
   store:
     redisURL: "redis://harbor-harbor-redis:6379"
     redisNamespace: "harbor.scanner.aqua:store"
