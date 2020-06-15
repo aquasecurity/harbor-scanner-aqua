@@ -245,6 +245,7 @@ it out based on the following instructions.
    ```
    $ mkdir -p ./common/config/aqua-scanner
    $ mkdir -p ./data/aqua-scanner/reports
+   $ mkdir -p ./data/aqua-scanner/opt
    ```
 3. Generate certificate and private key files:
    ```
@@ -267,7 +268,7 @@ it out based on the following instructions.
    SCANNER_AQUA_PASSWORD=$AQUA_CONSOLE_PASSWORD
    SCANNER_AQUA_HOST=https://aqua.domain
    SCANNER_AQUA_REGISTRY=Harbor
-   SCANNER_AQUA_REPORTS_DIR=/var/lib/scanners/reports
+   SCANNER_AQUA_REPORTS_DIR=/var/lib/scanner/reports
    SCANNER_STORE_REDIS_URL=redis://redis:6379
    EOF
    ```
@@ -305,7 +306,10 @@ it out based on the following instructions.
            target: /cert
          - type: bind
            source: ./data/aqua-scanner/reports
-           target: /var/lib/scanners/reports
+           target: /var/lib/scanner/reports
+         - type: bind
+           source: ./data/aqua-scanner/opt
+           target: /opt/aquascans
        logging:
          driver: "syslog"
          options:
@@ -315,12 +319,21 @@ it out based on the following instructions.
          ./common/config/aqua-scanner/env
    EOF
    ```
-7. Start the adapter service:
+7. For some Docker drivers you might need to explicitly set ownership of config files and data directories to user and
+   group which runs the adapter process, i.e. `1000:1000`:
+   ```
+   $ sudo chown 1000:1000 ./data/aqua-scanner/reports
+   $ sudo chown 1000:1000 ./data/aqua-scanner/opt
+   $ sudo chown 1000:1000 ./common/config/aqua-scanner/cert/aqua-scanner.key
+   $ sudo chown 1000:1000 ./common/config/aqua-scanner/cert/aqua-scanner.key
+   $ sudo chmod +x ./scannercli && sudo chown 1000:1000 ./scannercli
+   ```
+8. Start the adapter service:
    ```
    $ docker-compose up -d
    ```
    The scanner service should be accessible at https://aqua-scanner:8443 from within the `harbor` Docker network.
-8. [Connect Harbor to Aqua scanner.](#configuring-harbor-scanner)
+9. [Connect Harbor to Aqua scanner.](#configuring-harbor-scanner)
 
 ### Configuring Harbor scanner
 
