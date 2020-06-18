@@ -218,9 +218,6 @@ func (h *handler) getMetadata(res http.ResponseWriter, _ *http.Request) {
 			"env.SCANNER_AQUA_REPORTS_DIR":        h.config.AquaCSP.ReportsDir,
 			"env.SCANNER_AQUA_USE_IMAGE_TAG":      strconv.FormatBool(h.config.AquaCSP.UseImageTag),
 			"env.SCANNER_CLI_NO_VERIFY":           strconv.FormatBool(h.config.AquaCSP.ScannerCLINoVerify),
-			"env.SCANNER_CLI_SHOW_NEGLIGIBLE":     strconv.FormatBool(h.config.AquaCSP.ScannerCLIShowNegligible),
-			"env.SCANNER_CLI_SHOW_WILL_NOT_FIX":   strconv.FormatBool(h.config.AquaCSP.ScannerCLIShowWillNotFix),
-			"env.SCANNER_CLI_HIDE_BASE":           strconv.FormatBool(h.config.AquaCSP.ScannerCLIHideBase),
 		},
 	}
 	h.WriteJSON(res, metadata, api.MimeTypeMetadata, http.StatusOK)

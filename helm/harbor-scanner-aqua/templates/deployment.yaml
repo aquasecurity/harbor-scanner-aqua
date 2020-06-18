@@ -84,14 +84,8 @@ spec:
               value: {{ .Values.scanner.aqua.registry | quote }}
             - name: "SCANNER_CLI_NO_VERIFY"
               value: {{ .Values.scanner.aqua.scannerCLINoVerify | default false | quote }}
-            - name: "SCANNER_CLI_SHOW_NEGLIGIBLE"
-              value: {{ .Values.scanner.aqua.scannerCLIShowNegligible | default true | quote }}
-            - name: "SCANNER_CLI_SHOW_WILL_NOT_FIX"
-              value: {{ .Values.scanner.aqua.scannerCLIShowWillNotFix | default false | quote }}
             - name: "SCANNER_AQUA_REPORTS_DIR"
               value: {{ .Values.scanner.aqua.reportsDir | quote }}
-            - name: "SCANNER_CLI_HIDE_BASE"
-              value: {{ .Values.scanner.aqua.scannerCLIHideBase | default true | quote }}
             - name: "SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS"
               value: {{ .Values.scanner.aqua.scannerCLIOverrideRegistryCredentials | default false | quote }}
             - name: "SCANNER_AQUA_USE_IMAGE_TAG"

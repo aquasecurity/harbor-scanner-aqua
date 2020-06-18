@@ -80,9 +80,6 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		fmt.Sprintf("--host=%s", c.cfg.Host),
 		fmt.Sprintf("--registry=%s", c.cfg.Registry),
 		fmt.Sprintf("--no-verify=%t", c.cfg.ScannerCLINoVerify),
-		fmt.Sprintf("--show-negligible=%t", c.cfg.ScannerCLIShowNegligible),
-		fmt.Sprintf("--show-will-not-fix=%t", c.cfg.ScannerCLIShowWillNotFix),
-		fmt.Sprintf("--hide-base=%t", c.cfg.ScannerCLIHideBase),
 		fmt.Sprintf("--jsonfile=%s", reportFile.Name()),
 	}
 

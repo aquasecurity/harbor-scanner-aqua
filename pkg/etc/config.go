@@ -50,9 +50,6 @@ type AquaCSP struct {
 	UseImageTag              bool   `env:"SCANNER_AQUA_USE_IMAGE_TAG" envDefault:"true"`
 	ReportsDir               string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/var/lib/scanner/reports"`
 	ScannerCLINoVerify       bool   `env:"SCANNER_CLI_NO_VERIFY" envDefault:"false"`
-	ScannerCLIShowNegligible bool   `env:"SCANNER_CLI_SHOW_NEGLIGIBLE" envDefault:"true"`
-	ScannerCLIShowWillNotFix bool   `env:"SCANNER_CLI_SHOW_WILL_NOT_FIX" envDefault:"false"`
-	ScannerCLIHideBase       bool   `env:"SCANNER_CLI_HIDE_BASE" envDefault:"true"`
 
 	ScannerCLIOverrideRegistryCredentials bool `env:"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS" envDefault:"false"`
 }
