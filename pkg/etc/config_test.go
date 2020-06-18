@@ -37,9 +37,7 @@ func TestGetConfig(t *testing.T) {
 					UseImageTag: true,
 
 					ScannerCLINoVerify:       false,
-					ScannerCLIShowNegligible: true,
-					ScannerCLIShowWillNotFix: false,
-					ScannerCLIHideBase:       true,
+
 
 					ScannerCLIOverrideRegistryCredentials: false,
 				},
@@ -67,9 +65,6 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_AQUA_USERNAME":                     "scanner",
 				"SCANNER_AQUA_PASSWORD":                     "s3cret",
 				"SCANNER_CLI_NO_VERIFY":                     "true",
-				"SCANNER_CLI_SHOW_NEGLIGIBLE":               "false",
-				"SCANNER_CLI_SHOW_WILL_NOT_FIX":             "true",
-				"SCANNER_CLI_HIDE_BASE":                     "false",
 				"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS": "true",
 			},
 			expectedConfig: Config{
@@ -89,9 +84,6 @@ func TestGetConfig(t *testing.T) {
 					ReportsDir:                            "/somewhere/else",
 					UseImageTag:                           false,
 					ScannerCLINoVerify:                    true,
-					ScannerCLIShowNegligible:              false,
-					ScannerCLIShowWillNotFix:              true,
-					ScannerCLIHideBase:                    false,
 					ScannerCLIOverrideRegistryCredentials: true,
 				},
 				Store: Store{

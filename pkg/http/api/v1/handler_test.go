@@ -62,10 +62,7 @@ func TestHandler(t *testing.T) {
     "env.SCANNER_AQUA_REGISTRY":         "Harbor",
     "env.SCANNER_AQUA_REPORTS_DIR":      "/var/lib/scanner/reports",
     "env.SCANNER_AQUA_USE_IMAGE_TAG":    "true",
-    "env.SCANNER_CLI_NO_VERIFY":         "false",
-    "env.SCANNER_CLI_SHOW_NEGLIGIBLE":   "true",
-    "env.SCANNER_CLI_SHOW_WILL_NOT_FIX": "false",
-    "env.SCANNER_CLI_HIDE_BASE":         "true"
+    "env.SCANNER_CLI_NO_VERIFY":         "false"
   }
 }`, string(bodyBytes))
 	})

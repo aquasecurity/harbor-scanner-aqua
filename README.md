@@ -99,9 +99,6 @@ $ scannercli scan \
     --robot-username=$HARBOR_ROBOT_ACCOUNT_NAME \
     --robot-password=$HARBOR_ROBOT_ACCOUNT_PASSWORD \
     --no-verify=$SCANNER_CLI_NO_VERIFY \
-    --show-negligible=$SCANNER_CLI_SHOW_NEGLIGIBLE \
-    --show-will-not-fix=$SCANNER_CLI_SHOW_WILL_NOT_FIX \
-    --hide-base=$SCANNER_CLI_HIDE_BASE \
     --jsonfile /var/lib/scanner/reports/aqua_scan_report_0123456789.json \
     library/mongo:3.4-xenial
 ```
@@ -377,9 +374,6 @@ Configuration of the adapter is done via environment variables at startup.
 | `SCANNER_AQUA_REPORTS_DIR`                  | `/var/lib/scanner/reports` | Directory to save temporary scan reports                |
 | `SCANNER_AQUA_USE_IMAGE_TAG`                | `true`   | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` |
 | `SCANNER_CLI_NO_VERIFY`                     | `false`  | The flag passed to `scannercli` to skip verifying TLS certificates         |
-| `SCANNER_CLI_SHOW_NEGLIGIBLE`               | `true`   | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities |
-| `SCANNER_CLI_SHOW_WILL_NOT_FIX`             | `false`  | The flag passed to `scannercli` to show vulnerabilities that will not be fixed |
-| `SCANNER_CLI_HIDE_BASE`                     | `true`   | The flag passed to `scannercli` to hide vulnerabilities in the base image |
 | `SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS` | `false`  | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary |
 | `SCANNER_STORE_REDIS_URL`                   | `redis://harbor-harbor-redis:6379` | Redis server URI for a redis store      |
 | `SCANNER_STORE_REDIS_NAMESPACE`             | `harbor.scanner.aqua:store` | A namespace for keys in a redis store          |
