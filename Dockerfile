@@ -1,8 +1,10 @@
-FROM alpine:3
+FROM alpine:3.9
 
-RUN apk add --no-cache ca-certificates \
-    && update-ca-certificates \
-    && rm -rf /var/cache/apk/*
+RUN echo "@edge http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
+
+RUN apk update \
+    && apk upgrade musl \
+    && apk add ca-certificates dpkg@edge rpm@edge expat@edge libbz2@edge libarchive@edge db@edge
 
 RUN adduser -u 1000 -D -g '' scanner scanner
 
