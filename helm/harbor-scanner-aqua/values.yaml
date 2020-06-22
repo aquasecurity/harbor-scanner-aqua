@@ -68,6 +68,8 @@ scanner:
     useImageTag: true
     ## scannerCLINoVerify the flag passed to `scannercli` to skip verifying TLS certificates
     scannerCLINoVerify: false
+    ## scannerCLIShowNegligible the flag passed to `scannercli` to show negligible/unknown severity vulnerabilities
+    scannerCLIShowNegligible: true
     ## scannerCLIOverrideRegistryCredentials the flag to enable passing `--robot-username` and `--robot-password`
     ## flags to the `scannercli` executable binary
     scannerCLIOverrideRegistryCredentials: false

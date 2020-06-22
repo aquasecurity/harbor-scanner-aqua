@@ -27,6 +27,7 @@ func TestCommand_Scan(t *testing.T) {
 		Registry:                              "Harbor",
 		UseImageTag:                           true,
 		ScannerCLINoVerify:                    true,
+		ScannerCLIShowNegligible:              true,
 		ScannerCLIOverrideRegistryCredentials: true,
 	}
 
@@ -79,6 +80,7 @@ func TestCommand_Scan(t *testing.T) {
 				"--host=https://aqua.domain:8080",
 				"--registry=Harbor",
 				"--no-verify=true",
+				"--show-negligible=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
 				"--robot-username=robotName",
 				"--robot-password=robotPassword",
@@ -115,6 +117,7 @@ func TestCommand_Scan(t *testing.T) {
 				"--host=https://aqua.domain:8080",
 				"--registry=Harbor",
 				"--no-verify=true",
+				"--show-negligible=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
 				"--robot-username=robotName",
 				"--robot-password=robotPassword",
