@@ -43,7 +43,7 @@ scanner:
   image:
     registry: "docker.io"
     repository: "aquasec/harbor-scanner-aqua"
-    tag: "0.8.0"
+    tag: "0.8.1"
     pullPolicy: "IfNotPresent"
   logLevel: info
   api:
