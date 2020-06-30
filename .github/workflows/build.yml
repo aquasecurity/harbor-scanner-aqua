@@ -3,17 +3,7 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - '*.md'
-      - 'docs/**'
-      - 'LICENSE'
-      - 'NOTICE'
   pull_request:
-    paths-ignore:
-      - '*.md'
-      - 'docs/**'
-      - 'LICENSE'
-      - 'NOTICE'
 jobs:
   build:
     name: Build

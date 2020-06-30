@@ -1,7 +1,7 @@
 apiVersion: v1
 name: harbor-scanner-aqua
-version: 0.8.1
-appVersion: 0.8.1
+version: 0.8.2
+appVersion: 0.8.2
 description: Harbor scanner adapter for Aqua CSP scanner
 keywords:
   - scanner
