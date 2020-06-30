@@ -396,12 +396,13 @@ pulling an image, which it needs to be able to do in order to scan it.
 
 ![](docs/images/harbor_deployment_security.png)
 
-The available solution depends on the version of your Aqua CSP deployment. In `scannercli` version >= **TBD** we've
-introduced new `--rebot-username` and `--robot-password` args to respect credentials provided by Harbor.
+The available solution depends on the version of your Aqua CSP deployment. In `scannercli` version >= **4.6.20181 (4.6 update 16)**
+we've introduced new `--robot-username` and `--robot-password` flags to respect credentials provided by Harbor.
 
-- For Aqua CSP version < **TBD** you can only disable deployment security checks in the Harbor interface under the
-  project configuration.
-- For Aqua CSP version >= **TBD** set the value of the `SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS` env to `true`.
+- For Aqua CSP version < **4.6.20181 (4.6 update 16)** you can only disable deployment security checks in the Harbor
+  interface under the project configuration.
+- For Aqua CSP version >= **4.6.20181 (4.6 update 16)** set the value of the `SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS`
+  env to `true`.
 
 ## Contributing
 
