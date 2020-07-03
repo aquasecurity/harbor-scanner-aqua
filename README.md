@@ -387,7 +387,7 @@ Configuration of the adapter is done via environment variables at startup.
 
 ### Error: failed getting image manifest: 412 Precondition Failed
 
-Currently, there's a limitation of `scannercli` in Aqua CSP version < **4.6.20181 (4.6 update 16)** which does not accept Harbor robot account
+Currently, there's a limitation of `scannercli` in Aqua CSP versions < **4.6.20181 (4.6 update 16)** which do not accept Harbor robot account
 credentials passed by a Harbor scan job to the adapter service. This effectively means that the Aqua CSP scanner is
 using the credentials provided in Aqua CSP management console under the **Integrations** / **Image Registries** section.
 However, these credentials do not have enough permissions to bypass the deployment security checker when it's enabled in
