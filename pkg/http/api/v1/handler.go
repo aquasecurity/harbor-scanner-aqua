@@ -220,6 +220,7 @@ func (h *handler) getMetadata(res http.ResponseWriter, _ *http.Request) {
 			"env.SCANNER_CLI_NO_VERIFY":                     strconv.FormatBool(h.config.AquaCSP.ScannerCLINoVerify),
 			"env.SCANNER_CLI_SHOW_NEGLIGIBLE":               strconv.FormatBool(h.config.AquaCSP.ScannerCLIShowNegligible),
 			"env.SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS": strconv.FormatBool(h.config.AquaCSP.ScannerCLIOverrideRegistryCredentials),
+			"env.SCANNER_CLI_DIRECT_CC":                     strconv.FormatBool(h.config.AquaCSP.ScannerCLIDirectCC),
 		},
 	}
 	h.WriteJSON(res, metadata, api.MimeTypeMetadata, http.StatusOK)

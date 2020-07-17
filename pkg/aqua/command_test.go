@@ -29,6 +29,7 @@ func TestCommand_Scan(t *testing.T) {
 		ScannerCLINoVerify:                    true,
 		ScannerCLIShowNegligible:              true,
 		ScannerCLIOverrideRegistryCredentials: true,
+		ScannerCLIDirectCC:                    true,
 	}
 
 	imageRef := ImageRef{
@@ -80,6 +81,7 @@ func TestCommand_Scan(t *testing.T) {
 				"--host=https://aqua.domain:8080",
 				"--registry=Harbor",
 				"--no-verify=true",
+				"--direct-cc=true",
 				"--show-negligible=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
 				"--robot-username=robotName",
@@ -117,6 +119,7 @@ func TestCommand_Scan(t *testing.T) {
 				"--host=https://aqua.domain:8080",
 				"--registry=Harbor",
 				"--no-verify=true",
+				"--direct-cc=true",
 				"--show-negligible=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
 				"--robot-username=robotName",
