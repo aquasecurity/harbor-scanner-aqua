@@ -51,6 +51,7 @@ type AquaCSP struct {
 	ReportsDir               string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/var/lib/scanner/reports"`
 	ScannerCLINoVerify       bool   `env:"SCANNER_CLI_NO_VERIFY" envDefault:"false"`
 	ScannerCLIShowNegligible bool   `env:"SCANNER_CLI_SHOW_NEGLIGIBLE" envDefault:"true"`
+	ScannerCLIDirectCC       bool   `env:"SCANNER_CLI_DIRECT_CC" envDefault:"false"`
 
 	ScannerCLIOverrideRegistryCredentials bool `env:"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS" envDefault:"false"`
 }

@@ -73,6 +73,8 @@ scanner:
     ## scannerCLIOverrideRegistryCredentials the flag to enable passing `--robot-username` and `--robot-password`
     ## flags to the `scannercli` executable binary
     scannerCLIOverrideRegistryCredentials: false
+    ## scannerCLIDirectCC the flag passed to `scannercli` to contact CyberCenter directly (rather than through the Aqua server)
+    scannerCLIDirectCC: false
   store:
     redisURL: "redis://harbor-harbor-redis:6379"
     redisNamespace: "harbor.scanner.aqua:store"
