@@ -3,6 +3,7 @@
 [![GitHub Release Action][release-action-img]][actions]
 [![Codecov][codecov-img]][codecov]
 [![Go Report Card][report-card-img]][report-card]
+![Docker Pulls][docker-pulls]
 [![License][license-img]][license]
 
 # Harbor Scanner Adapter for Aqua CSP Scanner
@@ -29,6 +30,10 @@ for providing vulnerability reports on images stored in Harbor registry as part 
   - [Configuring Harbor scanner](#configuring-harbor-scanner)
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
+  - [Error: Failed getting image manifest: 412 Precondition Failed](#error-failed-getting-image-manifest-412-precondition-failed)
+  - [Error: Failed scanning image: image was not found in registry](#error-failed-scanning-image-image-was-not-found-in-registry)
+  - [Error: Failed scanning image: no such registry](#error-failed-scanning-image-no-such-registry)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Requirements
@@ -39,7 +44,7 @@ for providing vulnerability reports on images stored in Harbor registry as part 
    the [environment variables](#configuration).
 3. The adapter service requires the `scannercli` executable binary, in version matching the Aqua CSP, to be mounted
    at `/usr/local/bin/scannercli`. The provided Helm chart mounts the `scannercli` executable automatically by pulling
-   the `registry.aquasec.com/scanner:$AQUA_CSP_VERSION` image from Aqua Registry and running it as an [init container][k8s-init-containers].
+   the `registry.aquasec.com/scanner:$AQUA_VERSION` image from Aqua Registry and running it as an [init container][k8s-init-containers].
    The init container's command is configured to copy the executable from the container's filesystem to an [emptyDir][k8s-volume-emptyDir]
    volume, which is shared with the main container. This makes the `scannercli` executable available to the main container at
    `/usr/local/bin/scannercli`.
@@ -105,6 +110,13 @@ $ scannercli scan \
 ```
 
 Finally, the output report is transformed to Harbor's model and displayed in the Harbor interface.
+
+> **NOTE:** The `SCANNER_AQUA_USE_IMAGE_TAG` env determines whether the image tag (`library/mongo:3.4-xenial`)
+> or digest (`library/mongo@sha256:6c3c624b58dbbcd3c0dd82b4c53f04194d1247c6eebdaab7c610cf7d66709b3b`) is used as
+> the image identifier passed to the `scannercli` command.
+
+> **NOTE:** Harbor versions >= 2.0 no longer set the `tag` property in the scan request and therefore the value of
+> the `SCANNER_AQUA_USE_IMAGE_TAG` env must be set to `false`.
 
 ## Getting started
 
@@ -386,7 +398,7 @@ Configuration of the adapter is done via environment variables at startup.
 
 ## Troubleshooting
 
-### Error: failed getting image manifest: 412 Precondition Failed
+### Error: Failed getting image manifest: 412 Precondition Failed
 
 Currently, there's a limitation of `scannercli` in Aqua CSP versions < **4.6.20181 (4.6 update 16)** which do not accept Harbor robot account
 credentials passed by a Harbor scan job to the adapter service. This effectively means that the Aqua CSP scanner is
@@ -404,6 +416,17 @@ we've introduced new `--robot-username` and `--robot-password` flags to respect 
   interface under the project configuration.
 - For Aqua CSP version >= **4.6.20181 (4.6 update 16)** set the value of the `SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS`
   env to `true`.
+
+### Error: Failed scanning image: image was not found in registry
+
+For Harbor versions >= 2.0, which do not set the `tag` property in a scan request anymore, the value of the
+`SCANNER_AQUA_USE_IMAGE_TAG` env must be set to `false`. This informs the adapter service to use digest rather than tag
+as the image identifier.
+
+### Error: Failed scanning image: no such registry
+
+Make sure the value of the `SCANNER_AQUA_REGISTRY` env is the same as the **Registry Name** entered in Aqua CSP
+management console.
 
 ## Contributing
 
@@ -423,6 +446,7 @@ This project is licensed under the [Apache 2.0](LICENSE).
 [codecov]: https://codecov.io/gh/aquasecurity/harbor-scanner-aqua
 [report-card-img]: https://goreportcard.com/badge/github.com/aquasecurity/harbor-scanner-aqua
 [report-card]: https://goreportcard.com/report/github.com/aquasecurity/harbor-scanner-aqua
+[docker-pulls]: https://img.shields.io/docker/pulls/aquasec/harbor-scanner-aqua
 [license-img]: https://img.shields.io/github/license/aquasecurity/harbor-scanner-aqua.svg
 [license]: https://github.com/aquasecurity/harbor-scanner-aqua/blob/master/LICENSE
 [harbor-url]: https://github.com/goharbor/harbor
