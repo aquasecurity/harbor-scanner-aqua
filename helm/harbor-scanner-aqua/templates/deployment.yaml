@@ -63,11 +63,11 @@ spec:
             - name: "SCANNER_API_ADDR"
               value: ":{{ .Values.service.port }}"
             - name: "SCANNER_API_READ_TIMEOUT"
-              value: {{ .Values.scanner.api.readTimeout }}
+              value: {{ .Values.scanner.api.readTimeout | default "15s" | quote }}
             - name: "SCANNER_API_WRITE_TIMEOUT"
-              value: {{ .Values.scanner.api.writeTimeout }}
+              value: {{ .Values.scanner.api.writeTimeout | default "15s" | quote }}
             - name: "SCANNER_API_IDLE_TIMEOUT"
-              value: {{ .Values.scanner.api.idleTimeout }}
+              value: {{ .Values.scanner.api.idleTimeout | default "60s" | quote }}
             - name: "SCANNER_AQUA_USERNAME"
               valueFrom:
                 secretKeyRef:
@@ -81,7 +81,7 @@ spec:
             - name: "SCANNER_AQUA_HOST"
               value: {{ .Values.scanner.aqua.host | quote }}
             - name: "SCANNER_AQUA_REGISTRY"
-              value: {{ .Values.scanner.aqua.registry | quote }}
+              value: {{ .Values.scanner.aqua.registry | default "Harbor" | quote }}
             - name: "SCANNER_CLI_NO_VERIFY"
               value: {{ .Values.scanner.aqua.scannerCLINoVerify | default false | quote }}
             - name: "SCANNER_CLI_SHOW_NEGLIGIBLE"
@@ -93,17 +93,17 @@ spec:
             - name: "SCANNER_CLI_DIRECT_CC"
               value: {{ .Values.scanner.aqua.scannerCLIDirectCC | default false | quote }}
             - name: "SCANNER_AQUA_USE_IMAGE_TAG"
-              value: {{ .Values.scanner.aqua.useImageTag | quote }}
+              value: {{ .Values.scanner.aqua.useImageTag | default false | quote }}
             - name: "SCANNER_STORE_REDIS_URL"
               value: {{ .Values.scanner.store.redisURL | quote }}
             - name: "SCANNER_STORE_REDIS_NAMESPACE"
-              value: {{ .Values.scanner.store.redisNamespace | quote }}
+              value: {{ .Values.scanner.store.redisNamespace | default "harbor.scanner.aqua:store" | quote }}
             - name: "SCANNER_STORE_REDIS_POOL_MAX_ACTIVE"
-              value: {{ .Values.scanner.store.redisPoolMaxActive | quote }}
+              value: {{ .Values.scanner.store.redisPoolMaxActive | default 5 | quote }}
             - name: "SCANNER_STORE_REDIS_POOL_MAX_IDLE"
-              value: {{ .Values.scanner.store.redisPoolMaxIdle | quote }}
+              value: {{ .Values.scanner.store.redisPoolMaxIdle | default 5 | quote }}
             - name: "SCANNER_STORE_REDIS_SCAN_JOB_TTL"
-              value: {{ .Values.scanner.store.redisScanJobTTL | quote }}
+              value: {{ .Values.scanner.store.redisScanJobTTL | default "1h" | quote }}
             {{- if .Values.scanner.api.tlsEnabled }}
             - name: "SCANNER_API_TLS_CERTIFICATE"
               value: "/certs/tls.crt"
@@ -112,7 +112,7 @@ spec:
             {{- end }}
           ports:
             - name: api-server
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.service.port | default 8080 }}
           livenessProbe:
             httpGet:
               scheme: {{ include "probeScheme" . }}

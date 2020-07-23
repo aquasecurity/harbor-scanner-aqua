@@ -107,7 +107,7 @@ $ scannercli scan \
     --no-verify=$SCANNER_CLI_NO_VERIFY \
     --show-negligible=$SCANNER_CLI_SHOW_NEGLIGIBLE \
     --jsonfile /var/lib/scanner/reports/aqua_scan_report_0123456789.json \
-    library/mongo:3.4-xenial
+    library/mongo@sha256:6c3c624b58dbbcd3c0dd82b4c53f04194d1247c6eebdaab7c610cf7d66709b3b
 ```
 
 Finally, the output report is transformed to Harbor's model and displayed in the Harbor interface.
@@ -386,7 +386,7 @@ Configuration of the adapter is done via environment variables at startup.
 | `SCANNER_AQUA_HOST`                         | `http://csp-console-svc.aqua:8080` | Aqua management console address                 |
 | `SCANNER_AQUA_REGISTRY`                     | `Harbor` | The name of the Harbor registry configured in Aqua management console     |
 | `SCANNER_AQUA_REPORTS_DIR`                  | `/var/lib/scanner/reports` | Directory to save temporary scan reports                |
-| `SCANNER_AQUA_USE_IMAGE_TAG`                | `true`   | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` |
+| `SCANNER_AQUA_USE_IMAGE_TAG`                | `false`  | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` |
 | `SCANNER_CLI_NO_VERIFY`                     | `false`  | The flag passed to `scannercli` to skip verifying TLS certificates         |
 | `SCANNER_CLI_SHOW_NEGLIGIBLE`               | `true`   | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities |
 | `SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS` | `false`  | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary |

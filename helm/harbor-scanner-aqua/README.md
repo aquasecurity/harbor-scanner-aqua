@@ -103,7 +103,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.aqua.scannerCLIOverrideRegistryCredentials` | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary | `false` |
 | `scanner.aqua.scannerCLIDirectCC`       | The flag passed to `scannercli` to contact CyberCenter directly (rather than through the Aqua server) | `false` |
 | `scanner.aqua.reportsDir`               | Directory to save temporary scan reports                                | `/var/lib/scanner/reports` |
-| `scanner.aqua.useImageTag`              | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` | `true` |
+| `scanner.aqua.useImageTag`              | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` | `false` |
 | `scanner.api.tlsEnabled`                | The flag to enable or disable TLS for HTTP                              | `true`         |
 | `scanner.api.tlsCertificate`            | The absolute path to the x509 certificate file                          |                |
 | `scanner.api.tlsKey`                    | The absolute path to the x509 private key file                          |                |
@@ -115,8 +115,8 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.store.redisPoolMaxActive`      | The max number of connections allocated by the pool for a redis store   | `5`            |
 | `scanner.store.redisPoolMaxIdle`        | The max number of idle connections in the pool for a redis store        | `5`            |
 | `scanner.store.redisScanJobTTL`         | The time to live for persisting scan jobs and associated scan reports   | `1h`           |
-| `service.type`                          | Kubernetes service type                                                 | `LoadBalancer` |
-| `service.port`                          | Kubernetes service port                                                 | `8443`         |
+| `service.type`                          | Kubernetes service type                                                 | `ClusterIP`    |
+| `service.port`                          | Kubernetes service port                                                 | `8080`         |
 | `replicaCount`                          | The number of scanner adapter Pods to run                               | `1`            |
 
 The above parameters map to the env variables defined in [harbor-scanner-aqua](https://github.com/aquasecurity/harbor-scanner-aqua#configuration).
