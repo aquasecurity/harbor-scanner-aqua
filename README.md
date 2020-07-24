@@ -33,6 +33,7 @@ for providing vulnerability reports on images stored in Harbor registry as part 
   - [Error: Failed getting image manifest: 412 Precondition Failed](#error-failed-getting-image-manifest-412-precondition-failed)
   - [Error: Failed scanning image: image was not found in registry](#error-failed-scanning-image-image-was-not-found-in-registry)
   - [Error: Failed scanning image: no such registry](#error-failed-scanning-image-no-such-registry)
+  - [Scans are not displayed in the CI/CD Scans page](#scans-are-not-displayed-in-the-cicd-scans-page)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -427,6 +428,18 @@ as the image identifier.
 
 Make sure the value of the `SCANNER_AQUA_REGISTRY` env is the same as the **Registry Name** entered in Aqua CSP
 management console.
+
+### Scans are not displayed in the CI/CD Scans page
+
+Normally, scans performed via the `scannercli` scan command (not through the daemon mode) are only saved if the images
+are also registered in Aqua CSP. To store and display all `scannercli` scans in the **CI/CD Scans** page, accessible
+from within the **Images** page, enable the **Save CI/CD scans** option in the Aqua CSP management console.
+
+![](docs/images/aqua_settings_save_cicd_scans.png)
+
+Now, even if the images stored in Harbor were not registered in Aqua CSP, you'd see them in the **CI/CD Scans** page.
+
+![](docs/images/aqua_cicd_scans_page.png)
 
 ## Contributing
 
