@@ -65,7 +65,7 @@ scanner:
     ## reportsDir directory to save temporary scan reports
     reportsDir: "/var/lib/scanner/reports"
     ## useImageTag the flag to determine whether the image tag or digest is used in the image reference passed to `scannercli`
-    useImageTag: true
+    useImageTag: false
     ## scannerCLINoVerify the flag passed to `scannercli` to skip verifying TLS certificates
     scannerCLINoVerify: false
     ## scannerCLIShowNegligible the flag passed to `scannercli` to show negligible/unknown severity vulnerabilities
