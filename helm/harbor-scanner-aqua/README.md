@@ -110,10 +110,10 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.api.readTimeout`               | The maximum duration for reading the entire request, including the body | `15s`          |
 | `scanner.api.writeTimeout`              | The maximum duration before timing out writes of the response           | `15s`          |
 | `scanner.api.idleTimeout`               | The maximum amount of time to wait for the next request when keep-alives are enabled | `60s` |
-| `scanner.store.redisURL`                | Redis server URI for a redis store                                      | `redis://harbor-harbor-redis:6379` |
-| `scanner.store.redisNamespace`          | A namespace for keys in a redis store                                   | `harbor.scanner.aqua:store` |
-| `scanner.store.redisPoolMaxActive`      | The max number of connections allocated by the pool for a redis store   | `5`            |
-| `scanner.store.redisPoolMaxIdle`        | The max number of idle connections in the pool for a redis store        | `5`            |
+| `scanner.store.redisURL`                | The server URI for the Redis store                                      | `redis://harbor-harbor-redis:6379` |
+| `scanner.store.redisNamespace`          | The namespace for keys in the Redis store                               | `harbor.scanner.aqua:store` |
+| `scanner.store.redisPoolMaxActive`      | The max number of connections allocated by the pool for the Redis store | `5`            |
+| `scanner.store.redisPoolMaxIdle`        | The max number of idle connections in the pool for the Redis store      | `5`            |
 | `scanner.store.redisScanJobTTL`         | The time to live for persisting scan jobs and associated scan reports   | `1h`           |
 | `service.type`                          | Kubernetes service type                                                 | `ClusterIP`    |
 | `service.port`                          | Kubernetes service port                                                 | `8080`         |
