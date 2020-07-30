@@ -43,15 +43,21 @@ scanner:
   image:
     registry: "docker.io"
     repository: "aquasec/harbor-scanner-aqua"
-    tag: "0.9.0"
+    tag: "0.10.0"
     pullPolicy: "IfNotPresent"
   logLevel: info
   api:
+    ## tlsEnabled the flag to enable TLS for HTTP
     tlsEnabled: false
+    ## tlsCertificate the absolute path to the x509 certificate file
     tlsCertificate: ""
+    ## tlsKey the absolute path to the x509 private key file
     tlsKey: ""
+    ## readTimeout the maximum duration for reading the entire request, including the body
     readTimeout: 15s
+    ## writeTimeout the maximum duration before timing out writes of the response
     writeTimeout: 15s
+    ## idleTimeout the maximum amount of time to wait for the next request when keep-alives are enabled
     idleTimeout: 60s
   aqua:
     ## username Aqua management console username
@@ -76,8 +82,13 @@ scanner:
     ## scannerCLIDirectCC the flag passed to `scannercli` to contact CyberCenter directly (rather than through the Aqua server)
     scannerCLIDirectCC: false
   store:
+    ## redisURL the server URI for the Redis store
     redisURL: "redis://harbor-harbor-redis:6379"
+    ## redisNamespace the namespace for keys in the Redis store
     redisNamespace: "harbor.scanner.aqua:store"
+    ## redisPoolMaxActive the max number of connections allocated by the pool for the Redis store
     redisPoolMaxActive: 5
+    ## redisPoolMaxIdle the max number of idle connections in the pool for the Redis store
     redisPoolMaxIdle: 5
+    ## redisScanJobTTL the time to live for persisting scan jobs and associated scan reports
     redisScanJobTTL: "1h"
