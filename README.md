@@ -36,7 +36,6 @@ for providing vulnerability reports on images stored in Harbor registry as part 
   - [Error: Failed scanning image: no such registry](#error-failed-scanning-image-no-such-registry)
   - [Scans are not displayed in the CI/CD Scans page](#scans-are-not-displayed-in-the-cicd-scans-page)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Requirements
 
@@ -259,7 +258,7 @@ The harbor-scanner-aqua’s Helm chart deployment template:
 
 Therefore, the harbor-scanner-aqua deployment will be accepted by OpenShift Container Platform only when a service
 account is granted access to a SCC that:
-* Allows user with ID `1000`
+* Allows container user with ID `1000`
 * Allows fsGroup with ID `1000`
 
 For example, if the scanner adapter installed as the Helm release called `harbor-scanner-aqua` in the `harbor` namespace,
@@ -269,7 +268,7 @@ the following command has to be run by the administrator to accept the pods:
 $ oc adm policy add-scc-to-user <scc name> system:serviceaccount:harbor:harbor-scanner-aqua
 ```
 
-where `<scc name>` is one of the predefined SCCs or a custom CSS created by the administrator.
+where `<scc name>` is one of the predefined SCCs or a custom SCC created by the administrator.
 
 ### Docker
 
@@ -475,10 +474,6 @@ Now, even if the images stored in Harbor were not registered in Aqua CSP, you'd 
 
 Please read [CODE_OF_CONDUCT.md][coc-url] for details on our code of conduct, and the process for submitting pull
 requests.
-
-## License
-
-This project is licensed under the [Apache 2.0](LICENSE).
 
 [release-img]: https://img.shields.io/github/release/aquasecurity/harbor-scanner-aqua.svg?logo=github
 [release]: https://github.com/aquasecurity/harbor-scanner-aqua/releases
