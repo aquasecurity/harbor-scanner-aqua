@@ -26,6 +26,7 @@ for providing vulnerability reports on images stored in Harbor registry as part 
   - [Running on Kubernetes](#running-on-kubernetes)
 - [Deployment](#deployment)
   - [Kubernetes](#kubernetes)
+  - [OpenShift Container Platform](#openshift-container-platform)
   - [Docker](#docker)
   - [Configuring Harbor scanner](#configuring-harbor-scanner)
 - [Configuration](#configuration)
@@ -240,6 +241,35 @@ it out based on the following instructions.
    ```
    The scanner service should be accessible at https://harbor-scanner-aqua.harbor:8443 from within the cluster.
 3. [Connect Harbor to Aqua scanner.](#configuring-harbor-scanner)
+
+### OpenShift Container Platform
+
+Similar to the way that RBAC resources control user access, administrators can use Security Context Constraints (SCCs)
+to control permissions for pods. These permissions include actions that a pod can perform and what resources it can
+access. You can use SCCs to define a set of conditions that a pod must run with in order to be accepted into the system.
+
+In particular, SCCs allow an administrator to control:
+* The container user ID
+* The allocation of an fsGroup that owns the pod's volumes
+
+The harbor-scanner-aqua’s Helm chart deployment template:
+* Runs the underlying pod with a dedicated service account (named after a Helm release)
+* Requires that the pod's containers run as user with ID `1000`
+* Requires that fsGroup that owns the pod's volumes has ID `1000`
+
+Therefore, the harbor-scanner-aqua deployment will be accepted by OpenShift Container Platform only when a service
+account is granted access to a SCC that:
+* Allows user with ID `1000`
+* Allows fsGroup with ID `1000`
+
+For example, if the scanner adapter installed as the Helm release called `harbor-scanner-aqua` in the `harbor` namespace,
+the following command has to be run by the administrator to accept the pods:
+
+```
+$ oc adm policy add-scc-to-user <scc name> system:serviceaccount:harbor:harbor-scanner-aqua
+```
+
+where `<scc name>` is one of the predefined SCCs or a custom CSS created by the administrator.
 
 ### Docker
 
