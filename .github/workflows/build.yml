@@ -2,7 +2,7 @@ name: build
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
 jobs:
   build:
@@ -22,12 +22,11 @@ jobs:
       - name: Upload code coverage
         uses: codecov/codecov-action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.txt
       - name: Release snapshot
         uses: goreleaser/goreleaser-action@v2
         with:
-          verson: v0.138.0
+          verson: v0.148.0
           args: release --snapshot --skip-publish --rm-dist
       - name: Scan image for vulnerabilities
         uses: docker://docker.io/aquasec/trivy
