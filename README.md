@@ -1,6 +1,5 @@
 [![GitHub release][release-img]][release]
 [![GitHub Build Action][build-action-img]][actions]
-[![GitHub Release Action][release-action-img]][actions]
 [![Codecov][codecov-img]][codecov]
 [![Go Report Card][report-card-img]][report-card]
 ![Docker Pulls][docker-pulls]
@@ -478,15 +477,14 @@ requests.
 [release-img]: https://img.shields.io/github/release/aquasecurity/harbor-scanner-aqua.svg?logo=github
 [release]: https://github.com/aquasecurity/harbor-scanner-aqua/releases
 [build-action-img]: https://github.com/aquasecurity/harbor-scanner-aqua/workflows/build/badge.svg
-[release-action-img]: https://github.com/aquasecurity/harbor-scanner-aqua/workflows/release/badge.svg
 [actions]: https://github.com/aquasecurity/harbor-scanner-aqua/actions
-[codecov-img]: https://codecov.io/gh/aquasecurity/harbor-scanner-aqua/branch/master/graph/badge.svg
+[codecov-img]: https://codecov.io/gh/aquasecurity/harbor-scanner-aqua/branch/main/graph/badge.svg
 [codecov]: https://codecov.io/gh/aquasecurity/harbor-scanner-aqua
 [report-card-img]: https://goreportcard.com/badge/github.com/aquasecurity/harbor-scanner-aqua
 [report-card]: https://goreportcard.com/report/github.com/aquasecurity/harbor-scanner-aqua
 [docker-pulls]: https://img.shields.io/docker/pulls/aquasec/harbor-scanner-aqua
 [license-img]: https://img.shields.io/github/license/aquasecurity/harbor-scanner-aqua.svg
-[license]: https://github.com/aquasecurity/harbor-scanner-aqua/blob/master/LICENSE
+[license]: https://github.com/aquasecurity/harbor-scanner-aqua/blob/main/LICENSE
 [harbor-url]: https://github.com/goharbor/harbor
 [harbor-helm-chart]: https://github.com/goharbor/harbor-helm
 [harbor-docs-installer]: https://goharbor.io/docs/1.10/install-config/download-installer/
@@ -497,4 +495,4 @@ requests.
 [aqua-docs-scanner-binary]: https://read.aquasec.com/docs/aqua-scanner-executable-binary
 [aqua-helm-chart]: https://github.com/aquasecurity/aqua-helm
 [download-scannercli]: https://read.aquasec.com/docs/aqua-scanner-command-line#section-obtain-the-scanner-executable-binary
-[coc-url]: https://github.com/aquasecurity/.github/blob/master/CODE_OF_CONDUCT.md
+[coc-url]: https://github.com/aquasecurity/.github/blob/main/CODE_OF_CONDUCT.md
