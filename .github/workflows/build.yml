@@ -15,6 +15,8 @@ jobs:
           go-version: 1.14
       - name: Checkout code
         uses: actions/checkout@v2
+      - name: yaml-lint
+        uses: ibiqlik/action-yamllint@v3
       - name: Run unit tests
         run: make test
       - name: Run integration tests
