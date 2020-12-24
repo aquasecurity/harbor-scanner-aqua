@@ -29,6 +29,7 @@ changelog:
 dockers:
   - image_templates:
       - "docker.io/aquasec/harbor-scanner-aqua:{{ .Version }}"
+      - "public.ecr.aws/aquasecurity/harbor-scanner-aqua:{{ .Version }}"
     binaries:
       - scanner-adapter
     build_flag_templates:
