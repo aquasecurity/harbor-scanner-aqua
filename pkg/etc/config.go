@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"reflect"
 	"sync"
 	"time"
 
@@ -41,17 +42,26 @@ func (c API) IsTLSEnabled() bool {
 	return c.TLSCertificate != "" && c.TLSKey != ""
 }
 
+type ImageRegistration string
+
+const (
+	Never     ImageRegistration = "Never"
+	Always    ImageRegistration = "Always"
+	Compliant ImageRegistration = "Compliant"
+)
+
 type AquaCSP struct {
 	Username string `env:"SCANNER_AQUA_USERNAME"`
 	Password string `env:"SCANNER_AQUA_PASSWORD"`
 	Host     string `env:"SCANNER_AQUA_HOST" envDefault:"http://csp-console-svc.aqua:8080"`
 	Registry string `env:"SCANNER_AQUA_REGISTRY" envDefault:"Harbor"`
 
-	UseImageTag              bool   `env:"SCANNER_AQUA_USE_IMAGE_TAG" envDefault:"true"`
-	ReportsDir               string `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/var/lib/scanner/reports"`
-	ScannerCLINoVerify       bool   `env:"SCANNER_CLI_NO_VERIFY" envDefault:"false"`
-	ScannerCLIShowNegligible bool   `env:"SCANNER_CLI_SHOW_NEGLIGIBLE" envDefault:"true"`
-	ScannerCLIDirectCC       bool   `env:"SCANNER_CLI_DIRECT_CC" envDefault:"false"`
+	UseImageTag              bool              `env:"SCANNER_AQUA_USE_IMAGE_TAG" envDefault:"true"`
+	ReportsDir               string            `env:"SCANNER_AQUA_REPORTS_DIR" envDefault:"/var/lib/scanner/reports"`
+	ScannerCLINoVerify       bool              `env:"SCANNER_CLI_NO_VERIFY" envDefault:"false"`
+	ScannerCLIShowNegligible bool              `env:"SCANNER_CLI_SHOW_NEGLIGIBLE" envDefault:"true"`
+	ScannerCLIDirectCC       bool              `env:"SCANNER_CLI_DIRECT_CC" envDefault:"false"`
+	ScannerCLIRegisterImages ImageRegistration `env:"SCANNER_CLI_REGISTER_IMAGES" envDefault:"Never"`
 
 	ScannerCLIOverrideRegistryCredentials bool `env:"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS" envDefault:"false"`
 }
@@ -64,12 +74,29 @@ type Store struct {
 	ScanJobTTL    time.Duration `env:"SCANNER_STORE_REDIS_SCAN_JOB_TTL" envDefault:"1h"`
 }
 
-func GetConfig() (cfg Config, err error) {
-	err = env.Parse(&cfg)
-	if err != nil {
-		return cfg, fmt.Errorf("parsing config: %w", err)
+var (
+	customParser = map[reflect.Type]env.ParserFunc{
+		reflect.TypeOf(ImageRegistration("")): func(v string) (interface{}, error) {
+			switch v {
+			case string(Never):
+				return Never, nil
+			case string(Always):
+				return Always, nil
+			case string(Compliant):
+				return Compliant, nil
+			}
+			return nil, fmt.Errorf("expected values %s, %s or %s but got %s", Never, Always, Compliant, v)
+		},
 	}
-	return
+)
+
+func GetConfig() (Config, error) {
+	var cfg Config
+	err := env.ParseWithFuncs(&cfg, customParser)
+	if err != nil {
+		return cfg, err
+	}
+	return cfg, nil
 }
 
 func GetLogLevel() logrus.Level {
@@ -99,17 +126,16 @@ func GetScannerMetadata() harbor.Scanner {
 	}
 }
 
-func getVersion() (version string, err error) {
+func getVersion() (string, error) {
 	executable, err := exec.LookPath("scannercli")
 	if err != nil {
-		return
+		return "", err
 	}
 	cmd := exec.Command(executable, "version")
 	out, err := cmd.Output()
 	if err != nil {
-		return
+		return "", err
 	}
 
-	version = string(out)
-	return
+	return string(out), nil
 }

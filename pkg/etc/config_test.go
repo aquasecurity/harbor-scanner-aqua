@@ -16,7 +16,7 @@ func TestGetConfig(t *testing.T) {
 	testCases := []struct {
 		name           string
 		envs           envs
-		expectedError  error
+		expectedError  string
 		expectedConfig Config
 	}{
 		{
@@ -39,6 +39,7 @@ func TestGetConfig(t *testing.T) {
 					ScannerCLINoVerify:                    false,
 					ScannerCLIShowNegligible:              true,
 					ScannerCLIOverrideRegistryCredentials: false,
+					ScannerCLIRegisterImages:              Never,
 				},
 				Store: Store{
 					RedisURL:      "redis://harbor-harbor-redis:6379",
@@ -48,6 +49,13 @@ func TestGetConfig(t *testing.T) {
 					ScanJobTTL:    parseDuration(t, "1h"),
 				},
 			},
+		},
+		{
+			name: "Should return error when ScannerCLIRegisterImages has invalid value",
+			envs: envs{
+				"SCANNER_CLI_REGISTER_IMAGES": "XXX",
+			},
+			expectedError: "env: parse error on field \"ScannerCLIRegisterImages\" of type \"etc.ImageRegistration\": expected values Never, Always or Compliant but got XXX",
 		},
 		{
 			name: "Should overwrite default config with environment variables",
@@ -65,6 +73,7 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_AQUA_PASSWORD":                     "s3cret",
 				"SCANNER_CLI_NO_VERIFY":                     "true",
 				"SCANNER_CLI_SHOW_NEGLIGIBLE":               "false",
+				"SCANNER_CLI_REGISTER_IMAGES":               "Compliant",
 				"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS": "true",
 			},
 			expectedConfig: Config{
@@ -85,6 +94,7 @@ func TestGetConfig(t *testing.T) {
 					UseImageTag:                           false,
 					ScannerCLINoVerify:                    true,
 					ScannerCLIShowNegligible:              false,
+					ScannerCLIRegisterImages:              Compliant,
 					ScannerCLIOverrideRegistryCredentials: true,
 				},
 				Store: Store{
@@ -102,8 +112,12 @@ func TestGetConfig(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			setenvs(t, tc.envs)
 			config, err := GetConfig()
-			assert.Equal(t, tc.expectedError, err)
-			assert.Equal(t, tc.expectedConfig, config)
+			if tc.expectedError == "" {
+				require.NoError(t, err)
+				assert.Equal(t, tc.expectedConfig, config)
+			} else {
+				assert.EqualError(t, err, tc.expectedError)
+			}
 		})
 	}
 }

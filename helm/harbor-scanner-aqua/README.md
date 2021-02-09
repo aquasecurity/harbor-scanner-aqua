@@ -4,10 +4,14 @@ Aqua CSP Scanner as a plug-in vulnerability scanner in the Harbor registry.
 
 ## TL;DR;
 
+```
+$ helm repo add aqua https://helm.aquasec.com
+```
+
 ### Without TLS
 
 ```
-$ helm install harbor-scanner-aqua . \
+$ helm install harbor-scanner-aqua aqua/harbor-scanner-aqua \
     --namespace harbor \
     --set aqua.version=$AQUA_VERSION \
     --set aqua.registry.server=registry.aquasec.com \
@@ -31,7 +35,7 @@ $ helm install harbor-scanner-aqua . \
    ```
 2. Install the `harbor-scanner-aqua` chart:
    ```
-   $ helm install harbor-scanner-aqua . \
+   $ helm install harbor-scanner-aqua aqua/harbor-scanner-aqua \
        --namespace harbor \
        --set service.port=8443 \
        --set scanner.api.tlsEnabled=true \
@@ -55,13 +59,17 @@ This chart bootstraps a scanner adapter deployment on a [Kubernetes](http://kube
 
 - Kubernetes 1.12+
 - Helm 2.11+ or Helm 3+
+- Add Aqua chart repository:
+  ```
+  $ helm repo add aqua https://helm.aquasec.com
+  ```
 
 ## Installing the Chart
 
 To install the chart with the release name `my-release`:
 
 ```
-$ helm install my-release .
+$ helm install my-release aqua/harbor-scanner-aqua
 ```
 
 The command deploys scanner adapter on the Kubernetes cluster in the default configuration. The [Parameters](#parameters)
@@ -85,7 +93,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 
 |              Parameter                  |                                Description                              |    Default     |
 |-----------------------------------------|-------------------------------------------------------------------------|----------------|
-| `aqua.version`                          | The version of Aqua CSP that the adapter operates against               | `4.6`          |
+| `aqua.version`                          | The version of Aqua CSP that the adapter operates against               | `5.0`          |
 | `aqua.registry.server`                  | Aqua Docker registry server                                             | `registry.aquasec.com` |
 | `aqua.registry.username`                | Aqua Docker registry username                                           | N/A            |
 | `aqua.registry.password`                | Aqua Docker registry password                                           | N/A            |
@@ -102,6 +110,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 | `scanner.aqua.scannerCLIShowNegligible` | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities | `true` |
 | `scanner.aqua.scannerCLIOverrideRegistryCredentials` | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary | `false` |
 | `scanner.aqua.scannerCLIDirectCC`       | The flag passed to `scannercli` to contact CyberCenter directly (rather than through the Aqua server) | `false` |
+| `scanner.aqua.scannerCLIRegisterImages` | The flag to determine whether images are registered in Aqua management console: `Never` - skips registration; `Compliant` - registers only compliant images; `Always` - registers compliant and non-compliant images. | `Never` |
 | `scanner.aqua.reportsDir`               | Directory to save temporary scan reports                                | `/var/lib/scanner/reports` |
 | `scanner.aqua.useImageTag`              | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` | `false` |
 | `scanner.api.tlsEnabled`                | The flag to enable or disable TLS for HTTP                              | `true`         |
@@ -124,7 +133,7 @@ The above parameters map to the env variables defined in [harbor-scanner-aqua](h
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`.
 
 ```
-$ helm install my-release . \
+$ helm install my-release aqua/harbor-scanner-aqua \
     --namespace my-namespace \
     --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
     --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD

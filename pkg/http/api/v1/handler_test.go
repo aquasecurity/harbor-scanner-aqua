@@ -64,8 +64,10 @@ func TestHandler(t *testing.T) {
     "env.SCANNER_AQUA_USE_IMAGE_TAG":    "true",
     "env.SCANNER_CLI_NO_VERIFY":         "false",
     "env.SCANNER_CLI_SHOW_NEGLIGIBLE":   "true",
-    "env.SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS": "false",
-    "env.SCANNER_CLI_DIRECT_CC": "false"
+    "env.SCANNER_CLI_DIRECT_CC":         "false",
+    "env.SCANNER_CLI_REGISTER_IMAGES":   "Never",
+
+    "env.SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS": "false"
   }
 }`, string(bodyBytes))
 	})
