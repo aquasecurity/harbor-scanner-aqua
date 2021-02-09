@@ -1,3 +1,4 @@
+---
 name: build
 on:
   push:
@@ -12,9 +13,11 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v1
         with:
-          go-version: 1.14
+          go-version: 1.15
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: yaml-lint
         uses: ibiqlik/action-yamllint@v3
       - name: Run unit tests
@@ -28,9 +31,11 @@ jobs:
       - name: Release snapshot
         uses: goreleaser/goreleaser-action@v2
         with:
-          verson: v0.148.0
+          verson: v0.155.1
           args: release --snapshot --skip-publish --rm-dist
       - name: Scan image for vulnerabilities
-        uses: docker://docker.io/aquasec/trivy
+        uses: aquasecurity/trivy-action@master
         with:
-          args: --cache-dir /var/lib/trivy --exit-code 1 --severity CRITICAL --no-progress docker.io/aquasec/harbor-scanner-aqua:${{ github.sha }}
+          image-ref: "docker.io/aquasec/harbor-scanner-aqua:${{ github.sha }}"
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
