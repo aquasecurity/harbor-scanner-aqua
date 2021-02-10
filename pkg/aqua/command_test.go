@@ -30,6 +30,7 @@ func TestCommand_Scan(t *testing.T) {
 		ScannerCLIShowNegligible:              true,
 		ScannerCLIOverrideRegistryCredentials: true,
 		ScannerCLIDirectCC:                    true,
+		ScannerCLIRegisterImages:              etc.Compliant,
 	}
 
 	imageRef := ImageRef{
@@ -84,6 +85,7 @@ func TestCommand_Scan(t *testing.T) {
 				"--direct-cc=true",
 				"--show-negligible=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
+				"--register-compliant",
 				"--robot-username=robotName",
 				"--robot-password=robotPassword",
 				"--password=ch@ng3me!",
@@ -122,6 +124,7 @@ func TestCommand_Scan(t *testing.T) {
 				"--direct-cc=true",
 				"--show-negligible=true",
 				"--jsonfile=/var/lib/scanner/reports/aqua_scan_report_1234567890.json",
+				"--register-compliant",
 				"--robot-username=robotName",
 				"--robot-password=robotPassword",
 				"--password=ch@ng3me!",

@@ -85,6 +85,15 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		fmt.Sprintf("--jsonfile=%s", reportFile.Name()),
 	}
 
+	switch c.cfg.ScannerCLIRegisterImages {
+	case etc.Never:
+		// Do nothing
+	case etc.Always:
+		args = append(args, "--register")
+	case etc.Compliant:
+		args = append(args, "--register-compliant")
+	}
+
 	log.WithFields(log.Fields{"exec": executable, "args": args}).Debug("Running scannercli")
 
 	if c.cfg.ScannerCLIOverrideRegistryCredentials {

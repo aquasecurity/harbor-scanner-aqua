@@ -91,6 +91,8 @@ spec:
               value: {{ .Values.scanner.aqua.scannerCLIOverrideRegistryCredentials | default false | quote }}
             - name: "SCANNER_CLI_DIRECT_CC"
               value: {{ .Values.scanner.aqua.scannerCLIDirectCC | default false | quote }}
+            - name: "SCANNER_CLI_REGISTER_IMAGES"
+              value: {{ .Values.scanner.aqua.scannerCLIRegisterImages | default "Never" | quote }}
             - name: "SCANNER_AQUA_USE_IMAGE_TAG"
               value: {{ .Values.scanner.aqua.useImageTag | default false | quote }}
             - name: "SCANNER_STORE_REDIS_URL"

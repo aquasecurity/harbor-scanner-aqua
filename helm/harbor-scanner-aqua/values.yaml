@@ -28,7 +28,7 @@ mainResources:
 
 aqua:
   ## version the version of Aqua CSP that the adapter operates against
-  version: 4.6
+  version: 5.0
   registry:
     ## server the Aqua Docker registry server
     server: "registry.aquasec.com"
@@ -81,6 +81,11 @@ scanner:
     scannerCLIOverrideRegistryCredentials: false
     ## scannerCLIDirectCC the flag passed to `scannercli` to contact CyberCenter directly (rather than through the Aqua server)
     scannerCLIDirectCC: false
+    ## scannerCLIRegisterImages the flag to determine whether images are registered in Aqua management console:
+    ## `Never` - skips registration
+    ## `Compliant` - registers only compliant images
+    ## `Always` - registers compliant and non-compliant images
+    scannerCLIRegisterImages: Never
   store:
     ## redisURL the server URI for the Redis store
     redisURL: "redis://harbor-harbor-redis:6379"

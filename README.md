@@ -419,6 +419,7 @@ Configuration of the adapter is done via environment variables at startup.
 | `SCANNER_CLI_SHOW_NEGLIGIBLE`               | `true`   | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities |
 | `SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS` | `false`  | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary |
 | `SCANNER_CLI_DIRECT_CC`                     | `false`  | The flag passed to `scannercli` to contact CyberCenter directly (rather than through the Aqua server) |
+| `SCANNER_CLI_REGISTER_IMAGES`               | `Never`  | The flag to determine whether images are registered in Aqua management console: `Never` - skips registration; `Compliant` - registers only compliant images; `Always` - registers compliant and non-compliant images. |
 | `SCANNER_STORE_REDIS_URL`                   | `redis://harbor-harbor-redis:6379` | The server URI for the Redis store            |
 | `SCANNER_STORE_REDIS_NAMESPACE`             | `harbor.scanner.aqua:store` | The namespace for keys in the Redis store            |
 | `SCANNER_STORE_REDIS_POOL_MAX_ACTIVE`       | `5`      | The max number of connections allocated by the pool for the Redis store |
