@@ -1,4 +1,4 @@
-FROM alpine:3.9
+FROM alpine:3.13
 
 RUN echo "@edge http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
 
