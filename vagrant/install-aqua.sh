@@ -1,12 +1,12 @@
 #! /bin/bash
 
-if [ -z "$AQUA_REGISTRY_USERNAME" ]; then echo "AQUA_REGISTRY_USERNAME is unset" && exit 1; fi
-if [ -z "$AQUA_REGISTRY_PASSWORD" ]; then echo "AQUA_REGISTRY_PASSWORD is unset" && exit 1; fi
-if [ -z "$AQUA_VERSION" ]; then echo "AQUA_VERSION is unset" && exit 1; else echo "AQUA_VERSION is set to '$AQUA_VERSION'"; fi
+if [ -z "$AQUA_REGISTRY_USERNAME" ]; then echo "AQUA_REGISTRY_USERNAME env is unset" && exit 1; fi
+if [ -z "$AQUA_REGISTRY_PASSWORD" ]; then echo "AQUA_REGISTRY_PASSWORD env is unset" && exit 1; fi
+if [ -z "$AQUA_VERSION" ]; then echo "AQUA_VERSION env is unset" && exit 1; else echo "AQUA_VERSION env is set to '$AQUA_VERSION'"; fi
 
 HARBOR_HOME="/opt/harbor"
+HARBOR_PKI_DIR="/etc/harbor/pki/internal"
 HARBOR_SCANNER_AQUA_VERSION="0.11.2"
-
 SCANNER_UID=1000
 SCANNER_GID=1000
 
@@ -15,19 +15,57 @@ mkdir -p /data/aqua-adapter/reports
 mkdir -p /data/aqua-adapter/opt
 mkdir -p /var/lib/aqua-db/data
 
-chown $SCANNER_UID:$SCANNER_GID /data/aqua-adapter/reports
-chown $SCANNER_UID:$SCANNER_GID /data/aqua-adapter/opt
+# Login to Aqua registry.
+echo $AQUA_REGISTRY_PASSWORD | docker login registry.aquasec.com \
+  --username $AQUA_REGISTRY_USERNAME \
+  --password-stdin
 
-echo $AQUA_REGISTRY_PASSWORD | docker login registry.aquasec.com --username $AQUA_REGISTRY_USERNAME --password-stdin
-
+# Copy the scannercli binary from the registry.aquasec.com/scanner image.
 docker run --rm --entrypoint "" \
   -v $HARBOR_HOME/common/config/aqua-adapter:/out registry.aquasec.com/scanner:$AQUA_VERSION \
   cp /opt/aquasec/scannercli /out
 
+# Generate a private key.
+openssl genrsa -out $HARBOR_PKI_DIR/aqua_adapter.key 4096
+
+# Generate a certificate signing request (CSR).
+openssl req -sha512 -new \
+  -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=aqua-adapter" \
+  -key $HARBOR_PKI_DIR/aqua_adapter.key \
+  -out $HARBOR_PKI_DIR/aqua_adapter.csr
+
+# Generate an x509 v3 extension file.
+cat > $HARBOR_PKI_DIR/aqua_adapter_v3.ext <<-EOF
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1=aqua-adapter
+EOF
+
+# Use the v3.ext file to generate a certificate for your Harbor host.
+openssl x509 -req -sha512 -days 365 \
+  -extfile $HARBOR_PKI_DIR/aqua_adapter_v3.ext \
+  -CA $HARBOR_PKI_DIR/harbor_internal_ca.crt \
+  -CAkey $HARBOR_PKI_DIR/harbor_internal_ca.key \
+  -CAcreateserial \
+  -in $HARBOR_PKI_DIR/aqua_adapter.csr \
+  -out $HARBOR_PKI_DIR/aqua_adapter.crt
+
+chown $SCANNER_UID:$SCANNER_GID /data/aqua-adapter/reports
+chown $SCANNER_UID:$SCANNER_GID /data/aqua-adapter/opt
 chown $SCANNER_UID:$SCANNER_GID $HARBOR_HOME/common/config/aqua-adapter/scannercli
+chown $SCANNER_UID:$SCANNER_GID $HARBOR_PKI_DIR/aqua_adapter.key
+chown $SCANNER_UID:$SCANNER_GID $HARBOR_PKI_DIR/aqua_adapter.crt
 
 cat << EOF > $HARBOR_HOME/common/config/aqua-adapter/env
 SCANNER_LOG_LEVEL=debug
+SCANNER_API_ADDR=:8443
+SCANNER_API_TLS_KEY=/etc/pki/aqua_adapter.key
+SCANNER_API_TLS_CERTIFICATE=/etc/pki/aqua_adapter.crt
 SCANNER_AQUA_USERNAME=administrator
 SCANNER_AQUA_PASSWORD=@Aqua12345
 SCANNER_AQUA_HOST=http://aqua-console:8080
@@ -54,6 +92,12 @@ services:
     depends_on:
       - redis
     volumes:
+      - type: bind
+        source: $HARBOR_PKI_DIR/aqua_adapter.key
+        target: /etc/pki/aqua_adapter.key
+      - type: bind
+        source: $HARBOR_PKI_DIR/aqua_adapter.crt
+        target: /etc/pki/aqua_adapter.crt
       - type: bind
         source: $HARBOR_HOME/common/config/aqua-adapter/scannercli
         target: /usr/local/bin/scannercli
@@ -125,11 +169,12 @@ EOF
 cd /opt/harbor
 docker-compose up -d
 
-# Register aqua-adapter as Harbor Interrogation Service.
+# Use Harbor 2.0 REST API to register aqua-adapter as an Interrogation Service.
 cat << EOF > /tmp/aqua-adapter.registration.json
 {
   "name": "Aqua Enterprise $AQUA_VERSION",
-  "url": "http://aqua-adapter:8080"
+  "url": "https://aqua-adapter:8443",
+  "description": "Aqua Enterprise $AQUA_VERSION vulnerability scanner."
 }
 EOF
 

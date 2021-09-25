@@ -309,20 +309,24 @@ where `<scc name>` is one of the predefined SCCs or a custom SCC created by the 
    ![Scanners config](docs/images/harbor_ui_scanners_config.png)
 3. Click the **NEW SCANNER** button.
 4. Enter the information to identify the scanner.
-   1. A unique name for this scanner instance, to display in the Harbor interface.
-   2. The API endpoint of the adapter service
+   1. A unique name for this scanner instance to display in the Harbor interface, e.g. **Aqua Enterprise 6.2**.
+   2. The API endpoint URL of the adapter service.
 
-   **NOTE**: For the adapter deployed on Kubernetes the URL is https://harbor-scanner-aqua.harbor:8443.
-   For Docker, it's https://aqua-scanner:8443
+      > **NOTE**: For the adapter deployed on Kubernetes the default URL is https://harbor-scanner-aqua.harbor:8443,
+      > whereas for Docker, it's https://aqua-adapter:8443.
 
    ![Add scanner](docs/images/harbor_ui_add_scanner.png)
-   3. Optionally select **Skip certificate verification** if the scanner uses a self-signed or untrusted certificate.
-5. Click **TEST CONNECTION** to make sure that Harbor can connect successfully to the scanner.
-6. If everything is fine click **ADD** to save the configuration and connect Harbor to the scanner.
+5. Click **TEST CONNECTION** to make sure that Harbor can connect successfully to the adapter service.
+
+   > **NOTE**: When you click the **TEST CONNECTION** button Harbor only pings the adapter service. It does not validate
+   > connection to the Aqua Management Console, which is configured with `SCANNER_AQUA_USERNAME`, `SCANNER_AQUA_PASSWORD`,
+   > and `SCANNER_AQUA_HOST` environment variables. If the connection to the Aqua Management Console is misconfigured
+   > you will see an error message in the scan logs accessible from the Harbor interface.
+6. If everything is fine click **ADD** to save the configuration and connect Harbor to the adapter service.
 7. If you configured multiple scanners, you can designate the Aqua Enterprise scanner as the default one by selecting it
    and clicking **SET AS DEFAULT**.
    ![Set default scanner](docs/images/harbor_ui_default_scanner.png)
-   Make sure the **Default** label is displayed next to the **Aqua** scanner's name.
+   Make sure the **Default** label is displayed next to the Aqua scanner's name.
 
 ## Configuration
 

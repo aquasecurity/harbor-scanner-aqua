@@ -9,6 +9,13 @@ http:
   # port for http, default is 80. If https enabled, this port will redirect to https port
   port: 8080
 
+# Uncomment following will enable tls communication between all harbor components
+internal_tls:
+  # set enabled to true means internal tls is enabled
+  enabled: true
+  # put your cert and key files on dir
+  dir: /etc/harbor/pki/internal
+
 # The initial password of Harbor admin
 # It only works in first time to install harbor
 # Remember Change the admin password from UI after launching Harbor.

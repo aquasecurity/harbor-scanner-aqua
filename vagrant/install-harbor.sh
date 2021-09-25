@@ -29,6 +29,11 @@ cat >> /etc/hosts <<EOF
 127.0.0.1  nginx
 EOF
 
+# Configure internal TLS communication between Harbor component.
+# https://goharbor.io/docs/2.3.0/install-config/configure-internal-tls/
+mkdir -p /etc/harbor/pki/internal
+docker run --volume /:/hostfs goharbor/prepare:$HARBOR_VERSION gencert -p /etc/harbor/pki/internal
+
 cd /opt/harbor
 
 ./install.sh
