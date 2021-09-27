@@ -1,6 +1,6 @@
 # Harbor Scanner Aqua
 
-Aqua CSP Scanner as a plug-in vulnerability scanner in the Harbor registry.
+Aqua Enterprise Scanner as a plug-in vulnerability scanner in the Harbor registry.
 
 ## TL;DR;
 
@@ -93,7 +93,7 @@ The following table lists the configurable parameters of the scanner adapter cha
 
 |              Parameter                  |                                Description                              |    Default     |
 |-----------------------------------------|-------------------------------------------------------------------------|----------------|
-| `aqua.version`                          | The version of Aqua CSP that the adapter operates against               | `5.0`          |
+| `aqua.version`                          | The version of Aqua Enterprise that the adapter operates against        | `5.0`          |
 | `aqua.registry.server`                  | Aqua Docker registry server                                             | `registry.aquasec.com` |
 | `aqua.registry.username`                | Aqua Docker registry username                                           | N/A            |
 | `aqua.registry.password`                | Aqua Docker registry password                                           | N/A            |

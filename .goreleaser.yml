@@ -36,7 +36,7 @@ dockers:
     build_flag_templates:
       - "--label=org.label-schema.schema-version=1.0"
       - "--label=org.label-schema.name={{ .ProjectName }}"
-      - "--label=org.label-schema.description=Harbor Scanner Adapter for Aqua CSP Scanner"
+      - "--label=org.label-schema.description=Harbor Scanner Adapter for Aqua Enterprise Scanner"
       - "--label=org.label-schema.vendor=Aqua Security"
       - "--label=org.label-schema.version={{ .Version }}"
       - "--label=org.label-schema.build-date={{ .Date }}"

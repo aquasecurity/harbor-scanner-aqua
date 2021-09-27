@@ -30,13 +30,13 @@ func (ir *ImageRef) WithDigest() string {
 	return fmt.Sprintf("%s@%s", ir.Repository, ir.Digest)
 }
 
-// Command represents the CLI interface for the Aqua CSP scanner,
+// Command represents the CLI interface for the Aqua Enterprise scanner,
 // i.e. scannercli executable.
 type Command interface {
 	Scan(imageRef ImageRef) (ScanReport, error)
 }
 
-// NewCommands constructs Aqua CSP scanner command with the given configuration.
+// NewCommand constructs Aqua Enterprise scanner command with the given configuration.
 func NewCommand(cfg etc.AquaCSP, ambassador ext.Ambassador) Command {
 	return &command{
 		cfg:        cfg,

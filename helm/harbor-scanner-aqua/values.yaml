@@ -27,7 +27,7 @@ mainResources:
     memory: 512Mi
 
 aqua:
-  ## version the version of Aqua CSP that the adapter operates against
+  ## version the version of Aqua Enterprise that the adapter operates against
   version: 5.0
   registry:
     ## server the Aqua Docker registry server

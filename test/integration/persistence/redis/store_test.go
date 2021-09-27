@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 package redis
@@ -77,11 +78,11 @@ func TestStore(t *testing.T) {
 			Severity: harbor.SevHigh,
 			Vulnerabilities: []harbor.VulnerabilityItem{
 				{
-					ID: "CVE-2013-1400",
-					Pkg: "openssl",
-					Version: "2.4",
-					FixVersion:"2.4.2",
-					Severity: harbor.SevHigh,
+					ID:         "CVE-2013-1400",
+					Pkg:        "openssl",
+					Version:    "2.4",
+					FixVersion: "2.4.2",
+					Severity:   harbor.SevHigh,
 					Links: []string{
 						"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-1400",
 					},
