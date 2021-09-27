@@ -32,10 +32,10 @@ OS and application vulnerabilities**.
 - [Requirements](#requirements)
 - [How does it work?](#how-does-it-work)
 - [Deployment](#deployment)
+  - [Docker](#docker)
   - [Kubernetes](#kubernetes)
   - [OpenShift Container Platform](#openshift-container-platform)
-  - [Docker](#docker)
-  - [Configuring Harbor scanner](#configuring-harbor-scanner)
+  - [Configuring Harbor Scanner](#configuring-harbor-scanner)
 - [Configuration](#configuration)
 - [Troubleshooting](#troubleshooting)
   - [Error: Failed getting image manifest: 412 Precondition Failed](#error-failed-getting-image-manifest-412-precondition-failed)
@@ -134,6 +134,170 @@ This section describes how to perform a new installation of the adapter service 
 It's also possible to deploy Harbor on Docker (outside the Kubernetes environment) to work with Aqua Enterprise on
 Kubernetes, and you should be able to figure it out based on the following instructions.
 
+### Docker
+
+This section shows how to install the adapter service by [extending the Docker Compose file](https://docs.docker.com/compose/extends/)
+created by the Harbor >= 1.10 installer in the `$HARBOR_HOME` directory. We assume that the internal
+[TLS communication between Harbor components][harbor-docs-internal-tls] is enabled and internal certificate files are
+stored in the `$HARBOR_PKI_DIR` directory. The default Harbor data volume path is referred to as `$HARBOR_DATA`. We also
+assume that you installed Aqua Enterprise >= 4.5, and the Aqua Management Console is accessible at
+https://aqua-console:8443, and you have valid credentials with permission to scan container images.
+
+1. Export environment variables that are used throughout the installation scripts.
+
+   Review and adapt the values to reflect your installation paths and credentials.
+   ```
+   export HARBOR_HOME="/opt/harbor"
+   export HARBOR_DATA="/data"
+   export HARBOR_PKI_DIR="/etc/harbor/pki/internal"
+
+   export AQUA_VERSION="6.2"
+   export AQUA_CONSOLE_HOST="https://aqua-console:8443"
+   export AQUA_CONSOLE_USERNAME=<your username>
+   export AQUA_CONSOLE_PASSWORD=<your password>
+
+   export HARBOR_SCANNER_AQUA_VERSION="0.11.2"
+   ```
+   ```
+   export AQUA_REGISTRY_USERNAME=<your username>
+   export AQUA_REGISTRY_PASSWORD=<your password>
+   ```
+2. Create the config and data directories for the adapter service.
+   ```
+   mkdir -p $HARBOR_HOME/common/config/aqua-adapter
+   mkdir -p $HARBOR_DATA/aqua-adapter/reports
+   mkdir -p $HARBOR_DATA/aqua-adapter/opt
+   ```
+3. Download the `scannercli` executable binary.
+   1. You can download the binary from the [docs][download-scannercli] page and save it to
+      `$HARBOR_HOME/common/config/aqua-adapter/scannercli`.
+   2. Alternatively you can use the `registry.aquasec.com/scanner:$AQUA_VERSION` image to copy the `scannercli` binary
+      from the container's file system.
+      ```
+      echo $AQUA_REGISTRY_PASSWORD | docker login registry.aquasec.com \
+        --username $AQUA_REGISTRY_USERNAME --password-stdin
+      ```
+      ```
+      docker run --rm --entrypoint "" \
+        --volume $HARBOR_HOME/common/config/aqua-adapter:/out registry.aquasec.com/scanner:$AQUA_VERSION \
+        cp /opt/aquasec/scannercli /out
+      ```
+4. Generate certificate files.
+   > **NOTE**: Self signed certificates without SAN were deprecated in Go, therefore you must add the SAN
+   > extension to your certificate files. The DNS name in SAN extension should be the same as CN field.
+   1. Generate a private key.
+      ```
+      openssl genrsa -out $HARBOR_PKI_DIR/aqua_adapter.key 4096
+      ```
+   2. Generate a certificate signing request (CSR).
+
+      Adapt the values in the `-subj` option to reflect your organization.
+      ```
+      openssl req -sha512 -new \
+        -subj "/C=CN/ST=Beijing/L=Beijing/O=example/OU=Personal/CN=aqua-adapter" \
+        -key $HARBOR_PKI_DIR/aqua_adapter.key \
+        -out $HARBOR_PKI_DIR/aqua_adapter.csr
+      ```
+   3. Generate an x509 v3 extension file.
+
+      You must create this file so that you can generate a certificate for adapter service host that complies with the
+      Subject Alternative Name (SAN) and x509 v3 extension requirements.
+      ```
+      cat << EOF > $HARBOR_PKI_DIR/aqua_adapter_v3.ext
+      authorityKeyIdentifier=keyid,issuer
+      basicConstraints=CA:FALSE
+      keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+      extendedKeyUsage = serverAuth
+      subjectAltName = @alt_names
+
+      [alt_names]
+      DNS.1=aqua-adapter
+      EOF
+      ```
+   4. Use the `aqua_adapter_v3.ext` file to generate a certificate for adapter service host.
+      > **NOTE**: The certificate must be signed by the internal Harbor CA.
+      ```
+      openssl x509 -req -sha512 -days 365 \
+        -extfile $HARBOR_PKI_DIR/aqua_adapter_v3.ext \
+        -CA $HARBOR_PKI_DIR/harbor_internal_ca.crt \
+        -CAkey $HARBOR_PKI_DIR/harbor_internal_ca.key \
+        -CAcreateserial \
+        -in $HARBOR_PKI_DIR/aqua_adapter.csr \
+        -out $HARBOR_PKI_DIR/aqua_adapter.crt
+      ```
+5. Create the `env` file to configure the adapter service:
+   ```
+   cat << EOF > $HARBOR_HOME/common/config/aqua-adapter/env
+   SCANNER_LOG_LEVEL=info
+   SCANNER_API_ADDR=:8443
+   SCANNER_API_TLS_KEY=/etc/pki/aqua_adapter.key
+   SCANNER_API_TLS_CERTIFICATE=/etc/pki/aqua_adapter.crt
+   SCANNER_AQUA_USERNAME=$AQUA_CONSOLE_USERNAME
+   SCANNER_AQUA_PASSWORD=$AQUA_CONSOLE_PASSWORD
+   SCANNER_AQUA_HOST=$AQUA_CONSOLE_HOST
+   SCANNER_AQUA_REGISTRY=Harbor
+   SCANNER_AQUA_USE_IMAGE_TAG=false
+   SCANNER_AQUA_REPORTS_DIR=/var/lib/scanner/reports
+   SCANNER_STORE_REDIS_URL=redis://redis:6379
+   EOF
+   ```
+6. Create `docker-compose.override.yml` file in the `$HARBOR_HOME` directory to install the adapter service:
+   ```
+   cat << EOF > $HARBOR_HOME/docker-compose.override.yml
+   version: '2.3'
+   services:
+     aqua-adapter:
+       networks:
+         - harbor
+       container_name: aqua-adapter
+       image: docker.io/aquasec/harbor-scanner-aqua:$HARBOR_SCANNER_AQUA_VERSION
+       restart: always
+       cap_drop:
+         - ALL
+       depends_on:
+         - redis
+       env_file:
+         $HARBOR_HOME/common/config/aqua-adapter/env
+       volumes:
+         - type: bind
+           source: $HARBOR_HOME/common/config/aqua-adapter/scannercli
+           target: /usr/local/bin/scannercli
+         - type: bind
+           source: $HARBOR_PKI_DIR/aqua_adapter.key
+           target: /etc/pki/aqua_adapter.key
+         - type: bind
+           source: $HARBOR_PKI_DIR/aqua_adapter.crt
+           target: /etc/pki/aqua_adapter.crt
+         - type: bind
+           source: $HARBOR_DATA/aqua-adapter/reports
+           target: /var/lib/scanner/reports
+         - type: bind
+           source: $HARBOR_DATA/aqua-adapter/opt
+           target: /opt/aquascans
+       logging:
+         driver: "syslog"
+         options:
+           syslog-address: "tcp://127.0.0.1:1514"
+           tag: "aqua-scanner"
+   EOF
+   ```
+7. For some Docker drivers you must explicitly set ownership of config files and data directories to user and
+   group which runs the adapter process, i.e. `1000:1000`:
+   ```
+   chown 1000:1000 $HARBOR_HOME/common/config/aqua-adapter/scannercli
+   chown 1000:1000 $HARBOR_PKI_DIR/aqua_adapter.key
+   chown 1000:1000 $HARBOR_PKI_DIR/aqua_adapter.crt
+   chown 1000:1000 $HARBOR_DATA/aqua-adapter/reports
+   chown 1000:1000 $HARBOR_DATA/aqua-adapter/opt
+   ```
+8. Start the adapter service:
+   ```
+   cd $HARBOR_HOME
+   docker-compose up --detach
+   ```
+   The adapter service will be accessible at https://aqua-adapter:8443 from within the `harbor` Docker network.
+9. [Connect Harbor to Aqua scanner.](#configuring-harbor-scanner)
+
 ### Kubernetes
 
 > I assume that you installed Aqua Enterprise >= 4.5 with [Aqua Security Helm charts][aqua-helm-chart] in the `aqua`
@@ -195,112 +359,6 @@ $ oc adm policy add-scc-to-user <scc name> system:serviceaccount:harbor:harbor-s
 ```
 
 where `<scc name>` is one of the predefined SCCs or a custom SCC created by the administrator.
-
-### Docker
-
-> I assume that you installed Harbor >= 1.10 with an online or offline installer script in the `$HARBOR_HOME` directory,
-> and it's accessible at https://harbor.domain.
->
-> I also assume that you installed Aqua Enterprise >= 4.5, and the Aqua Management Console is accessible at https://aqua.domain.
-
-1. Change directory to `$HARBOR_HOME`:
-   ```
-   $ cd $HARBOR_HOME
-   ```
-2. Create the config and data directories for the adapter service:
-   ```
-   $ mkdir -p ./common/config/aqua-scanner
-   $ mkdir -p ./data/aqua-scanner/reports
-   $ mkdir -p ./data/aqua-scanner/opt
-   ```
-3. Generate certificate and private key files:
-   ```
-   $ mkdir -p ./common/config/aqua-scanner/cert
-   $ openssl genrsa -out ./common/config/aqua-scanner/cert/aqua-scanner.key 2048
-   $ openssl req -new -x509 \
-       -key ./common/config/aqua-scanner/cert/aqua-scanner.key \
-       -out ./common/config/aqua-scanner/cert/aqua-scanner.crt \
-       -days 365 \
-       -subj /CN=aqua-scanner
-   ```
-4. Create the `env` file to configure the adapter service:
-   ```
-   $ cat << EOF > ./common/config/aqua-scanner/env
-   SCANNER_LOG_LEVEL=info
-   SCANNER_API_ADDR=:8443
-   SCANNER_API_TLS_KEY=/cert/aqua-scanner.key
-   SCANNER_API_TLS_CERTIFICATE=/cert/aqua-scanner.crt
-   SCANNER_AQUA_USERNAME=$AQUA_CONSOLE_USERNAME
-   SCANNER_AQUA_PASSWORD=$AQUA_CONSOLE_PASSWORD
-   SCANNER_AQUA_HOST=https://aqua.domain
-   SCANNER_AQUA_REGISTRY=Harbor
-   SCANNER_AQUA_REPORTS_DIR=/var/lib/scanner/reports
-   SCANNER_STORE_REDIS_URL=redis://redis:6379
-   EOF
-   ```
-5. Download the `scannercli` executable binary
-   1. You can download the binary from the [docs][download-scannercli] page and save it to `$HARBOR_HOME/scannercli`
-   2. Alternatively you can use the `registry.aquasec.com/scanner` image to copy the `scannercli` binary from the
-      container's file system:
-      ```
-      $ echo $AQUA_REGISTRY_PASSWORD | docker login registry.aquasec.com \
-          -u $AQUA_REGISTRY_USERNAME --password-stdin
-      $ docker run --rm --entrypoint "" \
-          -v $HARBOR_HOME:/out registry.aquasec.com/scanner:$AQUA_VERSION \
-          cp /opt/aquasec/scannercli /out
-      ```
-6. Create the `docker-compose.override.yml` to install the adapter service:
-   ```
-   $ cat << EOF > ./docker-compose.override.yml
-   version: '2.3'
-   services:
-     aqua-scanner:
-       networks:
-         - harbor
-       container_name: aqua-scanner
-       image: docker.io/aquasec/harbor-scanner-aqua:$HARBOR_SCANNER_AQUA_VERSION
-       restart: always
-       cap_drop:
-         - ALL
-       depends_on:
-         - redis
-       volumes:
-         - type: bind
-           source: ./scannercli
-           target: /usr/local/bin/scannercli
-         - type: bind
-           source: ./common/config/aqua-scanner/cert
-           target: /cert
-         - type: bind
-           source: ./data/aqua-scanner/reports
-           target: /var/lib/scanner/reports
-         - type: bind
-           source: ./data/aqua-scanner/opt
-           target: /opt/aquascans
-       logging:
-         driver: "syslog"
-         options:
-           syslog-address: "tcp://127.0.0.1:1514"
-           tag: "aqua-scanner"
-       env_file:
-         ./common/config/aqua-scanner/env
-   EOF
-   ```
-7. For some Docker drivers you might need to explicitly set ownership of config files and data directories to user and
-   group which runs the adapter process, i.e. `1000:1000`:
-   ```
-   $ sudo chown 1000:1000 ./data/aqua-scanner/reports
-   $ sudo chown 1000:1000 ./data/aqua-scanner/opt
-   $ sudo chown 1000:1000 ./common/config/aqua-scanner/cert/aqua-scanner.key
-   $ sudo chown 1000:1000 ./common/config/aqua-scanner/cert/aqua-scanner.key
-   $ sudo chmod +x ./scannercli && sudo chown 1000:1000 ./scannercli
-   ```
-8. Start the adapter service:
-   ```
-   $ docker-compose up -d
-   ```
-   The scanner service should be accessible at https://aqua-scanner:8443 from within the `harbor` Docker network.
-9. [Connect Harbor to Aqua scanner.](#configuring-harbor-scanner)
 
 ### Configuring Harbor Scanner
 
@@ -422,6 +480,7 @@ contribution workflow that we expect.
 [harbor-url]: https://github.com/goharbor/harbor
 [harbor-helm-chart]: https://github.com/goharbor/harbor-helm
 [harbor-docs-installer]: https://goharbor.io/docs/2.3.0/install-config/download-installer/
+[harbor-docs-internal-tls]: https://goharbor.io/docs/2.3.0/install-config/configure-internal-tls/
 [harbor-docs-helm]: https://goharbor.io/docs/2.3.0/install-config/harbor-ha-helm/
 [harbor-pluggable-scanner-api]: https://github.com/goharbor/pluggable-scanner-spec
 [k8s-init-containers]: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
