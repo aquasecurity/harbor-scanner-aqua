@@ -120,7 +120,7 @@ func GetScannerMetadata() harbor.Scanner {
 		version = v
 	})
 	return harbor.Scanner{
-		Name:    "Aqua CSP Scanner",
+		Name:    "Aqua Enterprise",
 		Vendor:  "Aqua Security",
 		Version: version,
 	}

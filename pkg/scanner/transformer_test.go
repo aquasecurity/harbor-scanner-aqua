@@ -60,7 +60,7 @@ func TestTransformer_Transform(t *testing.T) {
 			Tag:        "1.12.4",
 		},
 		Scanner: harbor.Scanner{
-			Name:    "Aqua CSP Scanner",
+			Name:    "Aqua Enterprise",
 			Vendor:  "Aqua Security",
 			Version: "Unknown",
 		},

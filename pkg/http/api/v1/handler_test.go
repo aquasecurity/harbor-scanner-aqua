@@ -35,7 +35,7 @@ func TestHandler(t *testing.T) {
 
 		assert.JSONEq(t, `{
   "scanner": {
-    "name": "Aqua CSP Scanner",
+    "name": "Aqua Enterprise",
     "vendor": "Aqua Security",
     "version": "Unknown"
   },
