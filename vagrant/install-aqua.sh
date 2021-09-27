@@ -22,7 +22,7 @@ echo $AQUA_REGISTRY_PASSWORD | docker login registry.aquasec.com \
 
 # Copy the scannercli binary from the registry.aquasec.com/scanner image.
 docker run --rm --entrypoint "" \
-  -v $HARBOR_HOME/common/config/aqua-adapter:/out registry.aquasec.com/scanner:$AQUA_VERSION \
+  --volume $HARBOR_HOME/common/config/aqua-adapter:/out registry.aquasec.com/scanner:$AQUA_VERSION \
   cp /opt/aquasec/scannercli /out
 
 # Generate a private key.
@@ -68,7 +68,8 @@ SCANNER_API_TLS_KEY=/etc/pki/aqua_adapter.key
 SCANNER_API_TLS_CERTIFICATE=/etc/pki/aqua_adapter.crt
 SCANNER_AQUA_USERNAME=administrator
 SCANNER_AQUA_PASSWORD=@Aqua12345
-SCANNER_AQUA_HOST=http://aqua-console:8080
+SCANNER_AQUA_HOST=https://aqua-console:8443
+SCANNER_CLI_NO_VERIFY=true
 SCANNER_AQUA_REGISTRY=Harbor
 SCANNER_AQUA_USE_IMAGE_TAG=false
 SCANNER_AQUA_REPORTS_DIR=/var/lib/scanner/reports
@@ -167,7 +168,7 @@ services:
 EOF
 
 cd /opt/harbor
-docker-compose up -d
+docker-compose up --detach
 
 # Use Harbor 2.0 REST API to register aqua-adapter as an Interrogation Service.
 cat << EOF > /tmp/aqua-adapter.registration.json
