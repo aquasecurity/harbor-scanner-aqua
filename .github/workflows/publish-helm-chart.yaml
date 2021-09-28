@@ -8,7 +8,7 @@ on:
 env:
   HELM_REP: helm-charts
   GH_OWNER: aquasecurity
-  CHART_DIR: helm
+  CHART_DIR: helm/harbor-scanner-aqua
 jobs:
   release:
     runs-on: ubuntu-20.04
