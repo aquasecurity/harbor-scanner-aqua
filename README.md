@@ -232,9 +232,9 @@ https://aqua-console:8443, and you have valid credentials with permission to sca
    SCANNER_API_ADDR=:8443
    SCANNER_API_TLS_KEY=/etc/pki/aqua_adapter.key
    SCANNER_API_TLS_CERTIFICATE=/etc/pki/aqua_adapter.crt
+   SCANNER_AQUA_HOST=$AQUA_CONSOLE_HOST
    SCANNER_AQUA_USERNAME=$AQUA_CONSOLE_USERNAME
    SCANNER_AQUA_PASSWORD=$AQUA_CONSOLE_PASSWORD
-   SCANNER_AQUA_HOST=$AQUA_CONSOLE_HOST
    SCANNER_AQUA_REGISTRY=Harbor
    SCANNER_AQUA_USE_IMAGE_TAG=false
    SCANNER_AQUA_REPORTS_DIR=/var/lib/scanner/reports
@@ -301,34 +301,37 @@ https://aqua-console:8443, and you have valid credentials with permission to sca
 ### Kubernetes
 
 > I assume that you installed Aqua Enterprise >= 4.5 with [Aqua Security Helm charts][aqua-helm-chart] in the `aqua`
-> namespace, and the Aqua Management Console is accessible at http://csp-console-svc.aqua:8080 from within the cluster.
+> namespace, and the Aqua Management Console is accessible at http://aqua-console-svc.aqua:8080 from within the cluster.
 
-1. Generate certificate and private key files:
+1. Export environment variables that are used throughout the installation scripts.
+
+   Review and adapt the values to reflect your installation paths and credentials.
    ```
-   $ openssl genrsa -out tls.key 2048
-   $ openssl req -new -x509 \
-       -key tls.key \
-       -out tls.crt \
-       -days 365 \
-       -subj /CN=harbor-scanner-aqua.harbor
+   export AQUA_VERSION="6.2"
+   export AQUA_CONSOLE_HOST="http://aqua-console-svc.aqua:8080"
+   export AQUA_CONSOLE_USERNAME=<your username>
+   export AQUA_CONSOLE_PASSWORD=<your password>
+
+   export AQUA_REGISTRY_USERNAME=<your username>
+   export AQUA_REGISTRY_PASSWORD=<your password>
    ```
 2. Install the `harbor-scanner-aqua` chart:
    ```
-   $ helm install harbor-scanner-aqua ./helm/harbor-scanner-aqua \
-       --namespace harbor \
-       --set service.port=8443 \
-       --set scanner.api.tlsEnabled=true \
-       --set scanner.api.tlsCertificate="`cat tls.crt`" \
-       --set scanner.api.tlsKey="`cat tls.key`" \
-       --set aqua.version=$AQUA_VERSION \
-       --set aqua.registry.server=registry.aquasec.com \
-       --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
-       --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
-       --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
-       --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD \
-       --set scanner.aqua.host=http://csp-console-svc.aqua:8080
+   helm repo add aqua https://helm.aquasec.com
+   helm repo update
    ```
-   The scanner service should be accessible at https://harbor-scanner-aqua.harbor:8443 from within the cluster.
+   ```
+   helm install harbor-scanner-aqua aqua/harbor-scanner-aqua \
+     --namespace harbor \
+     --set aqua.version=$AQUA_VERSION \
+     --set aqua.registry.server=registry.aquasec.com \
+     --set aqua.registry.username=$AQUA_REGISTRY_USERNAME \
+     --set aqua.registry.password=$AQUA_REGISTRY_PASSWORD \
+     --set scanner.aqua.host=$AQUA_CONSOLE_HOST \
+     --set scanner.aqua.username=$AQUA_CONSOLE_USERNAME \
+     --set scanner.aqua.password=$AQUA_CONSOLE_PASSWORD
+   ```
+   The scanner service should be accessible at http://harbor-scanner-aqua.harbor:8080 from within the cluster.
 3. [Connect Harbor to Aqua scanner.](#configuring-harbor-scanner)
 
 ### OpenShift Container Platform
