@@ -156,7 +156,7 @@ https://aqua-console:8443, and you have valid credentials with permission to sca
    export AQUA_CONSOLE_USERNAME=<your username>
    export AQUA_CONSOLE_PASSWORD=<your password>
 
-   export HARBOR_SCANNER_AQUA_VERSION="0.11.2"
+   export HARBOR_SCANNER_AQUA_VERSION="0.12.0"
    ```
    ```
    export AQUA_REGISTRY_USERNAME=<your username>
@@ -317,7 +317,7 @@ https://aqua-console:8443, and you have valid credentials with permission to sca
    ```
 2. Install the `harbor-scanner-aqua` chart:
    ```
-   helm repo add aqua https://helm.aquasec.com
+   helm repo add aqua https://aquasecurity.github.io/helm-charts/
    helm repo update
    ```
    ```
@@ -373,7 +373,7 @@ where `<scc name>` is one of the predefined SCCs or a custom SCC created by the 
    1. A unique name for this scanner instance to display in the Harbor interface, e.g. **Aqua Enterprise 6.2**.
    2. The API endpoint URL of the adapter service.
 
-      > **NOTE**: For the adapter deployed on Kubernetes the default URL is https://harbor-scanner-aqua.harbor:8443,
+      > **NOTE**: For the adapter deployed on Kubernetes the default URL is http://harbor-scanner-aqua.harbor:8080,
       > whereas for Docker, it's https://aqua-adapter:8443.
 
    ![Add scanner](docs/images/harbor_ui_add_scanner.png)
