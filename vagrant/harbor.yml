@@ -93,7 +93,7 @@ log:
     location: /var/log/harbor
 
 #This attribute is for migrator to detect the version of the .cfg file, DO NOT MODIFY!
-_version: 2.3.0
+_version: 2.4.0
 
 # Global proxy
 # Config http proxy for components, e.g. http://my.proxy.com:3128

@@ -20,13 +20,13 @@ Vagrant.configure("2") do |config|
   config.vm.provision "install-go", type: "shell", path: "vagrant/install-go.sh"
   config.vm.provision "install-docker-ce", type: "shell", path: "vagrant/install-docker.sh"
   config.vm.provision "install-harbor", type: "shell", path: "vagrant/install-harbor.sh", env: {
-    "HARBOR_VERSION" => ENV["HARBOR_VERSION"] || "v2.3.2"
+    "HARBOR_VERSION" => ENV["HARBOR_VERSION"] || "v2.4.0"
   }
   config.vm.provision "install-aqua", type: "shell", path: "vagrant/install-aqua.sh", env: {
     "AQUA_REGISTRY_USERNAME" => ENV['AQUA_REGISTRY_USERNAME'],
     "AQUA_REGISTRY_PASSWORD" => ENV['AQUA_REGISTRY_PASSWORD'],
-    "AQUA_VERSION" => ENV['AQUA_VERSION'] || "6.2",
-    "HARBOR_VERSION" => ENV['HARBOR_VERSION'] || "v2.3.2"
+    "AQUA_VERSION" => ENV['AQUA_VERSION'] || "6.5",
+    "HARBOR_VERSION" => ENV['HARBOR_VERSION'] || "v2.4.0"
   }
 
   # Access Harbor Portal at http://localhost:8181 (admin/@Harbor12345)

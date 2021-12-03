@@ -151,7 +151,7 @@ https://aqua-console:8443, and you have valid credentials with permission to sca
    export HARBOR_DATA="/data"
    export HARBOR_PKI_DIR="/etc/harbor/pki/internal"
 
-   export AQUA_VERSION="6.2"
+   export AQUA_VERSION="6.5"
    export AQUA_CONSOLE_HOST="https://aqua-console:8443"
    export AQUA_CONSOLE_USERNAME=<your username>
    export AQUA_CONSOLE_PASSWORD=<your password>
@@ -307,7 +307,7 @@ https://aqua-console:8443, and you have valid credentials with permission to sca
 
    Review and adapt the values to reflect your installation paths and credentials.
    ```
-   export AQUA_VERSION="6.2"
+   export AQUA_VERSION="6.5"
    export AQUA_CONSOLE_HOST="http://aqua-console-svc.aqua:8080"
    export AQUA_CONSOLE_USERNAME=<your username>
    export AQUA_CONSOLE_PASSWORD=<your password>
@@ -370,7 +370,7 @@ where `<scc name>` is one of the predefined SCCs or a custom SCC created by the 
    ![Scanners config](docs/images/harbor_ui_scanners_config.png)
 3. Click the **NEW SCANNER** button.
 4. Enter the information to identify the scanner.
-   1. A unique name for this scanner instance to display in the Harbor interface, e.g. **Aqua Enterprise 6.2**.
+   1. A unique name for this scanner instance to display in the Harbor interface, e.g. **Aqua Enterprise 6.5**.
    2. The API endpoint URL of the adapter service.
 
       > **NOTE**: For the adapter deployed on Kubernetes the default URL is http://harbor-scanner-aqua.harbor:8080,
@@ -393,31 +393,31 @@ where `<scc name>` is one of the predefined SCCs or a custom SCC created by the 
 
 Configuration of the adapter is done via environment variables at startup.
 
-|                  Name                       |  Default |                                 Description                               |
-|---------------------------------------------|----------|---------------------------------------------------------------------------|
-| `SCANNER_LOG_LEVEL`                         | `info`   | The log level of `trace`, `debug`, `info`, `warn`, `warning`, `error`, `fatal` or `panic`. The standard logger logs entries with that level or anything above it. |
-| `SCANNER_API_ADDR`                          | `:8080`  | Binding address for the API HTTP server                                   |
-| `SCANNER_API_TLS_CERTIFICATE`               |          | The absolute path to the x509 certificate file                            |
-| `SCANNER_API_TLS_KEY`                       |          | The absolute path to the x509 private key file                            |
-| `SCANNER_API_READ_TIMEOUT`                  | `15s`    | The maximum duration for reading the entire request, including the body   |
-| `SCANNER_API_WRITE_TIMEOUT`                 | `15s`    | The maximum duration before timing out writes of the response             |
-| `SCANNER_API_IDLE_TIMEOUT`                  | `60s`    | The maximum amount of time to wait for the next request when keep-alives are enabled |
-| `SCANNER_AQUA_USERNAME`                     | N/A      | Aqua management console username (required)                               |
-| `SCANNER_AQUA_PASSWORD`                     | N/A      | Aqua management console password (required)                               |
-| `SCANNER_AQUA_HOST`                         | `http://csp-console-svc.aqua:8080` | Aqua management console address                 |
-| `SCANNER_AQUA_REGISTRY`                     | `Harbor` | The name of the Harbor registry configured in Aqua management console     |
-| `SCANNER_AQUA_REPORTS_DIR`                  | `/var/lib/scanner/reports` | Directory to save temporary scan reports                |
-| `SCANNER_AQUA_USE_IMAGE_TAG`                | `false`  | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli` |
-| `SCANNER_CLI_NO_VERIFY`                     | `false`  | The flag passed to `scannercli` to skip verifying TLS certificates         |
-| `SCANNER_CLI_SHOW_NEGLIGIBLE`               | `true`   | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities |
-| `SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS` | `false`  | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary |
-| `SCANNER_CLI_DIRECT_CC`                     | `false`  | The flag passed to `scannercli` to contact CyberCenter directly (rather than through the Aqua server) |
-| `SCANNER_CLI_REGISTER_IMAGES`               | `Never`  | The flag to determine whether images are registered in Aqua management console: `Never` - skips registration; `Compliant` - registers only compliant images; `Always` - registers compliant and non-compliant images. |
-| `SCANNER_STORE_REDIS_URL`                   | `redis://harbor-harbor-redis:6379` | The server URI for the Redis store            |
-| `SCANNER_STORE_REDIS_NAMESPACE`             | `harbor.scanner.aqua:store` | The namespace for keys in the Redis store            |
-| `SCANNER_STORE_REDIS_POOL_MAX_ACTIVE`       | `5`      | The max number of connections allocated by the pool for the Redis store |
-| `SCANNER_STORE_REDIS_POOL_MAX_IDLE`         | `5`      | The max number of idle connections in the pool for the Redis store      |
-| `SCANNER_STORE_REDIS_SCAN_JOB_TTL`          | `1h`     | The time to live for persisting scan jobs and associated scan reports   |
+| Name                                        | Default                            | Description                                                                                                                                                                                                           |
+|---------------------------------------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `SCANNER_LOG_LEVEL`                         | `info`                             | The log level of `trace`, `debug`, `info`, `warn`, `warning`, `error`, `fatal` or `panic`. The standard logger logs entries with that level or anything above it.                                                     |
+| `SCANNER_API_ADDR`                          | `:8080`                            | Binding address for the API HTTP server                                                                                                                                                                               |
+| `SCANNER_API_TLS_CERTIFICATE`               |                                    | The absolute path to the x509 certificate file                                                                                                                                                                        |
+| `SCANNER_API_TLS_KEY`                       |                                    | The absolute path to the x509 private key file                                                                                                                                                                        |
+| `SCANNER_API_READ_TIMEOUT`                  | `15s`                              | The maximum duration for reading the entire request, including the body                                                                                                                                               |
+| `SCANNER_API_WRITE_TIMEOUT`                 | `15s`                              | The maximum duration before timing out writes of the response                                                                                                                                                         |
+| `SCANNER_API_IDLE_TIMEOUT`                  | `60s`                              | The maximum amount of time to wait for the next request when keep-alives are enabled                                                                                                                                  |
+| `SCANNER_AQUA_USERNAME`                     | N/A                                | Aqua management console username (required)                                                                                                                                                                           |
+| `SCANNER_AQUA_PASSWORD`                     | N/A                                | Aqua management console password (required)                                                                                                                                                                           |
+| `SCANNER_AQUA_HOST`                         | `http://csp-console-svc.aqua:8080` | Aqua management console address                                                                                                                                                                                       |
+| `SCANNER_AQUA_REGISTRY`                     | `Harbor`                           | The name of the Harbor registry configured in Aqua management console                                                                                                                                                 |
+| `SCANNER_AQUA_REPORTS_DIR`                  | `/var/lib/scanner/reports`         | Directory to save temporary scan reports                                                                                                                                                                              |
+| `SCANNER_AQUA_USE_IMAGE_TAG`                | `false`                            | The flag to determine whether the image tag or digest is used in the image reference passed to `scannercli`                                                                                                           |
+| `SCANNER_CLI_NO_VERIFY`                     | `false`                            | The flag passed to `scannercli` to skip verifying TLS certificates                                                                                                                                                    |
+| `SCANNER_CLI_SHOW_NEGLIGIBLE`               | `true`                             | The flag passed to `scannercli` to show negligible/unknown severity vulnerabilities                                                                                                                                   |
+| `SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS` | `false`                            | The flag to enable passing `--robot-username` and `--robot-password` flags to the `scannercli` executable binary                                                                                                      |
+| `SCANNER_CLI_DIRECT_CC`                     | `false`                            | The flag passed to `scannercli` to contact CyberCenter directly (rather than through the Aqua server)                                                                                                                 |
+| `SCANNER_CLI_REGISTER_IMAGES`               | `Never`                            | The flag to determine whether images are registered in Aqua management console: `Never` - skips registration; `Compliant` - registers only compliant images; `Always` - registers compliant and non-compliant images. |
+| `SCANNER_STORE_REDIS_URL`                   | `redis://harbor-harbor-redis:6379` | The server URI for the Redis store                                                                                                                                                                                    |
+| `SCANNER_STORE_REDIS_NAMESPACE`             | `harbor.scanner.aqua:store`        | The namespace for keys in the Redis store                                                                                                                                                                             |
+| `SCANNER_STORE_REDIS_POOL_MAX_ACTIVE`       | `5`                                | The max number of connections allocated by the pool for the Redis store                                                                                                                                               |
+| `SCANNER_STORE_REDIS_POOL_MAX_IDLE`         | `5`                                | The max number of idle connections in the pool for the Redis store                                                                                                                                                    |
+| `SCANNER_STORE_REDIS_SCAN_JOB_TTL`          | `1h`                               | The time to live for persisting scan jobs and associated scan reports                                                                                                                                                 |
 
 ## Troubleshooting
 
