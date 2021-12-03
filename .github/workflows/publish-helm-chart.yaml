@@ -23,8 +23,8 @@ jobs:
           version: v3.5.0
       - name: Install chart-releaser
         run: |
-          wget https://github.com/helm/chart-releaser/releases/download/v1.1.1/chart-releaser_1.1.1_linux_amd64.tar.gz
-          tar xzvf chart-releaser_1.1.1_linux_amd64.tar.gz cr
+          wget https://github.com/helm/chart-releaser/releases/download/v1.3.0/chart-releaser_1.3.0_linux_amd64.tar.gz
+          tar xzvf chart-releaser_1.3.0_linux_amd64.tar.gz cr
       - name: Package helm chart
         run: |
           ./cr package ${{ env.CHART_DIR }}
