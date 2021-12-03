@@ -28,17 +28,17 @@
    cd harbor-scanner-aqua
    ```
 2. Create and configure a guest development machine, which is based on Ubuntu 20.4.3 LTS and has Go, Docker, Docker Compose,
-   Make, and Harbor v2.3.2 preinstalled. Harbor is installed in the `/opt/harbor` directory.
+   Make, and Harbor v2.4.0 preinstalled. Harbor is installed in the `/opt/harbor` directory.
    ```
    export AQUA_REGISTRY_USERNAME=<provide your username>
    export AQUA_REGISTRY_PASSWORD=<provide your password>
-   export AQUA_VERSION="6.2"
-   export HARBOR_VERSION="v2.3.2"
+   export AQUA_VERSION="6.5"
+   export HARBOR_VERSION="v2.4.0"
    
    vagrant up
    ```
 
-The Harbor UI is accessible at http://localhost:8181 (admin/@Harbor12345). The Aqua Management Console is accessible at
+The Harbor UI is accessible at http://localhost:8181 (admin/Harbor12345). The Aqua Management Console is accessible at
 http://localhost:9181 (administrator/@Aqua12345). Note that you'll be prompted for a valid licence key upon successful
 login to the Aqua Management Console.
    
