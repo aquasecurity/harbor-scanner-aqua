@@ -155,7 +155,7 @@ https://aqua-console:8443, and you have valid credentials with permission to sca
    export AQUA_CONSOLE_USERNAME=<your username>
    export AQUA_CONSOLE_PASSWORD=<your password>
 
-   export HARBOR_SCANNER_AQUA_VERSION="0.13.0"
+   export HARBOR_SCANNER_AQUA_VERSION="0.14.0"
    ```
    ```
    export AQUA_REGISTRY_USERNAME=<your username>

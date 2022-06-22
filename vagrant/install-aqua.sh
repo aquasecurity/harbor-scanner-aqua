@@ -6,7 +6,7 @@ if [ -z "$AQUA_VERSION" ]; then echo "AQUA_VERSION env is unset" && exit 1; else
 
 HARBOR_HOME="/opt/harbor"
 HARBOR_PKI_DIR="/etc/harbor/pki/internal"
-HARBOR_SCANNER_AQUA_VERSION="0.13.0"
+HARBOR_SCANNER_AQUA_VERSION="0.14.0"
 SCANNER_UID=1000
 SCANNER_GID=1000
 
