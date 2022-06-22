@@ -1,6 +1,5 @@
 [![GitHub release][release-img]][release]
 [![GitHub Build Action][build-action-img]][actions]
-[![Codecov][codecov-img]][codecov]
 [![Go Report Card][report-card-img]][report-card]
 ![Docker Pulls][docker-pulls]
 [![License][license-img]][license]
@@ -473,8 +472,6 @@ contribution workflow that we expect.
 [release]: https://github.com/aquasecurity/harbor-scanner-aqua/releases
 [build-action-img]: https://github.com/aquasecurity/harbor-scanner-aqua/workflows/build/badge.svg
 [actions]: https://github.com/aquasecurity/harbor-scanner-aqua/actions
-[codecov-img]: https://codecov.io/gh/aquasecurity/harbor-scanner-aqua/branch/main/graph/badge.svg
-[codecov]: https://codecov.io/gh/aquasecurity/harbor-scanner-aqua
 [report-card-img]: https://goreportcard.com/badge/github.com/aquasecurity/harbor-scanner-aqua
 [report-card]: https://goreportcard.com/report/github.com/aquasecurity/harbor-scanner-aqua
 [docker-pulls]: https://img.shields.io/docker/pulls/aquasec/harbor-scanner-aqua
