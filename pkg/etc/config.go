@@ -10,7 +10,6 @@ import (
 
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
 	"github.com/caarlos0/env/v6"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -24,9 +23,10 @@ type BuildInfo struct {
 }
 
 type Config struct {
-	API     API
-	AquaCSP AquaCSP
-	Store   Store
+	API        API
+	AquaCSP    AquaCSP
+	RedisStore RedisStore
+	RedisPool  RedisPool
 }
 
 type API struct {
@@ -66,12 +66,19 @@ type AquaCSP struct {
 	ScannerCLIOverrideRegistryCredentials bool `env:"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS" envDefault:"false"`
 }
 
-type Store struct {
-	RedisURL      string        `env:"SCANNER_STORE_REDIS_URL" envDefault:"redis://harbor-harbor-redis:6379"`
-	Namespace     string        `env:"SCANNER_STORE_REDIS_NAMESPACE" envDefault:"harbor.scanner.aqua:store"`
-	PoolMaxActive int           `env:"SCANNER_STORE_REDIS_POOL_MAX_ACTIVE" envDefault:"5"`
-	PoolMaxIdle   int           `env:"SCANNER_STORE_REDIS_POOL_MAX_IDLE" envDefault:"5"`
-	ScanJobTTL    time.Duration `env:"SCANNER_STORE_REDIS_SCAN_JOB_TTL" envDefault:"1h"`
+type RedisStore struct {
+	Namespace  string        `env:"SCANNER_STORE_REDIS_NAMESPACE" envDefault:"harbor.scanner.aqua:store"`
+	ScanJobTTL time.Duration `env:"SCANNER_STORE_REDIS_SCAN_JOB_TTL" envDefault:"1h"`
+}
+
+type RedisPool struct {
+	URL               string        `env:"SCANNER_REDIS_URL" envDefault:"redis://harbor-harbor-redis:6379"`
+	MaxActive         int           `env:"SCANNER_REDIS_POOL_MAX_ACTIVE" envDefault:"5"`
+	MaxIdle           int           `env:"SCANNER_REDIS_POOL_MAX_IDLE" envDefault:"5"`
+	IdleTimeout       time.Duration `env:"SCANNER_REDIS_POOL_IDLE_TIMEOUT" envDefault:"5m"`
+	ConnectionTimeout time.Duration `env:"SCANNER_REDIS_POOL_CONNECTION_TIMEOUT" envDefault:"1s"`
+	ReadTimeout       time.Duration `env:"SCANNER_REDIS_POOL_READ_TIMEOUT" envDefault:"1s"`
+	WriteTimeout      time.Duration `env:"SCANNER_REDIS_POOL_WRITE_TIMEOUT" envDefault:"1s"`
 }
 
 var (
@@ -99,15 +106,15 @@ func GetConfig() (Config, error) {
 	return cfg, nil
 }
 
-func GetLogLevel() logrus.Level {
+func GetLogLevel() log.Level {
 	if value, ok := os.LookupEnv("SCANNER_LOG_LEVEL"); ok {
-		level, err := logrus.ParseLevel(value)
+		level, err := log.ParseLevel(value)
 		if err != nil {
-			return logrus.InfoLevel
+			return log.InfoLevel
 		}
 		return level
 	}
-	return logrus.InfoLevel
+	return log.InfoLevel
 }
 
 func GetScannerMetadata() harbor.Scanner {

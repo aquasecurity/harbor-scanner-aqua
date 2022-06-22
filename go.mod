@@ -3,6 +3,7 @@ module github.com/aquasecurity/harbor-scanner-aqua
 go 1.18
 
 require (
+	github.com/FZambia/sentinel v1.1.0
 	github.com/caarlos0/env/v6 v6.8.0
 	github.com/gomodule/redigo v1.8.8
 	github.com/google/uuid v1.3.0

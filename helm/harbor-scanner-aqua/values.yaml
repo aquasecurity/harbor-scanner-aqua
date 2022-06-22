@@ -87,13 +87,25 @@ scanner:
     ## `Always` - registers compliant and non-compliant images
     scannerCLIRegisterImages: Never
   store:
-    ## redisURL the server URI for the Redis store
-    redisURL: "redis://harbor-harbor-redis:6379"
     ## redisNamespace the namespace for keys in the Redis store
     redisNamespace: "harbor.scanner.aqua:store"
-    ## redisPoolMaxActive the max number of connections allocated by the pool for the Redis store
-    redisPoolMaxActive: 5
-    ## redisPoolMaxIdle the max number of idle connections in the pool for the Redis store
-    redisPoolMaxIdle: 5
     ## redisScanJobTTL the time to live for persisting scan jobs and associated scan reports
     redisScanJobTTL: "1h"
+  redis:
+    ## poolURL the Redis server URI. The URI supports schemas to connect to a standalone Redis server,
+    ## i.e. `redis://:password@standalone_host:port/db-number` and Redis Sentinel deployment,
+    ## i.e. `redis+sentinel://:password@sentinel_host1:port1,sentinel_host2:port2/monitor-name/db-number`.
+    poolURL: "redis://harbor-harbor-redis:6379"
+    ## poolMaxActive the max number of connections allocated by the Redis connection pool
+    poolMaxActive: 5
+    ## poolMaxIdle the max number of idle connections in the Redis connection pool
+    poolMaxIdle: 5
+    ## poolIdleTimeout the duration after which idle connections to the Redis server are closed.
+    ## If the value is zero, then idle connections are not closed.
+    poolIdleTimeout: 5m
+    ## poolConnectionTimeout the timeout for connecting to the Redis server
+    poolConnectionTimeout: 1s
+    ## poolReadTimeout the timeout for reading a single Redis command reply
+    poolReadTimeout: 1s
+    ## poolWriteTimeout The timeout for writing a single Redis command
+    poolWriteTimeout: 1s

@@ -3,6 +3,7 @@ package redis
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/job"
@@ -13,21 +14,14 @@ import (
 )
 
 type store struct {
-	cfg  etc.Store
-	pool redis.Pool
+	cfg  etc.RedisStore
+	pool *redis.Pool
 }
 
-func NewStore(cfg etc.Store) persistence.Store {
+func NewStore(cfg etc.RedisStore, pool *redis.Pool) persistence.Store {
 	return &store{
-		cfg: cfg,
-		pool: redis.Pool{
-			Dial: func() (redis.Conn, error) {
-				return redis.DialURL(cfg.RedisURL)
-			},
-			MaxIdle:   cfg.PoolMaxIdle,
-			MaxActive: cfg.PoolMaxActive,
-			Wait:      true,
-		},
+		cfg:  cfg,
+		pool: pool,
 	}
 }
 
