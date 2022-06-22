@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/caarlos0/env/v6 v6.8.0
-	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/gomodule/redigo v1.8.8
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/prometheus/client_golang v1.11.0
