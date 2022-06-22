@@ -95,16 +95,24 @@ spec:
               value: {{ .Values.scanner.aqua.scannerCLIRegisterImages | default "Never" | quote }}
             - name: "SCANNER_AQUA_USE_IMAGE_TAG"
               value: {{ .Values.scanner.aqua.useImageTag | default false | quote }}
-            - name: "SCANNER_STORE_REDIS_URL"
-              value: {{ .Values.scanner.store.redisURL | quote }}
             - name: "SCANNER_STORE_REDIS_NAMESPACE"
-              value: {{ .Values.scanner.store.redisNamespace | default "harbor.scanner.aqua:store" | quote }}
-            - name: "SCANNER_STORE_REDIS_POOL_MAX_ACTIVE"
-              value: {{ .Values.scanner.store.redisPoolMaxActive | default 5 | quote }}
-            - name: "SCANNER_STORE_REDIS_POOL_MAX_IDLE"
-              value: {{ .Values.scanner.store.redisPoolMaxIdle | default 5 | quote }}
+              value: {{ .Values.scanner.store.redisNamespace | quote }}
             - name: "SCANNER_STORE_REDIS_SCAN_JOB_TTL"
-              value: {{ .Values.scanner.store.redisScanJobTTL | default "1h" | quote }}
+              value: {{ .Values.scanner.store.redisScanJobTTL | quote }}
+            - name: "SCANNER_REDIS_URL"
+              value: {{ .Values.scanner.redis.poolURL | quote }}
+            - name: "SCANNER_REDIS_POOL_MAX_ACTIVE"
+              value: {{ .Values.scanner.redis.poolMaxActive | quote }}
+            - name: "SCANNER_REDIS_POOL_MAX_IDLE"
+              value: {{ .Values.scanner.redis.poolMaxIdle | quote }}
+            - name: "SCANNER_REDIS_POOL_IDLE_TIMEOUT"
+              value: {{ .Values.scanner.redis.poolIdleTimeout | quote }}
+            - name: "SCANNER_REDIS_POOL_CONNECTION_TIMEOUT"
+              value: {{ .Values.scanner.redis.poolConnectionTimeout | quote }}
+            - name: "SCANNER_REDIS_POOL_READ_TIMEOUT"
+              value: {{ .Values.scanner.redis.poolReadTimeout | quote }}
+            - name: "SCANNER_REDIS_POOL_WRITE_TIMEOUT"
+              value: {{ .Values.scanner.redis.poolWriteTimeout | quote }}
             {{- if .Values.scanner.api.tlsEnabled }}
             - name: "SCANNER_API_TLS_CERTIFICATE"
               value: "/certs/tls.crt"

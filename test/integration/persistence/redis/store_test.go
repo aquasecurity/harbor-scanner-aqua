@@ -1,21 +1,22 @@
 //go:build integration
-// +build integration
 
 package redis
 
 import (
 	"context"
 	"fmt"
+	"testing"
+	"time"
+
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/harbor"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/job"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/persistence/redis"
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/redisx"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	tc "github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"testing"
-	"time"
 )
 
 // TestStore is an integration test for the Redis persistence store.
@@ -40,13 +41,15 @@ func TestStore(t *testing.T) {
 
 	redisURL := getRedisURL(t, ctx, redisC)
 
-	store := redis.NewStore(etc.Store{
-		RedisURL:      redisURL,
-		Namespace:     "harbor.scanner.aqua:store",
-		PoolMaxActive: 5,
-		PoolMaxIdle:   5,
-		ScanJobTTL:    parseDuration(t, "10s"),
+	pool, err := redisx.NewPool(etc.RedisPool{
+		URL: redisURL,
 	})
+	require.NoError(t, err)
+
+	store := redis.NewStore(etc.RedisStore{
+		Namespace:  "harbor.scanner.aqua:store",
+		ScanJobTTL: parseDuration(t, "10s"),
+	}, pool)
 
 	t.Run("CRUD", func(t *testing.T) {
 		scanJobID := "123"

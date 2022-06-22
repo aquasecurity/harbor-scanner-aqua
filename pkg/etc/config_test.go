@@ -41,12 +41,18 @@ func TestGetConfig(t *testing.T) {
 					ScannerCLIOverrideRegistryCredentials: false,
 					ScannerCLIRegisterImages:              Never,
 				},
-				Store: Store{
-					RedisURL:      "redis://harbor-harbor-redis:6379",
-					Namespace:     "harbor.scanner.aqua:store",
-					PoolMaxActive: 5,
-					PoolMaxIdle:   5,
-					ScanJobTTL:    parseDuration(t, "1h"),
+				RedisStore: RedisStore{
+					Namespace:  "harbor.scanner.aqua:store",
+					ScanJobTTL: parseDuration(t, "1h"),
+				},
+				RedisPool: RedisPool{
+					URL:               "redis://harbor-harbor-redis:6379",
+					MaxActive:         5,
+					MaxIdle:           5,
+					IdleTimeout:       parseDuration(t, "5m"),
+					ConnectionTimeout: parseDuration(t, "1s"),
+					ReadTimeout:       parseDuration(t, "1s"),
+					WriteTimeout:      parseDuration(t, "1s"),
 				},
 			},
 		},
@@ -75,6 +81,7 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_CLI_SHOW_NEGLIGIBLE":               "false",
 				"SCANNER_CLI_REGISTER_IMAGES":               "Compliant",
 				"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS": "true",
+				"SCANNER_REDIS_URL":                         "redis://localhost:6379",
 			},
 			expectedConfig: Config{
 				API: API{
@@ -97,12 +104,18 @@ func TestGetConfig(t *testing.T) {
 					ScannerCLIRegisterImages:              Compliant,
 					ScannerCLIOverrideRegistryCredentials: true,
 				},
-				Store: Store{
-					RedisURL:      "redis://harbor-harbor-redis:6379",
-					Namespace:     "harbor.scanner.aqua:store",
-					PoolMaxActive: 5,
-					PoolMaxIdle:   5,
-					ScanJobTTL:    parseDuration(t, "1h"),
+				RedisStore: RedisStore{
+					Namespace:  "harbor.scanner.aqua:store",
+					ScanJobTTL: parseDuration(t, "1h"),
+				},
+				RedisPool: RedisPool{
+					URL:               "redis://localhost:6379",
+					MaxActive:         5,
+					MaxIdle:           5,
+					IdleTimeout:       parseDuration(t, "5m"),
+					ConnectionTimeout: parseDuration(t, "1s"),
+					ReadTimeout:       parseDuration(t, "1s"),
+					WriteTimeout:      parseDuration(t, "1s"),
 				},
 			},
 		},

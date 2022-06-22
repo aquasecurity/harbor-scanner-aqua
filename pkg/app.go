@@ -12,6 +12,7 @@ import (
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/http/api"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/http/api/v1"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/persistence/redis"
+	"github.com/aquasecurity/harbor-scanner-aqua/pkg/redisx"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/scanner"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/work"
 	log "github.com/sirupsen/logrus"
@@ -37,11 +38,16 @@ func Run(info etc.BuildInfo) error {
 		}
 	}
 
+	pool, err := redisx.NewPool(config.RedisPool)
+	if err != nil {
+		return fmt.Errorf("constructing connection pool: %w", err)
+	}
+
 	workPool := work.New()
 	command := aqua.NewCommand(config.AquaCSP, ext.DefaultAmbassador)
 	transformer := scanner.NewTransformer(ext.NewSystemClock())
 	adapter := scanner.NewAdapter(command, transformer)
-	store := redis.NewStore(config.Store)
+	store := redis.NewStore(config.RedisStore, pool)
 	enqueuer := scanner.NewEnqueuer(workPool, adapter, store)
 	apiServer := api.NewServer(config.API, v1.NewAPIHandler(info, config, enqueuer, store))
 
