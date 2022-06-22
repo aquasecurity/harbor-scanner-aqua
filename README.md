@@ -122,8 +122,8 @@ Finally, the output report is transformed to Harbor's model and displayed in the
 > or digest (`library/mongo@sha256:6c3c624b58dbbcd3c0dd82b4c53f04194d1247c6eebdaab7c610cf7d66709b3b`) is used as
 > the image identifier passed to the `scannercli` command.
 
-> **NOTE:** Harbor versions >= 2.0 no longer set the `tag` property in the scan request and therefore the value of
-> the `SCANNER_AQUA_USE_IMAGE_TAG` env must be set to `false`.
+> **NOTE:** Harbor version >= 2.0 && version < 2.3 no longer set the `tag` property in the scan request.
+> Thus, the `SCANNER_AQUA_USE_IMAGE_TAG` env must be set to `false`.
 
 ## Deployment
 
@@ -446,7 +446,7 @@ we've introduced new `--robot-username` and `--robot-password` flags to respect 
 
 ### Error: Failed scanning image: image was not found in registry
 
-For Harbor versions >= 2.0, which do not set the `tag` property in a scan request anymore, the value of the
+For Harbor version >= 2.0 && version < 2.3, which do not set the `tag` property in a scan request anymore, the value of the
 `SCANNER_AQUA_USE_IMAGE_TAG` env must be set to `false`. This informs the adapter service to use digest rather than tag
 as the image identifier.
 
