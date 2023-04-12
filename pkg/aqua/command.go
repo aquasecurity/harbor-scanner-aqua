@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/etc"
 	"github.com/aquasecurity/harbor-scanner-aqua/pkg/ext"
@@ -68,10 +69,16 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 	}()
 
 	image := imageRef.WithDigest()
-	if c.cfg.UseImageTag {
-		image = imageRef.WithTag()
+	if c.cfg.UseImageTag && imageRef.WithTag() != "" {
+		repoAndTag := strings.Split(imageRef.WithTag(), ":")
+		if len(repoAndTag) == 2 && len(strings.TrimSpace(repoAndTag[1])) != 0 {
+			log.WithField("input image name", c.cfg.UseImageTag).Infof("got proper image name:tag")
+			image = imageRef.WithTag()
+		} else {
+			log.WithField("input image name", c.cfg.UseImageTag).WithField("input digest", imageRef.WithDigest()).
+				Infof("failed with tag..proceeding with digest")
+		}
 	}
-
 	args := []string{
 		"scan",
 		"--checkonly",
