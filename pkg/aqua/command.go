@@ -68,6 +68,8 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 				log.WithError(err).Warn("Error while removing tmp scan report file")
 			}
 		}()
+	} else {
+		log.WithField("path", reportFile.Name()).Warn("tmp scan report file was stored")
 	}
 
 	image := imageRef.WithDigest()
