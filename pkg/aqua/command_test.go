@@ -31,6 +31,7 @@ func TestCommand_Scan(t *testing.T) {
 		ScannerCLIOverrideRegistryCredentials: true,
 		ScannerCLIDirectCC:                    true,
 		ScannerCLIRegisterImages:              etc.Compliant,
+		DeleteReport:                          true,
 	}
 
 	imageRef := ImageRef{
