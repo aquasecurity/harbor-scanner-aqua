@@ -40,6 +40,8 @@ func TestGetConfig(t *testing.T) {
 					ScannerCLIShowNegligible:              true,
 					ScannerCLIOverrideRegistryCredentials: false,
 					ScannerCLIRegisterImages:              Never,
+
+					DeleteReport: true,
 				},
 				RedisStore: RedisStore{
 					Namespace:  "harbor.scanner.aqua:store",
@@ -103,6 +105,7 @@ func TestGetConfig(t *testing.T) {
 					ScannerCLIShowNegligible:              false,
 					ScannerCLIRegisterImages:              Compliant,
 					ScannerCLIOverrideRegistryCredentials: true,
+					DeleteReport:                          true,
 				},
 				RedisStore: RedisStore{
 					Namespace:  "harbor.scanner.aqua:store",
