@@ -60,7 +60,7 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		return report, fmt.Errorf("creating tmp scan report file: %w", err)
 	}
 	log.WithField("path", reportFile.Name()).Debug("Saving tmp scan report file")
-	if c.cfg.DeleteReport {
+	if c.cfg.ReportDelete {
 		defer func() {
 			log.WithField("path", reportFile.Name()).Debug("Removing tmp scan report file")
 			err := c.ambassador.Remove(reportFile.Name())
@@ -94,6 +94,7 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		fmt.Sprintf("--direct-cc=%t", c.cfg.ScannerCLIDirectCC),
 		fmt.Sprintf("--show-negligible=%t", c.cfg.ScannerCLIShowNegligible),
 		fmt.Sprintf("--jsonfile=%s", reportFile.Name()),
+		fmt.Sprintf("--report-delete=%t", c.cfg.ReportDelete),
 	}
 
 	switch c.cfg.ScannerCLIRegisterImages {

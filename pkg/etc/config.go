@@ -65,7 +65,7 @@ type AquaCSP struct {
 
 	ScannerCLIOverrideRegistryCredentials bool `env:"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS" envDefault:"false"`
 
-	DeleteReport bool `env:"AQUA_REPORT_DELETE" envDefault:"true"`
+	ReportDelete bool `env:"AQUA_REPORT_DELETE" envDefault:"true"`
 }
 
 type RedisStore struct {
