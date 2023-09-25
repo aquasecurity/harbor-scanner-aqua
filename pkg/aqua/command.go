@@ -60,13 +60,15 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		return report, fmt.Errorf("creating tmp scan report file: %w", err)
 	}
 	log.WithField("path", reportFile.Name()).Debug("Saving tmp scan report file")
-	defer func() {
-		log.WithField("path", reportFile.Name()).Debug("Removing tmp scan report file")
-		err := c.ambassador.Remove(reportFile.Name())
-		if err != nil {
-			log.WithError(err).Warn("Error while removing tmp scan report file")
-		}
-	}()
+	if c.cfg.DeleteReport {
+		defer func() {
+			log.WithField("path", reportFile.Name()).Debug("Removing tmp scan report file")
+			err := c.ambassador.Remove(reportFile.Name())
+			if err != nil {
+				log.WithError(err).Warn("Error while removing tmp scan report file")
+			}
+		}()
+	}
 
 	image := imageRef.WithDigest()
 	if c.cfg.UseImageTag && imageRef.WithTag() != "" {

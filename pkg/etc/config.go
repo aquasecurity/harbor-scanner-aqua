@@ -64,6 +64,8 @@ type AquaCSP struct {
 	ScannerCLIRegisterImages ImageRegistration `env:"SCANNER_CLI_REGISTER_IMAGES" envDefault:"Never"`
 
 	ScannerCLIOverrideRegistryCredentials bool `env:"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS" envDefault:"false"`
+
+	DeleteReport bool `env:"AQUA_REPORT_DELETE" envDefault:"true"`
 }
 
 type RedisStore struct {
