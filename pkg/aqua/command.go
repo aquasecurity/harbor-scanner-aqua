@@ -94,7 +94,6 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		fmt.Sprintf("--direct-cc=%t", c.cfg.ScannerCLIDirectCC),
 		fmt.Sprintf("--show-negligible=%t", c.cfg.ScannerCLIShowNegligible),
 		fmt.Sprintf("--jsonfile=%s", reportFile.Name()),
-		fmt.Sprintf("--report-delete=%t", c.cfg.ReportDelete),
 	}
 
 	switch c.cfg.ScannerCLIRegisterImages {
