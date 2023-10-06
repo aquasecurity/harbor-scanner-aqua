@@ -84,6 +84,7 @@ func TestGetConfig(t *testing.T) {
 				"SCANNER_CLI_REGISTER_IMAGES":               "Compliant",
 				"SCANNER_CLI_OVERRIDE_REGISTRY_CREDENTIALS": "true",
 				"SCANNER_REDIS_URL":                         "redis://localhost:6379",
+				"SCANNER_AQUA_REPORT_DELETE":                "false",
 			},
 			expectedConfig: Config{
 				API: API{
@@ -105,7 +106,7 @@ func TestGetConfig(t *testing.T) {
 					ScannerCLIShowNegligible:              false,
 					ScannerCLIRegisterImages:              Compliant,
 					ScannerCLIOverrideRegistryCredentials: true,
-					ReportDelete:                          true,
+					ReportDelete:                          false,
 				},
 				RedisStore: RedisStore{
 					Namespace:  "harbor.scanner.aqua:store",
