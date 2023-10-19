@@ -53,6 +53,7 @@ const (
 type AquaCSP struct {
 	Username string `env:"SCANNER_AQUA_USERNAME"`
 	Password string `env:"SCANNER_AQUA_PASSWORD"`
+        Token    string `env:"SCANNER_AQUA_TOKEN"`
 	Host     string `env:"SCANNER_AQUA_HOST" envDefault:"http://csp-console-svc.aqua:8080"`
 	Registry string `env:"SCANNER_AQUA_REGISTRY" envDefault:"Harbor"`
 
