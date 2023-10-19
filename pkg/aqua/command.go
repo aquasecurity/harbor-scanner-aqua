@@ -87,7 +87,6 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		"scan",
 		"--checkonly",
 		"--dockerless",
-		fmt.Sprintf("--user=%s", c.cfg.Username),
 		fmt.Sprintf("--host=%s", c.cfg.Host),
 		fmt.Sprintf("--registry=%s", c.cfg.Registry),
 		fmt.Sprintf("--no-verify=%t", c.cfg.ScannerCLINoVerify),
@@ -111,7 +110,13 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		args = append(args, fmt.Sprintf("--robot-username=%s", imageRef.Auth.Username),
 			fmt.Sprintf("--robot-password=%s", imageRef.Auth.Password))
 	}
-	args = append(args, fmt.Sprintf("--password=%s", c.cfg.Password), image)
+
+	if c.cfg.Token != "" {
+		args = append(args, fmt.Sprintf("--token=%s", c.cfg.Token),image)
+	} else {
+		args = append(args, fmt.Sprintf("--password=%s", c.cfg.Password),
+			fmt.Sprintf("--user=%s", c.cfg.Username),image)
+	}
 
 	cmd := exec.Command(executable, args...)
 
