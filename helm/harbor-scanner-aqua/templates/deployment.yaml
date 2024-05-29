@@ -113,6 +113,8 @@ spec:
               value: {{ .Values.scanner.redis.poolReadTimeout | quote }}
             - name: "SCANNER_REDIS_POOL_WRITE_TIMEOUT"
               value: {{ .Values.scanner.redis.poolWriteTimeout | quote }}
+            - name: "TMPDIR"
+              value: {{ .Values.scanner.tmpdir }}
             {{- if .Values.scanner.api.tlsEnabled }}
             - name: "SCANNER_API_TLS_CERTIFICATE"
               value: "/certs/tls.crt"

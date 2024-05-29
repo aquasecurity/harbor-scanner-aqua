@@ -46,6 +46,7 @@ scanner:
     tag: "0.14.0"
     pullPolicy: "IfNotPresent"
   logLevel: info
+  tmpdir: ""
   api:
     ## tlsEnabled the flag to enable TLS for HTTP
     tlsEnabled: false
