@@ -68,15 +68,11 @@ spec:
             - name: "SCANNER_API_IDLE_TIMEOUT"
               value: {{ .Values.scanner.api.idleTimeout | default "60s" | quote }}
             - name: "SCANNER_AQUA_USERNAME"
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "harbor-scanner-aqua.fullname" . }}
-                  key: aqua_username
+              value: {{ .Values.scanner.aqua.user | quote }}            
             - name: "SCANNER_AQUA_PASSWORD"
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "harbor-scanner-aqua.fullname" . }}
-                  key: aqua_password
+              value: {{ .Values.scanner.aqua.password | quote }}
+            - name: "SCANNER_AQUA_TOKEN"
+              value: {{ .Values.scanner.aqua.token | quote }}
             - name: "SCANNER_AQUA_HOST"
               value: {{ .Values.scanner.aqua.host | quote }}
             - name: "SCANNER_AQUA_REGISTRY"
