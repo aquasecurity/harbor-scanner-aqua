@@ -87,7 +87,7 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		"scan",
 		"--checkonly",
 		"--dockerless",
-		fmt.Sprintf("--user=%s", c.cfg.Username),
+		//fmt.Sprintf("--user=%s", c.cfg.Username),
 		fmt.Sprintf("--host=%s", c.cfg.Host),
 		fmt.Sprintf("--registry=%s", c.cfg.Registry),
 		fmt.Sprintf("--no-verify=%t", c.cfg.ScannerCLINoVerify),
@@ -111,7 +111,18 @@ func (c *command) Scan(imageRef ImageRef) (report ScanReport, err error) {
 		args = append(args, fmt.Sprintf("--robot-username=%s", imageRef.Auth.Username),
 			fmt.Sprintf("--robot-password=%s", imageRef.Auth.Password))
 	}
-	args = append(args, fmt.Sprintf("--password=%s", c.cfg.Password), image)
+	//args = append(args, fmt.Sprintf("--password=%s", c.cfg.Password), image)
+	if c.cfg.Token != "" {
+		args = append(args, fmt.Sprintf("--token=%s", c.cfg.Token), image)
+	} else {
+		if c.cfg.Username == "" || c.cfg.Password == "" {
+			log.WithFields(log.Fields{"exec": executable, "args": args}).Debug("Running scannercli")
+			args = append(args, fmt.Sprintf("--user=%s", c.cfg.Username), fmt.Sprintf("--password=%s", c.cfg.Password), image)
+			return report, fmt.Errorf("running command: %v: %v", args, "Username or password should not be empty")
+
+		}
+		args = append(args, fmt.Sprintf("--user=%s", c.cfg.Username), fmt.Sprintf("--password=%s", c.cfg.Password), image)
+	}
 
 	cmd := exec.Command(executable, args...)
 
