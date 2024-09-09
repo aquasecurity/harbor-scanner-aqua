@@ -65,6 +65,8 @@ scanner:
     username: ""
     ## password Aqua management console password
     password: ""
+    ## token Aqua scanner token for token based authentication
+    token: ""
     ## host Aqua management console address
     host: "http://csp-console-svc.aqua:8080"
     ## registry the name of the Harbor registry configured in Aqua management console
