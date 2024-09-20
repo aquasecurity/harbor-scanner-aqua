@@ -80,7 +80,7 @@ spec:
             - name: "SCANNER_AQUA_TOKEN"
               valueFrom:
                 secretKeyRef:
-                  name: { { include "harbor-scanner-aqua.fullname" . } }
+                  name: {{ include "harbor-scanner-aqua.fullname" . }}
                   key: aqua_token
             - name: "SCANNER_AQUA_HOST"
               value: {{ .Values.scanner.aqua.host | quote }}
